@@ -77,13 +77,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`\n=============================================================`);
-  console.log(`🚀 Jharkhand AR Safety Training API Server Running on Port ${PORT}`);
-  console.log(`📡 Health Check: http://localhost:${PORT}/api/health`);
-  console.log(`📊 REST Analytics: http://localhost:${PORT}/api/analytics/compliance-summary`);
-  console.log(`🔍 GraphQL Endpoint: http://localhost:${PORT}/graphql`);
-  console.log(`=============================================================\n`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`\n=============================================================`);
+    console.log(`🚀 Jharkhand AR Safety Training API Server Running on Port ${PORT}`);
+    console.log(`📡 Health Check: http://localhost:${PORT}/api/health`);
+    console.log(`📊 REST Analytics: http://localhost:${PORT}/api/analytics/compliance-summary`);
+    console.log(`🔍 GraphQL Endpoint: http://localhost:${PORT}/graphql`);
+    console.log(`=============================================================\n`);
+  });
+}
 
 export default app;
