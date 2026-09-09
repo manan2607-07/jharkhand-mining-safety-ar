@@ -85,3 +85,5 @@ app.listen(PORT, () => {
   console.log(`🔍 GraphQL Endpoint: http://localhost:${PORT}/graphql`);
   console.log(`=============================================================\n`);
 });
+
+export default app;

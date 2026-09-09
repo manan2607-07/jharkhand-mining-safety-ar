@@ -6,9 +6,15 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dbDir = path.join(__dirname, '../../data');
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+let dbDir = path.join(__dirname, '../../data');
+try {
+  if (process.env.VERCEL) {
+    dbDir = '/tmp';
+  } else if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
+} catch {
+  dbDir = '/tmp';
 }
 
 const dbPath = path.join(dbDir, 'jharkhand_mining_safety.db');
