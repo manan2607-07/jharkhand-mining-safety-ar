@@ -1,0 +1,23 @@
+{
+  "short_name": "AR Mines Safety",
+  "name": "AR Mining Safety Simulator - Jharkhand",
+  "description": "Smart India Hackathon 2026 AR-Based Vocational Training & Safety Simulator",
+  "icons": [
+    {
+      "src": "/app-logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#073556",
+  "theme_color": "#0c4e7e",
+  "display": "standalone",
+  "orientation": "portrait"
+}
