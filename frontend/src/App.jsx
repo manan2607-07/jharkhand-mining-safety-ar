@@ -8,15 +8,19 @@ import WorkerPortal from './portals/worker/WorkerPortal';
 import SafetyOfficerDashboard from './portals/safety_officer/SafetyOfficerDashboard';
 import DGMSPortal from './portals/dgms/DGMSPortal';
 import StateNodalDashboard from './portals/state_nodal/StateNodalDashboard';
+import WorkerLoginPage from './portals/auth/WorkerLoginPage';
+import AdminLoginPage from './portals/auth/AdminLoginPage';
 import { AshokaLionCapital } from './components/Emblem';
 import { Shield, ExternalLink, Info, CheckCircle } from 'lucide-react';
 
 function MainApp() {
-  const { currentRole, switchRole } = useAuth();
-  const [portalMode, setPortalModeState] = useState(() => {
-    if (typeof window !== 'undefined' && window.location.hash.startsWith('#admin')) return 'admin';
-    return localStorage.getItem('jh_safety_portal_mode') || 'worker';
+  const { currentRole, switchRole, workerUser, adminUser, isWorkerAuthenticated, isAdminAuthenticated } = useAuth();
+  
+  const [routeHash, setRouteHash] = useState(() => {
+    if (typeof window !== 'undefined') return window.location.hash || '#worker';
+    return '#worker';
   });
+
   const [adminTab, setAdminTabState] = useState(() => {
     if (typeof window !== 'undefined') {
       if (window.location.hash.includes('dgms')) return 'dgms';
@@ -24,6 +28,7 @@ function MainApp() {
     }
     return 'officer';
   });
+
   const [workerSection, setWorkerSection] = useState('modules');
   const [verificationHash, setVerificationHash] = useState('');
   const [lastSyncTimestamp, setLastSyncTimestamp] = useState(Date.now());
@@ -31,9 +36,10 @@ function MainApp() {
   // Synchronize hash routing across page visits
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash;
+      const hash = window.location.hash || '#worker';
+      setRouteHash(hash);
+
       if (hash.startsWith('#admin')) {
-        setPortalModeState('admin');
         if (hash.includes('dgms')) {
           setAdminTabState('dgms');
           switchRole('DGMS_INSPECTOR');
@@ -45,7 +51,6 @@ function MainApp() {
           switchRole('SAFETY_OFFICER');
         }
       } else {
-        setPortalModeState('worker');
         if (hash.includes('certificates')) setWorkerSection('certificates');
         else if (hash.includes('profile')) setWorkerSection('profile');
         else setWorkerSection('modules');
@@ -71,18 +76,10 @@ function MainApp() {
   }, []);
 
   const setPortalMode = (mode) => {
-    setPortalModeState(mode);
-    localStorage.setItem('jh_safety_portal_mode', mode);
     if (mode === 'admin') {
-      window.location.hash = `#admin/${adminTab}`;
-      if (currentRole === 'WORKER') {
-        switchRole('SAFETY_OFFICER');
-      }
+      window.location.hash = isAdminAuthenticated ? `#admin/${adminTab}` : '#admin-login';
     } else {
-      window.location.hash = '#worker';
-      if (currentRole !== 'WORKER') {
-        switchRole('WORKER');
-      }
+      window.location.hash = isWorkerAuthenticated ? '#worker' : '#worker-login';
     }
   };
 
@@ -97,33 +94,47 @@ function MainApp() {
   const navigateToDGMS = (hash) => {
     setVerificationHash(hash);
     switchRole('DGMS_INSPECTOR');
-    setPortalModeState('admin');
     setAdminTabState('dgms');
-    localStorage.setItem('jh_safety_portal_mode', 'admin');
     window.location.hash = '#admin/dgms';
   };
 
+  // Determine active view mode based on route and auth status
+  const isAdminRoute = routeHash.startsWith('#admin');
+  const isAdminLoginView = routeHash === '#admin-login' || (isAdminRoute && !isAdminAuthenticated);
+  const isWorkerLoginView = routeHash === '#worker-login' || routeHash === '#login' || (!isAdminRoute && !isWorkerAuthenticated);
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-primary)' }}>
-      <Navbar
-        portalMode={portalMode}
-        setPortalMode={setPortalMode}
-        adminTab={adminTab}
-        setAdminTab={setAdminTab}
-        workerSection={workerSection}
-        setWorkerSection={setWorkerSection}
-      />
+      {/* Show full Navbar when authenticated in respective portal */}
+      {!isAdminLoginView && !isWorkerLoginView && (
+        <Navbar
+          portalMode={isAdminRoute ? 'admin' : 'worker'}
+          setPortalMode={setPortalMode}
+          adminTab={adminTab}
+          setAdminTab={setAdminTab}
+          workerSection={workerSection}
+          setWorkerSection={setWorkerSection}
+        />
+      )}
       <OfflineBanner />
 
       <main id="main-content" tabIndex="-1" style={{ flex: 1, outline: 'none' }}>
-        {portalMode === 'worker' ? (
-          <WorkerPortal
-            key={`worker-${lastSyncTimestamp}`}
-            onNavigateToDGMS={navigateToDGMS}
-            onActivityOccurred={() => setLastSyncTimestamp(Date.now())}
-            workerSection={workerSection}
+        {isAdminLoginView ? (
+          <AdminLoginPage
+            onLoginSuccess={(admin) => {
+              const targetTab = admin.role === 'DGMS_INSPECTOR' ? 'dgms' : admin.role === 'STATE_NODAL_OFFICER' ? 'state' : 'officer';
+              setAdminTabState(targetTab);
+              window.location.hash = `#admin/${targetTab}`;
+            }}
           />
-        ) : (
+        ) : isWorkerLoginView ? (
+          <WorkerLoginPage
+            onLoginSuccess={(worker) => {
+              setWorkerSection('modules');
+              window.location.hash = '#worker';
+            }}
+          />
+        ) : isAdminRoute ? (
           <>
             {adminTab === 'officer' && (
               <SafetyOfficerDashboard key={`officer-${lastSyncTimestamp}`} />
@@ -135,6 +146,13 @@ function MainApp() {
               <StateNodalDashboard key={`state-${lastSyncTimestamp}`} />
             )}
           </>
+        ) : (
+          <WorkerPortal
+            key={`worker-${lastSyncTimestamp}`}
+            onNavigateToDGMS={navigateToDGMS}
+            onActivityOccurred={() => setLastSyncTimestamp(Date.now())}
+            workerSection={workerSection}
+          />
         )}
       </main>
 
@@ -179,6 +197,8 @@ function MainApp() {
             <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Safety Framework</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
             <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Screen Reader Access</a>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
+            <a href="#admin-login" style={{ color: '#2EE59D', textDecoration: 'none', fontWeight: '700' }}>Official Sign-In (विभागीय लॉगिन)</a>
           </div>
         </div>
 

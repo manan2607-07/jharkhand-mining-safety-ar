@@ -51,26 +51,124 @@ export const ROLES = {
 };
 
 export const AuthProvider = ({ children }) => {
+  // Worker session (isolated from Admin)
+  const [workerUser, setWorkerUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('jh_worker_user');
+      return saved ? JSON.parse(saved) : ROLES.WORKER;
+    } catch {
+      return ROLES.WORKER;
+    }
+  });
+
+  // Admin session (isolated from Worker)
+  const [adminUser, setAdminUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('jh_admin_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [currentRole, setCurrentRole] = useState(() => {
     return localStorage.getItem('jh_safety_role') || 'WORKER';
   });
-
-  const currentUser = ROLES[currentRole] || ROLES.WORKER;
 
   useEffect(() => {
     localStorage.setItem('jh_safety_role', currentRole);
   }, [currentRole]);
 
+  // Worker Login Handler
+  const loginWorker = async (credentials) => {
+    try {
+      const res = await fetch('/api/auth/worker-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Worker authentication failed');
+      }
+
+      localStorage.setItem('jh_worker_token', data.token);
+      localStorage.setItem('jh_worker_user', JSON.stringify(data.worker));
+      setWorkerUser(data.worker);
+      setCurrentRole('WORKER');
+      return { success: true, worker: data.worker };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
+  // Worker Logout Handler
+  const logoutWorker = () => {
+    localStorage.removeItem('jh_worker_token');
+    localStorage.removeItem('jh_worker_user');
+    setWorkerUser(null);
+  };
+
+  // Admin Login Handler
+  const loginAdmin = async (credentials) => {
+    try {
+      const res = await fetch('/api/auth/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Administrative authentication failed');
+      }
+
+      localStorage.setItem('jh_admin_token', data.token);
+      localStorage.setItem('jh_admin_user', JSON.stringify(data.admin));
+      setAdminUser(data.admin);
+      setCurrentRole(data.admin.role);
+      return { success: true, admin: data.admin };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
+  // Admin Logout Handler
+  const logoutAdmin = () => {
+    localStorage.removeItem('jh_admin_token');
+    localStorage.removeItem('jh_admin_user');
+    setAdminUser(null);
+  };
+
   const switchRole = (roleKey) => {
     if (ROLES[roleKey]) {
       setCurrentRole(roleKey);
+      if (adminUser) {
+        const updatedAdmin = { ...adminUser, role: roleKey };
+        setAdminUser(updatedAdmin);
+        localStorage.setItem('jh_admin_user', JSON.stringify(updatedAdmin));
+      }
     }
   };
+
+  // Compute active currentUser based on role/session
+  const currentUser = adminUser && currentRole !== 'WORKER'
+    ? { ...ROLES[currentRole], ...adminUser }
+    : (workerUser || ROLES.WORKER);
 
   return (
     <AuthContext.Provider value={{
       currentRole,
       currentUser,
+      workerUser,
+      adminUser,
+      isWorkerAuthenticated: !!workerUser,
+      isAdminAuthenticated: !!adminUser,
+      loginWorker,
+      logoutWorker,
+      loginAdmin,
+      logoutAdmin,
       switchRole,
       ROLES
     }}>

@@ -6,7 +6,7 @@ import db from '../db/database.js';
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'jharkhand-sih-2026-secret-key-dgms-verified';
 
-// POST /api/auth/login
+// POST /api/auth/login - Generic login endpoint
 router.post('/login', (req, res) => {
   try {
     const { username, password } = req.body;
@@ -50,55 +50,241 @@ router.post('/login', (req, res) => {
   }
 });
 
-// GET /api/auth/roles - quick role accounts for hackathon demo
-router.get('/demo-accounts', (req, res) => {
+// POST /api/auth/worker-login - Dedicated Frontline Worker Login (Zero Admin Leakage)
+router.post('/worker-login', (req, res) => {
   try {
-    const stmt = db.prepare('SELECT id, username, full_name, role, site_id, district FROM users');
-    const accounts = stmt.all();
-    res.json(accounts);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+    const { workerCode, phone, pin } = req.body;
+    const identifier = (workerCode || phone || '').trim();
 
-// POST /api/auth/demo-switch - switch active user for interactive testing
-router.post('/demo-switch', (req, res) => {
-  try {
-    const { role } = req.body;
-    const stmt = db.prepare('SELECT * FROM users WHERE role = ? LIMIT 1');
-    const user = stmt.get(role || 'WORKER');
+    if (!identifier) {
+      return res.status(400).json({ error: 'Worker Code (e.g. JH-WRK-001) or Registered Mobile Number required' });
+    }
 
-    if (!user) {
-      return res.status(404).json({ error: 'Role user not found' });
+    // Optional PIN verification (default SIH prototype PIN: 1234 or miner123)
+    if (pin && pin !== '1234' && pin !== 'miner123' && pin !== 'password123') {
+      return res.status(401).json({ error: 'Invalid Security PIN. Use default prototype PIN: 1234' });
+    }
+
+    const stmt = db.prepare(`
+      SELECT 
+        w.id, w.worker_code, w.full_name, w.tribal_language, w.literacy_level,
+        w.designation, w.phone, w.joined_date,
+        s.id AS site_id, s.name AS site_name, s.sector, s.district,
+        c.id AS cohort_id, c.name AS cohort_name
+      FROM workers w
+      JOIN sites s ON w.site_id = s.id
+      LEFT JOIN cohorts c ON w.cohort_id = c.id
+      WHERE UPPER(w.worker_code) = UPPER(?) 
+         OR w.phone LIKE ? 
+         OR w.id = ?
+      LIMIT 1
+    `);
+
+    const phoneClean = identifier.replace(/[^0-9]/g, '');
+    const worker = stmt.get(identifier, `%${phoneClean}%`, identifier);
+
+    if (!worker) {
+      return res.status(404).json({
+        error: `No miner record found for '${identifier}'. Try sample worker code 'JH-WRK-001' (Birsa Hansda).`
+      });
     }
 
     const token = jwt.sign(
       {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        fullName: user.full_name,
-        siteId: user.site_id,
-        district: user.district
+        id: worker.id,
+        workerCode: worker.worker_code,
+        role: 'WORKER',
+        fullName: worker.full_name,
+        siteId: worker.site_id,
+        district: worker.district
       },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
     res.json({
+      success: true,
       token,
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        fullName: user.full_name,
-        siteId: user.site_id,
-        district: user.district
+      worker: {
+        id: worker.id,
+        role: 'WORKER',
+        workerCode: worker.worker_code,
+        name: worker.full_name,
+        designation: worker.designation,
+        tribalLanguage: worker.tribal_language,
+        phone: worker.phone,
+        siteId: worker.site_id,
+        siteName: worker.site_name,
+        sector: worker.sector,
+        district: worker.district,
+        cohortId: worker.cohort_id,
+        cohortName: worker.cohort_name
       }
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// POST /api/auth/admin-login - Dedicated Administrative & Regulatory Official Sign-In
+router.post('/admin-login', (req, res) => {
+  try {
+    const { username, password, captchaCode } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Official Username and Password required' });
+    }
+
+    const stmt = db.prepare(`
+      SELECT 
+        u.*,
+        s.name AS site_name, s.sector
+      FROM users u
+      LEFT JOIN sites s ON u.site_id = s.id
+      WHERE LOWER(u.username) = LOWER(?)
+        AND u.role IN ('SAFETY_OFFICER', 'DGMS_INSPECTOR', 'STATE_NODAL_OFFICER')
+    `);
+
+    const admin = stmt.get(username.trim());
+
+    if (!admin) {
+      return res.status(401).json({
+        error: 'Invalid administrative credentials. Access restricted to authorized statutory officials.'
+      });
+    }
+
+    // Verify bcrypt password
+    const isPwValid = bcrypt.compareSync(password, admin.password_hash);
+    if (!isPwValid && password !== 'password123') {
+      return res.status(401).json({ error: 'Incorrect statutory password. (Default prototype password: password123)' });
+    }
+
+    const token = jwt.sign(
+      {
+        id: admin.id,
+        username: admin.username,
+        role: admin.role,
+        fullName: admin.full_name,
+        siteId: admin.site_id,
+        district: admin.district
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      success: true,
+      token,
+      admin: {
+        id: admin.id,
+        username: admin.username,
+        fullName: admin.full_name,
+        role: admin.role,
+        designation: admin.role === 'SAFETY_OFFICER' 
+          ? 'Site Safety Supervisor'
+          : admin.role === 'DGMS_INSPECTOR'
+            ? 'Director of Mine Safety (Statutory Inspector)'
+            : 'State Nodal Officer - Mines & Geology',
+        siteId: admin.site_id,
+        siteName: admin.site_name || 'DGMS / State Headquarters',
+        district: admin.district || 'Dhanbad',
+        sector: admin.sector || 'ALL'
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/auth/credentials-info - Detailed credentials directory for evaluation
+router.get('/credentials-info', (req, res) => {
+  res.json({
+    workerPortal: {
+      portalName: 'Frontline Worker AR Safety Training Portal',
+      loginRoute: '#worker-login',
+      activePortalRoute: '#worker',
+      instructions: 'Enter Workforce ID or registered phone number with default PIN 1234.',
+      accounts: [
+        {
+          name: 'Birsa Hansda',
+          workerCode: 'JH-WRK-001',
+          phone: '+91 94311 20401',
+          pin: '1234',
+          designation: 'Underground Driller',
+          site: 'BCCL Jharia Colliery #4 (Dhanbad)',
+          language: 'SANTALI'
+        },
+        {
+          name: 'Shibu Soren',
+          workerCode: 'JH-WRK-002',
+          phone: '+91 94311 20402',
+          pin: '1234',
+          designation: 'Loader Operator',
+          site: 'BCCL Jharia Colliery #4 (Dhanbad)',
+          language: 'SANTALI'
+        },
+        {
+          name: 'Sunil Murmu',
+          workerCode: 'JH-WRK-003',
+          phone: '+91 94311 20403',
+          pin: '1234',
+          designation: 'Ventilation Helper',
+          site: 'BCCL Jharia Colliery #4 (Dhanbad)',
+          language: 'SANTALI'
+        },
+        {
+          name: 'Raju Mahato',
+          workerCode: 'JH-WRK-005',
+          phone: '+91 94311 20405',
+          pin: '1234',
+          designation: 'Blast Furnace Assistant',
+          site: 'SAIL Bokaro Steel Plant (Bokaro)',
+          language: 'HINDI'
+        },
+        {
+          name: 'Champa Marandi',
+          workerCode: 'JH-WRK-004',
+          phone: '+91 94311 20404',
+          pin: '1234',
+          designation: 'Mica Sorter',
+          site: 'Koderma Mica Mining Zone (Koderma)',
+          language: 'SANTALI'
+        }
+      ]
+    },
+    adminPortal: {
+      portalName: 'Administrative & Regulatory Console (Safety Officer, DGMS, State Nodal)',
+      loginRoute: '#admin-login',
+      activePortalRoute: '#admin',
+      instructions: 'Enter official username with default statutory password password123.',
+      accounts: [
+        {
+          roleName: 'Site Safety Officer',
+          username: 'officer1',
+          password: 'password123',
+          officialName: 'Rajesh Mahato',
+          jurisdiction: 'BCCL Jharia Underground Coal Mine Colliery #4',
+          portalTab: '#admin/officer'
+        },
+        {
+          roleName: 'DGMS Statutory Inspector',
+          username: 'dgms_inspector',
+          password: 'password123',
+          officialName: 'Dr. A.K. Sengupta',
+          jurisdiction: 'Directorate General of Mines Safety (DGMS) Dhanbad HQ',
+          portalTab: '#admin/dgms'
+        },
+        {
+          roleName: 'State Nodal Officer',
+          username: 'state_nodal',
+          password: 'password123',
+          officialName: 'Priya Soren',
+          jurisdiction: 'Dept. of Mines & Geology, Govt. of Jharkhand (Ranchi)',
+          portalTab: '#admin/state'
+        }
+      ]
+    }
+  });
 });
 
 export default router;

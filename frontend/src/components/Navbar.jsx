@@ -24,7 +24,8 @@ import {
   Award,
   Shield,
   ArrowRight,
-  ArrowLeft
+  ArrowLeft,
+  LogOut
 } from 'lucide-react';
 
 export default function Navbar({
@@ -36,7 +37,7 @@ export default function Navbar({
   setWorkerSection
 }) {
   const { language, setLanguage, t, audioEnabled, setAudioEnabled, isSpeaking } = useLanguage();
-  const { currentRole, switchRole, currentUser, ROLES } = useAuth();
+  const { currentRole, switchRole, currentUser, workerUser, adminUser, logoutWorker, logoutAdmin, ROLES } = useAuth();
   const { isOnline, pendingSyncCount, isSyncing, triggerSync } = useOfflineSync();
 
   // Accessibility States (GIGW Mandated)
@@ -562,35 +563,36 @@ export default function Navbar({
                       Active Frontline Miner:
                     </div>
                     <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#0c4e7e', fontFamily: "'Roboto Slab', serif" }}>
-                      Birsa Hansda (JH-WRK-001)
+                      {workerUser?.name || 'Birsa Hansda'} ({workerUser?.workerCode || 'JH-WRK-001'})
                     </div>
                   </div>
                 </div>
 
-                {/* Primary Button to Enter Admin Portal */}
+                {/* Frontline Worker Sign Out Button (Zero Mention of Admin Portal) */}
                 <button
                   type="button"
-                  onClick={() => setPortalMode('admin')}
+                  onClick={() => {
+                    logoutWorker();
+                    window.location.hash = '#worker-login';
+                  }}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.55rem 1rem',
-                    background: '#0c4e7e',
-                    color: '#FFFFFF',
-                    border: '1px solid #073556',
+                    gap: '0.45rem',
+                    padding: '0.45rem 0.85rem',
+                    background: '#FDF2F2',
+                    color: '#9B1C1C',
+                    border: '1px solid #F8B4B4',
                     borderRadius: '4px',
                     fontWeight: '700',
-                    fontSize: '0.84rem',
-                    fontFamily: "'Roboto Slab', serif",
+                    fontSize: '0.8rem',
                     cursor: 'pointer',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
                     transition: 'all 0.15s ease'
                   }}
-                  title="Switch to Administrative & Regulatory Console"
+                  title="कामगार लॉग आउट (Log Out)"
                 >
-                  <Shield size={16} color="#2EE59D" />
-                  <span>Official / Admin Console (अधिकारी लॉगिन) →</span>
+                  <LogOut size={15} color="#9B1C1C" />
+                  <span>लॉग आउट (Log Out)</span>
                 </button>
               </>
             ) : (
@@ -644,30 +646,31 @@ export default function Navbar({
                   </div>
                 </div>
 
-                {/* Primary Button to Return to Worker Portal */}
+                {/* Administrative Authority Sign Out Button */}
                 <button
                   type="button"
-                  onClick={() => setPortalMode('worker')}
+                  onClick={() => {
+                    logoutAdmin();
+                    window.location.hash = '#admin-login';
+                  }}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.55rem 1rem',
-                    background: '#F8FAFC',
-                    color: '#0c4e7e',
-                    border: '1px solid #0c4e7e',
+                    gap: '0.45rem',
+                    padding: '0.45rem 0.85rem',
+                    background: '#FDF2F2',
+                    color: '#9B1C1C',
+                    border: '1px solid #F8B4B4',
                     borderRadius: '4px',
                     fontWeight: '700',
-                    fontSize: '0.84rem',
-                    fontFamily: "'Roboto Slab', serif",
+                    fontSize: '0.8rem',
                     cursor: 'pointer',
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                     transition: 'all 0.15s ease'
                   }}
-                  title="Return to Frontline Worker Portal"
+                  title="प्राधिकरण साइन आउट (Sign Out)"
                 >
-                  <ArrowLeft size={16} color="#0c4e7e" />
-                  <span>← Return to Worker Portal (कामगार पोर्टल)</span>
+                  <LogOut size={15} color="#9B1C1C" />
+                  <span>साइन आउट (Sign Out)</span>
                 </button>
               </>
             )}
