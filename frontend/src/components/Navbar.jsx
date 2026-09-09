@@ -446,7 +446,7 @@ export default function Navbar({
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <img
                 src="/app-logo.png"
-                alt="Khan Suraksha Official Mobile App Logo"
+                alt="AR Mining Safety Simulator App Logo"
                 style={{ width: '50px', height: '50px', borderRadius: '10px', boxShadow: '0 2px 6px rgba(0,0,0,0.12)' }}
               />
               <JharkhandGovSeal size={48} />
