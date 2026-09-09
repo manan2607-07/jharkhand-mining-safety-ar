@@ -1,0 +1,665 @@
+/* ==========================================================================
+   OFFICIAL INDIAN GOVERNMENT E-GOVERNANCE PORTAL DESIGN SYSTEM (GIGW COMPLIANT)
+   In the style of UMANG, MyGov, DigiLocker, National Portal of India & Jharkhand State
+   ========================================================================== */
+
+:root {
+  /* Official Jharkhand State Mines Portal Palette (jharkhand.gov.in/mines) */
+  --gov-navy: #0c4e7e;           /* Jharkhand Mines Primary Blue */
+  --gov-navy-dark: #073556;      /* Deep Colliery Slate Navy */
+  --gov-navy-light: #12639e;     /* Hover State Blue */
+  --gov-ashoka-blue: #0c4e7e;    /* Official State Header Blue */
+  
+  /* Jharkhand State Signature Accent Colors */
+  --jh-blue: #0c4e7e;           /* Mines Dept Official Primary */
+  --jh-dark-blue: #073556;      /* Mines Dept Table Header Dark */
+  --jh-mint: #2EE59D;           /* Signature Jharkhand Portal Mint Accent */
+  --jh-forest-green: #4DA91C;   /* Active State Green */
+  --jh-tab-cyan: #5bc0de;       /* Sub-department Tablink Cyan */
+  --jh-tab-cyan-hover: #00d8ff; /* Tablink Hover Bright Cyan */
+  --jh-top-bar: #1b2733;        /* Top Utility Bar Dark Charcoal */
+
+  /* Indian National Tricolour (Top strip) */
+  --tricolour-saffron: #FF9933;  /* India Saffron */
+  --tricolour-white: #FFFFFF;    /* Pure White */
+  --tricolour-green: #138808;    /* India Green */
+  
+  /* Secondary Accent (Gold / Amber for statutory stamps and highlights) */
+  --gov-gold: #B8860B;           /* Dark Goldenrod */
+  --gov-gold-dark: #8B6508;      /* Deep Amber */
+  --gov-gold-light: #FEF9E7;     /* Light Gold Tint */
+  --gov-gold-border: #F3DC9B;
+  
+  /* Status / Alert Colors (Restrained, high-contrast, no neon) */
+  --gov-success: #1E7B34;        /* Official Compliance Green */
+  --gov-success-bg: #EAF5EC;
+  --gov-success-border: #B8E0C0;
+  
+  --gov-warning: #8B6508;        /* Statutory Warning Amber */
+  --gov-warning-bg: #FEF9E7;
+  --gov-warning-border: #F3DC9B;
+  
+  --gov-danger: #9B1C1C;         /* Statutory Hazard Red */
+  --gov-danger-bg: #FDF2F2;
+  --gov-danger-border: #F8B4B4;
+  
+  --gov-info: #0c4e7e;
+  --gov-info-bg: #EBF3FC;
+  --gov-info-border: #B4D3F7;
+
+  /* Background & Surface Mappings */
+  --bg-primary: #F5F7FA;         /* Crisp Light Grey Portal Background */
+  --bg-secondary: #FFFFFF;       /* Pure White Container */
+  --bg-tertiary: #EDF2F7;        /* Subtle Row Background */
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  
+  --border-subtle: #D9D9D9;      /* Crisp 1px Govt Border */
+  --border-medium: #CBD5E1;
+  --border-accent: #0c4e7e;
+  
+  --safety-orange: #B8860B;
+  --safety-amber: #B8860B;
+  --safety-emerald: #1E7B34;
+  --safety-red: #9B1C1C;
+  --ar-cyan: #0c4e7e;
+  
+  --text-primary: #1A202C;       /* WCAG 2.1 AA High Contrast Body Text */
+  --text-secondary: #4A5568;     /* Supporting Metadata */
+  --text-muted: #718096;         /* Captions & Dates */
+  --text-white: #FFFFFF;
+  
+  /* Form & Radius Metrics */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-full: 9999px;
+  
+  /* Official Jharkhand State Portal Typography (jharkhand.gov.in/mines) */
+  --font-heading: 'Roboto Slab', 'Noto Sans Devanagari', Georgia, serif;
+  --font-slab: 'Roboto Slab', serif;
+  --font-sans: 'Open Sans', 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-subheading: 'Lato', 'Raleway', sans-serif;
+  --font-serif: 'Roboto Slab', serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  --font-ol-chiki: 'Noto Sans Ol Chiki', 'Open Sans', sans-serif;
+
+  /* Shadows (Subtle, strictly 1px to 2px, no colored glows) */
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   FONT SIZE SCALING (GIGW Standard A- / A / A+)
+   ========================================================================== */
+html[data-font-size="small"] {
+  font-size: 14px;
+}
+html[data-font-size="normal"] {
+  font-size: 16px;
+}
+html[data-font-size="large"] {
+  font-size: 18px;
+}
+
+/* ==========================================================================
+   HIGH CONTRAST MODE (GIGW WCAG AAA Accessibility)
+   ========================================================================== */
+body.high-contrast {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #000000 !important;
+  --bg-tertiary: #111111 !important;
+  --bg-card: #000000 !important;
+  --bg-card-hover: #1a1a1a !important;
+  
+  --border-subtle: #FFFF00 !important;
+  --border-medium: #FFFF00 !important;
+  --border-accent: #FFFF00 !important;
+  
+  --gov-navy: #FFFF00 !important;
+  --gov-navy-dark: #000000 !important;
+  --gov-gold: #FFFF00 !important;
+  
+  --text-primary: #FFFFFF !important;
+  --text-secondary: #FFFF00 !important;
+  --text-muted: #E2E8F0 !important;
+  
+  --gov-success-bg: #000000 !important;
+  --gov-success: #00FF00 !important;
+  --gov-warning-bg: #000000 !important;
+  --gov-warning: #FFFF00 !important;
+  --gov-danger-bg: #000000 !important;
+  --gov-danger: #FF0000 !important;
+}
+
+body.high-contrast a,
+body.high-contrast button {
+  outline: 2px solid #FFFF00 !important;
+}
+
+/* ==========================================================================
+   BASE RESET & ACCESSIBILITY
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessible Focus States (GIGW Mandate) */
+:focus-visible {
+  outline: 2px solid var(--gov-navy);
+  outline-offset: 2px;
+}
+
+/* Skip to Main Content Link (Hidden until tabbed) */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: var(--gov-navy);
+  color: #FFFFFF;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  z-index: 99999;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-medium);
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 0.5rem;
+}
+
+/* ==========================================================================
+   OFFICIAL TRICOLOUR ACCENT STRIP
+   ========================================================================== */
+.tricolour-bar {
+  height: 4px;
+  width: 100%;
+  display: flex;
+}
+
+.tricolour-bar .saffron {
+  flex: 1;
+  background-color: var(--tricolour-saffron);
+}
+
+.tricolour-bar .white {
+  flex: 1;
+  background-color: var(--tricolour-white);
+}
+
+.tricolour-bar .green {
+  flex: 1;
+  background-color: var(--tricolour-green);
+}
+
+/* ==========================================================================
+   JHARKHAND STATE PORTAL SIGNATURE COMPONENTS (jharkhand.gov.in/mines)
+   ========================================================================== */
+.menuline {
+  height: 3px;
+  background: linear-gradient(90deg, #2EE59D 0%, #00d8ff 50%, #4DA91C 100%);
+  width: 100%;
+}
+
+.visitorspan {
+  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 2px;
+  background: var(--jh-mint);
+  color: #000000;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin-right: 2px;
+  border: 1px solid #1abc75;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.tablink {
+  background-color: var(--jh-tab-cyan);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  outline: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+}
+
+.tablink:hover {
+  background-color: var(--jh-tab-cyan-hover);
+  color: #ffffff !important;
+}
+
+.tablink.active {
+  background-color: var(--jh-blue) !important;
+  color: #ffffff !important;
+  border-bottom: 3px solid var(--jh-mint);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* ==========================================================================
+   TYPOGRAPHY UTILITIES
+   ========================================================================== */
+.font-ol-chiki {
+  font-family: var(--font-ol-chiki);
+  letter-spacing: 0.015em;
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+  color: var(--gov-navy);
+  font-weight: 700;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--gov-navy);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.45rem; }
+h3 { font-size: 1.2rem; }
+h4 { font-size: 1.05rem; }
+
+/* ==========================================================================
+   OFFICIAL GOVERNMENT CARDS & PANELS
+   (White background, thin grey border, subtle 1px shadow, square-ish corners)
+   ========================================================================== */
+.gov-card,
+.glass-panel {
+  background: #FFFFFF !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-subtle) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--text-primary) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gov-card:hover,
+.glass-panel:hover {
+  border-color: #B0B0B0 !important;
+  box-shadow: var(--shadow-medium) !important;
+}
+
+/* Header strip cards */
+.gov-card-header {
+  padding: 0.85rem 1.25rem;
+  background-color: #FAFAFA;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Remove colored neon glow classes */
+.glass-panel-orange,
+.glass-panel-emerald {
+  box-shadow: var(--shadow-subtle) !important;
+}
+
+.glass-panel-orange {
+  border-left: 4px solid var(--gov-gold) !important;
+}
+
+.glass-panel-emerald {
+  border-left: 4px solid var(--gov-success) !important;
+}
+
+/* ==========================================================================
+   OFFICIAL GOVERNMENT BUTTONS
+   (Solid Navy or Gold, rectangular with slight radius, formal label style)
+   ========================================================================== */
+.btn-primary,
+.gov-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--gov-navy) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gov-navy-dark);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.btn-primary:hover,
+.gov-btn-primary:hover {
+  background-color: var(--gov-navy-dark) !important;
+  color: #FFFFFF !important;
+}
+
+.btn-secondary,
+.gov-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #FFFFFF !important;
+  color: var(--gov-navy) !important;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid #CBD5E1 !important;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+}
+
+.btn-secondary:hover,
+.gov-btn-secondary:hover {
+  background-color: #F1F5F9 !important;
+  border-color: var(--gov-navy) !important;
+}
+
+.gov-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--gov-gold) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gov-gold-dark);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  text-decoration: none;
+}
+
+.gov-btn-gold:hover {
+  background-color: var(--gov-gold-dark) !important;
+}
+
+/* ==========================================================================
+   OFFICIAL STATUS BADGES & PILLS
+   (Small rectangular pill tags with plain colors, no gradients)
+   ========================================================================== */
+.badge-certified,
+.gov-badge-green {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--gov-success-bg);
+  color: var(--gov-success);
+  border: 1px solid var(--gov-success-border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-pending,
+.gov-badge-amber {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--gov-warning-bg);
+  color: var(--gov-warning);
+  border: 1px solid var(--gov-warning-border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-danger,
+.gov-badge-red {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--gov-danger-bg);
+  color: var(--gov-danger);
+  border: 1px solid var(--gov-danger-border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-locked,
+.gov-badge-grey {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #D1D5DB;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.gov-badge-navy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--gov-info-bg);
+  color: var(--gov-info);
+  border: 1px solid var(--gov-info-border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* ==========================================================================
+   OFFICIAL GOVERNMENT DATA TABLES
+   ========================================================================== */
+.gov-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: #FFFFFF;
+}
+
+.gov-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.gov-table th {
+  background-color: var(--gov-navy);
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--gov-navy-dark);
+  white-space: nowrap;
+}
+
+.gov-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #E2E8F0;
+  color: var(--text-primary);
+}
+
+.gov-table tbody tr:nth-child(even) {
+  background-color: #F8FAFC;
+}
+
+.gov-table tbody tr:hover {
+  background-color: #F1F5F9;
+}
+
+/* ==========================================================================
+   OFFICIAL STATUTORY CERTIFICATE & STAMP WIDGET
+   ========================================================================== */
+.gov-stamp-box {
+  border: 2px dashed var(--gov-navy);
+  background: #FAFCFF;
+  position: relative;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.gov-stamp-box::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--gov-navy);
+  border-left: 2px solid var(--gov-navy);
+}
+
+.gov-stamp-box::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid var(--gov-navy);
+  border-right: 2px solid var(--gov-navy);
+}
+
+.gov-seal-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--gov-navy);
+  border-radius: 50%;
+  width: 84px;
+  height: 84px;
+  padding: 4px;
+  text-align: center;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--gov-navy);
+  background: #FFFFFF;
+}
+
+/* ==========================================================================
+   FORM INPUTS & CONTROLS
+   ========================================================================== */
+.gov-input,
+.gov-select {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-family: var(--font-sans);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.gov-input:focus,
+.gov-select:focus {
+  border-color: var(--gov-navy);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(11, 61, 145, 0.2);
+}
+
+/* ==========================================================================
+   OFFICIAL NOTIFICATION BANNERS
+   ========================================================================== */
+.gov-alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.gov-alert-info {
+  background-color: var(--gov-info-bg);
+  border-left: 4px solid var(--gov-navy);
+  color: var(--gov-navy-dark);
+}
+
+.gov-alert-warning {
+  background-color: var(--gov-warning-bg);
+  border-left: 4px solid var(--gov-gold);
+  color: var(--gov-gold-dark);
+}
+
+.gov-alert-success {
+  background-color: var(--gov-success-bg);
+  border-left: 4px solid var(--gov-success);
+  color: var(--gov-success);
+}
+
+/* ==========================================================================
+   PRINT MEDIA STYLES (Statutory Certificates & Audit Reports)
+   ========================================================================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  
+  .print-page {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

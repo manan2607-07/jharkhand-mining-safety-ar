@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jharkhand-safety-backend
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - JWT_SECRET=jharkhand-sih-2026-secret-key-dgms-verified
+      - NODE_ENV=production
+    volumes:
+      - ./backend/data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: jharkhand-safety-frontend
+    ports:
+      - "5176:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

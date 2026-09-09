@@ -1,0 +1,53 @@
+name: Jharkhand AR Safety CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Root Dependencies
+        run: npm ci || npm install
+
+      - name: Install Backend Dependencies & Seed Database
+        run: |
+          cd backend
+          npm install
+          node src/db/seed.js
+
+      - name: Test Backend Health Check
+        run: |
+          cd backend
+          node src/server.js &
+          sleep 3
+          curl -f http://localhost:5001/api/health || exit 1
+
+      - name: Install Frontend Dependencies & Build
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
+      - name: Verification Summary
+        run: |
+          echo "====================================================="
+          echo "✓ CI/CD Pipeline passed successfully!"
+          echo "✓ Smart India Hackathon 2026 - PS ID 26041 Deliverable"
+          echo "====================================================="

@@ -1,0 +1,32 @@
+{
+  "name": "jharkhand-ar-mining-safety",
+  "version": "1.0.0",
+  "description": "AR-Based Vocational Training & Safety Certification Simulator for Jharkhand's Mining, Steel & Mica Workforce (SIH 2026 - PS ID 26041)",
+  "scripts": {
+    "install:all": "npm install && npm run install:backend && npm run install:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "cd frontend && npm run build",
+    "seed": "cd backend && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "keywords": [
+    "ar",
+    "webxr",
+    "threejs",
+    "dgms",
+    "jharkhand",
+    "mining-safety",
+    "smart-india-hackathon-2026",
+    "ol-chiki",
+    "santali",
+    "offline-first"
+  ],
+  "author": "Smart India Hackathon 2026 Team",
+  "license": "MIT"
+}

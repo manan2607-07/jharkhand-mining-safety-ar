@@ -1,0 +1,1 @@
+# Ensures backend/data directory is tracked by git while ignoring SQLite db files
