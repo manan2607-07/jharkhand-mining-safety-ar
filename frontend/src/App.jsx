@@ -17,7 +17,18 @@ function MainApp() {
   const { currentRole, switchRole, workerUser, adminUser, isWorkerAuthenticated, isAdminAuthenticated } = useAuth();
   
   const [routeHash, setRouteHash] = useState(() => {
-    if (typeof window !== 'undefined') return window.location.hash || '#worker';
+    if (typeof window !== 'undefined') {
+      const isSubdomainAdmin = window.location.hostname.startsWith('admin');
+      const isPathAdmin = window.location.pathname.startsWith('/admin');
+      const isEnvAdmin = import.meta.env.VITE_DEFAULT_PORTAL === 'admin';
+
+      if (isSubdomainAdmin || isPathAdmin || isEnvAdmin) {
+        if (!window.location.hash.startsWith('#admin')) {
+          return '#admin-login';
+        }
+      }
+      return window.location.hash || '#worker';
+    }
     return '#worker';
   });
 
