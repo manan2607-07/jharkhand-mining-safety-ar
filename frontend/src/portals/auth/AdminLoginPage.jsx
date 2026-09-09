@@ -95,8 +95,8 @@ export default function AdminLoginPage({ onLoginSuccess }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
               <img
-                src="/app-logo.png"
-                alt="AR Mining Safety Simulator App Logo"
+                src="/admin-app-logo.png"
+                alt="Khan Suraksha Admin App Logo"
                 style={{
                   width: '64px',
                   height: '64px',
