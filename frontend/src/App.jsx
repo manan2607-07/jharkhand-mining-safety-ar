@@ -11,67 +11,100 @@ import StateNodalDashboard from './portals/state_nodal/StateNodalDashboard';
 import WorkerLoginPage from './portals/auth/WorkerLoginPage';
 import AdminLoginPage from './portals/auth/AdminLoginPage';
 import { AshokaLionCapital } from './components/Emblem';
-import { Shield, ExternalLink, Info, CheckCircle } from 'lucide-react';
+
+const isCurrentDomainAdmin = () => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname.toLowerCase();
+  const path = window.location.pathname.toLowerCase();
+  return (
+    host.includes('admin') ||
+    path.startsWith('/admin') ||
+    import.meta.env.VITE_DEFAULT_PORTAL === 'admin'
+  );
+};
 
 function MainApp() {
-  const { currentRole, switchRole, workerUser, adminUser, isWorkerAuthenticated, isAdminAuthenticated } = useAuth();
+  const { adminUser, isWorkerAuthenticated, isAdminAuthenticated } = useAuth();
   
+  const isAdminDomain = isCurrentDomainAdmin();
+
+  // Determine authorized admin tab based strictly on authenticated role (immutable per session)
+  const authorizedAdminTab = adminUser ? (
+    adminUser.role === 'DGMS_INSPECTOR' ? 'dgms' :
+    adminUser.role === 'STATE_NODAL_OFFICER' ? 'state' : 'officer'
+  ) : 'officer';
+
   const [routeHash, setRouteHash] = useState(() => {
     if (typeof window !== 'undefined') {
-      const isSubdomainAdmin = window.location.hostname.startsWith('admin');
-      const isPathAdmin = window.location.pathname.startsWith('/admin');
-      const isEnvAdmin = import.meta.env.VITE_DEFAULT_PORTAL === 'admin';
-
-      if (isSubdomainAdmin || isPathAdmin || isEnvAdmin) {
-        if (!window.location.hash.startsWith('#admin')) {
-          return '#admin-login';
-        }
+      if (isAdminDomain) {
+        return isAdminAuthenticated ? `#admin/${authorizedAdminTab}` : '#admin-login';
       }
-      return window.location.hash || '#worker';
+      if (window.location.hash === '#admin-login') return '#admin-login';
+      return isWorkerAuthenticated ? (window.location.hash || '#worker') : '#worker-login';
     }
-    return '#worker';
+    return '#worker-login';
   });
 
-  const [adminTab, setAdminTabState] = useState(() => {
-    if (typeof window !== 'undefined') {
-      if (window.location.hash.includes('dgms')) return 'dgms';
-      if (window.location.hash.includes('state')) return 'state';
-    }
-    return 'officer';
-  });
-
+  const [adminTab, setAdminTabState] = useState(authorizedAdminTab);
   const [workerSection, setWorkerSection] = useState('modules');
-  const [verificationHash, setVerificationHash] = useState('');
   const [lastSyncTimestamp, setLastSyncTimestamp] = useState(Date.now());
 
-  // Synchronize hash routing across page visits
+  // Keep adminTab locked to authorized role
+  useEffect(() => {
+    if (adminUser) {
+      setAdminTabState(authorizedAdminTab);
+    }
+  }, [adminUser, authorizedAdminTab]);
+
+  // Synchronize hash routing across page visits with strict auth guards
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash || '#worker';
-      setRouteHash(hash);
+      const hash = window.location.hash || '';
 
-      if (hash.startsWith('#admin')) {
-        if (hash.includes('dgms')) {
-          setAdminTabState('dgms');
-          switchRole('DGMS_INSPECTOR');
-        } else if (hash.includes('state')) {
-          setAdminTabState('state');
-          switchRole('STATE_NODAL_OFFICER');
+      if (isAdminDomain) {
+        if (!isAdminAuthenticated) {
+          if (hash !== '#admin-login') {
+            window.location.hash = '#admin-login';
+          }
+          setRouteHash('#admin-login');
         } else {
-          setAdminTabState('officer');
-          switchRole('SAFETY_OFFICER');
+          // Locked strictly to authorized role's tab; cannot switch or view other admins
+          const target = `#admin/${authorizedAdminTab}`;
+          if (hash !== target) {
+            window.location.hash = target;
+          }
+          setRouteHash(target);
+          setAdminTabState(authorizedAdminTab);
         }
-      } else {
-        if (hash.includes('certificates')) setWorkerSection('certificates');
-        else if (hash.includes('profile')) setWorkerSection('profile');
-        else setWorkerSection('modules');
-        switchRole('WORKER');
+        return;
       }
+
+      // On worker domain:
+      if (hash === '#admin-login') {
+        setRouteHash('#admin-login');
+        return;
+      }
+
+      if (!isWorkerAuthenticated) {
+        if (hash !== '#worker-login') {
+          window.location.hash = '#worker-login';
+        }
+        setRouteHash('#worker-login');
+        return;
+      }
+
+      // Authenticated worker routing
+      const safeHash = hash.startsWith('#worker') ? hash : '#worker';
+      setRouteHash(safeHash);
+      if (safeHash.includes('certificates')) setWorkerSection('certificates');
+      else if (safeHash.includes('profile')) setWorkerSection('profile');
+      else setWorkerSection('modules');
     };
 
+    handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [isAdminDomain, isAdminAuthenticated, isWorkerAuthenticated, authorizedAdminTab]);
 
   // Listen for real-time worker completions & offline sync broadcasts
   useEffect(() => {
@@ -86,41 +119,24 @@ function MainApp() {
     };
   }, []);
 
-  const setPortalMode = (mode) => {
-    if (mode === 'admin') {
-      window.location.hash = isAdminAuthenticated ? `#admin/${adminTab}` : '#admin-login';
-    } else {
-      window.location.hash = isWorkerAuthenticated ? '#worker' : '#worker-login';
-    }
+  const setAdminTab = () => {
+    // Admin is strictly locked to their own authorized console
+    setAdminTabState(authorizedAdminTab);
+    window.location.hash = `#admin/${authorizedAdminTab}`;
   };
 
-  const setAdminTab = (tab) => {
-    setAdminTabState(tab);
-    window.location.hash = `#admin/${tab}`;
-    if (tab === 'officer') switchRole('SAFETY_OFFICER');
-    else if (tab === 'dgms') switchRole('DGMS_INSPECTOR');
-    else if (tab === 'state') switchRole('STATE_NODAL_OFFICER');
-  };
-
-  const navigateToDGMS = (hash) => {
-    setVerificationHash(hash);
-    switchRole('DGMS_INSPECTOR');
-    setAdminTabState('dgms');
-    window.location.hash = '#admin/dgms';
-  };
-
-  // Determine active view mode based on route and auth status
-  const isAdminRoute = routeHash.startsWith('#admin');
-  const isAdminLoginView = routeHash === '#admin-login' || (isAdminRoute && !isAdminAuthenticated);
-  const isWorkerLoginView = routeHash === '#worker-login' || routeHash === '#login' || (!isAdminRoute && !isWorkerAuthenticated);
+  // Determine views strictly based on authentication state
+  const showAdminLogin = isAdminDomain ? !isAdminAuthenticated : (routeHash === '#admin-login' && !isAdminAuthenticated);
+  const showWorkerLogin = !isAdminDomain && !isWorkerAuthenticated && !showAdminLogin;
+  const showAdminDashboard = isAdminDomain ? isAdminAuthenticated : (routeHash.startsWith('#admin') && isAdminAuthenticated);
+  const showWorkerDashboard = !isAdminDomain && isWorkerAuthenticated && !showAdminLogin && !showAdminDashboard;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-primary)' }}>
       {/* Show full Navbar when authenticated in respective portal */}
-      {!isAdminLoginView && !isWorkerLoginView && (
+      {!showAdminLogin && !showWorkerLogin && (
         <Navbar
-          portalMode={isAdminRoute ? 'admin' : 'worker'}
-          setPortalMode={setPortalMode}
+          portalMode={isAdminDomain || routeHash.startsWith('#admin') ? 'admin' : 'worker'}
           adminTab={adminTab}
           setAdminTab={setAdminTab}
           workerSection={workerSection}
@@ -130,7 +146,7 @@ function MainApp() {
       <OfflineBanner />
 
       <main id="main-content" tabIndex="-1" style={{ flex: 1, outline: 'none' }}>
-        {isAdminLoginView ? (
+        {showAdminLogin ? (
           <AdminLoginPage
             onLoginSuccess={(admin) => {
               const targetTab = admin.role === 'DGMS_INSPECTOR' ? 'dgms' : admin.role === 'STATE_NODAL_OFFICER' ? 'state' : 'officer';
@@ -138,32 +154,35 @@ function MainApp() {
               window.location.hash = `#admin/${targetTab}`;
             }}
           />
-        ) : isWorkerLoginView ? (
+        ) : showWorkerLogin ? (
           <WorkerLoginPage
-            onLoginSuccess={(worker) => {
+            onLoginSuccess={() => {
               setWorkerSection('modules');
               window.location.hash = '#worker';
             }}
           />
-        ) : isAdminRoute ? (
+        ) : showAdminDashboard ? (
           <>
-            {adminTab === 'officer' && (
+            {adminUser?.role === 'SAFETY_OFFICER' && (
               <SafetyOfficerDashboard key={`officer-${lastSyncTimestamp}`} />
             )}
-            {adminTab === 'dgms' && (
-              <DGMSPortal key={`dgms-${lastSyncTimestamp}`} initialHash={verificationHash} />
+            {adminUser?.role === 'DGMS_INSPECTOR' && (
+              <DGMSPortal key={`dgms-${lastSyncTimestamp}`} />
             )}
-            {adminTab === 'state' && (
+            {adminUser?.role === 'STATE_NODAL_OFFICER' && (
               <StateNodalDashboard key={`state-${lastSyncTimestamp}`} />
             )}
           </>
-        ) : (
+        ) : showWorkerDashboard ? (
           <WorkerPortal
             key={`worker-${lastSyncTimestamp}`}
-            onNavigateToDGMS={navigateToDGMS}
             onActivityOccurred={() => setLastSyncTimestamp(Date.now())}
             workerSection={workerSection}
           />
+        ) : (
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            <p>Accessing portal...</p>
+          </div>
         )}
       </main>
 
@@ -208,8 +227,12 @@ function MainApp() {
             <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Safety Framework</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
             <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Screen Reader Access</a>
-            <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#admin-login" style={{ color: '#2EE59D', textDecoration: 'none', fontWeight: '700' }}>Official Sign-In (विभागीय लॉगिन)</a>
+            {isAdminDomain && !isAdminAuthenticated && (
+              <>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
+                <a href="#admin-login" style={{ color: '#2EE59D', textDecoration: 'none', fontWeight: '700' }}>Official Sign-In (विभागीय लॉगिन)</a>
+              </>
+            )}
           </div>
         </div>
 

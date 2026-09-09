@@ -17,7 +17,7 @@ import {
   FileCheck
 } from 'lucide-react';
 
-export default function DigitalCertificate({ certificate, onDone, onVerifyInDGMS }) {
+export default function DigitalCertificate({ certificate, onDone }) {
   const { t } = useLanguage();
   const { currentUser } = useAuth();
   const { saveOfflineCertificate } = useOfflineSync();
@@ -89,16 +89,7 @@ export default function DigitalCertificate({ certificate, onDone, onVerifyInDGMS
             <span>Print Simulation Certificate</span>
           </button>
 
-          {onVerifyInDGMS && (
-            <button
-              onClick={() => onVerifyInDGMS(certificate.qrHash)}
-              className="gov-btn-primary"
-              style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem' }}
-            >
-              <ExternalLink size={15} />
-              <span>Verify on Simulated Ledger</span>
-            </button>
-          )}
+
 
           <button
             onClick={onDone}

@@ -18,10 +18,17 @@ import {
 export default function AdminLoginPage({ onLoginSuccess }) {
   const { loginAdmin } = useAuth();
 
-  const [username, setUsername] = useState('officer1');
-  const [password, setPassword] = useState('password123');
-  const [captchaInput, setCaptchaInput] = useState('7M9K2');
-  const [captchaCode, setCaptchaCode] = useState('7M9K2');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaCode, setCaptchaCode] = useState(() => {
+    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    let code = '';
+    for (let i = 0; i < 5; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  });
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -32,59 +39,20 @@ export default function AdminLoginPage({ onLoginSuccess }) {
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     setCaptchaCode(code);
-    setCaptchaInput(code);
-  };
-
-  const authorityProfiles = [
-    {
-      role: 'SAFETY_OFFICER',
-      title: 'Site Safety Officer',
-      username: 'officer1',
-      password: 'password123',
-      name: 'Rajesh Mahato',
-      jurisdiction: 'BCCL Jharia Colliery #4',
-      icon: Building2,
-      tab: 'officer'
-    },
-    {
-      role: 'DGMS_INSPECTOR',
-      title: 'DGMS Statutory Inspector',
-      username: 'dgms_inspector',
-      password: 'password123',
-      name: 'Dr. A.K. Sengupta',
-      jurisdiction: 'DGMS Dhanbad Headquarters',
-      icon: Scale,
-      tab: 'dgms'
-    },
-    {
-      role: 'STATE_NODAL_OFFICER',
-      title: 'State Nodal Officer',
-      username: 'state_nodal',
-      password: 'password123',
-      name: 'Priya Soren',
-      jurisdiction: 'Dept. of Mines & Geology, Ranchi',
-      icon: BarChart3,
-      tab: 'state'
-    }
-  ];
-
-  const handleSelectProfile = (p) => {
-    setUsername(p.username);
-    setPassword(p.password);
-    setErrorMsg('');
+    setCaptchaInput('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
-    if (captchaInput.toUpperCase() !== captchaCode.toUpperCase()) {
+    if (captchaInput.trim().toUpperCase() !== captchaCode.trim().toUpperCase()) {
       setErrorMsg('Security CAPTCHA verification failed. Please enter the characters shown.');
       return;
     }
 
     setLoading(true);
-    const res = await loginAdmin({ username, password });
+    const res = await loginAdmin({ username: username.trim(), password });
     setLoading(false);
 
     if (res.success) {
@@ -112,7 +80,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
         gap: '2rem',
         alignItems: 'stretch'
       }}>
-        {/* Left Side: Regulatory Notice & Quick Credentials */}
+        {/* Left Side: Regulatory Notice & Statutory Directives (Zero Admin Profile Leakage) */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.06)',
           backdropFilter: 'blur(10px)',
@@ -151,61 +119,45 @@ export default function AdminLoginPage({ onLoginSuccess }) {
               color: '#E2E8F0'
             }}>
               <strong style={{ color: '#2EE59D' }}>Statutory Access Restriction:</strong><br />
-              This gateway is restricted to accredited Site Safety Officers, DGMS Statutory Inspectors, and State Nodal Directors under the Mines Act, 1952.
+              This gateway is restricted strictly to accredited Site Safety Officers, DGMS Statutory Inspectors, and State Nodal Directors under Section 38 of the Mines Act, 1952.
             </div>
 
-            {/* Quick Demo Credentials for Hackathon Evaluators */}
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: '700', color: '#CBD5E1', marginBottom: '0.65rem' }}>
-                Evaluation Authority Profiles (Click to Auto-Fill):
+            {/* Official Statutory Directives */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <Shield size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#FFFFFF' }}>
+                    Role-Isolated Authority Sessions
+                  </div>
+                  <div style={{ fontSize: '0.74rem', color: '#94A3B8', lineHeight: 1.4 }}>
+                    Upon authentication, your console is strictly confined to your accredited statutory jurisdiction. Cross-role impersonation or visibility into other administrative accounts is strictly prohibited.
+                  </div>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                {authorityProfiles.map((p) => {
-                  const Icon = p.icon;
-                  const isSelected = username === p.username;
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <KeyRound size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#FFFFFF' }}>
+                    Statutory Audit & Forensic Trail
+                  </div>
+                  <div style={{ fontSize: '0.74rem', color: '#94A3B8', lineHeight: 1.4 }}>
+                    All logins, workforce certifications, and regulatory ledger verifications are immutably signed and timestamped per DGMS safety circulars.
+                  </div>
+                </div>
+              </div>
 
-                  return (
-                    <button
-                      key={p.username}
-                      type="button"
-                      onClick={() => handleSelectProfile(p)}
-                      style={{
-                        padding: '0.75rem 1rem',
-                        textAlign: 'left',
-                        background: isSelected ? 'rgba(46, 229, 157, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                        border: isSelected ? '2px solid #2EE59D' : '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.85rem',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      <div style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '4px',
-                        background: isSelected ? '#2EE59D' : 'rgba(255, 255, 255, 0.1)',
-                        color: isSelected ? '#000000' : '#FFFFFF',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <Icon size={18} />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.84rem', fontWeight: '700', color: '#FFFFFF' }}>
-                          {p.title}: {p.name}
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: '#94A3B8' }}>
-                          User: <strong style={{ color: '#2EE59D' }}>{p.username}</strong> • Pass: <strong style={{ color: '#2EE59D' }}>{p.password}</strong>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <CheckCircle2 size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#FFFFFF' }}>
+                    Statutory Credentials Assistance
+                  </div>
+                  <div style={{ fontSize: '0.74rem', color: '#94A3B8', lineHeight: 1.4 }}>
+                    Official credentials are provided through the DGMS Dhanbad Headquarters or Dept. of Mines & Geology, Govt. of Jharkhand.
+                  </div>
+                </div>
               </div>
             </div>
           </div>

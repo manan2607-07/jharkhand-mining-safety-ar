@@ -25,7 +25,7 @@ import {
   Info
 } from 'lucide-react';
 
-export default function WorkerPortal({ onNavigateToDGMS, onActivityOccurred, workerSection = 'modules' }) {
+export default function WorkerPortal({ onActivityOccurred, workerSection = 'modules' }) {
   const { t, language, speak } = useLanguage();
   const { currentUser } = useAuth();
   const { saveOfflineSession, saveOfflineCertificate } = useOfflineSync();
@@ -261,7 +261,6 @@ export default function WorkerPortal({ onNavigateToDGMS, onActivityOccurred, wor
         <DigitalCertificate
           certificate={issuedCertificate}
           onDone={() => setActiveView('CATALOG')}
-          onVerifyInDGMS={onNavigateToDGMS}
         />
       )}
 

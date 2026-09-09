@@ -51,33 +51,49 @@ export const ROLES = {
 };
 
 export const AuthProvider = ({ children }) => {
-  // Worker session (isolated from Admin)
+  // Worker session (isolated from Admin, strictly requires token and saved user)
   const [workerUser, setWorkerUser] = useState(() => {
     try {
+      const token = localStorage.getItem('jh_worker_token');
       const saved = localStorage.getItem('jh_worker_user');
-      return saved ? JSON.parse(saved) : ROLES.WORKER;
+      return token && saved ? JSON.parse(saved) : null;
     } catch {
-      return ROLES.WORKER;
+      return null;
     }
   });
 
-  // Admin session (isolated from Worker)
+  // Admin session (isolated from Worker, strictly requires token and saved user)
   const [adminUser, setAdminUser] = useState(() => {
     try {
+      const token = localStorage.getItem('jh_admin_token');
       const saved = localStorage.getItem('jh_admin_user');
-      return saved ? JSON.parse(saved) : null;
+      return token && saved ? JSON.parse(saved) : null;
     } catch {
       return null;
     }
   });
 
   const [currentRole, setCurrentRole] = useState(() => {
-    return localStorage.getItem('jh_safety_role') || 'WORKER';
+    try {
+      const savedAdmin = localStorage.getItem('jh_admin_user');
+      if (savedAdmin) return JSON.parse(savedAdmin).role;
+      const savedWorker = localStorage.getItem('jh_worker_user');
+      if (savedWorker) return 'WORKER';
+      return null;
+    } catch {
+      return null;
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('jh_safety_role', currentRole);
-  }, [currentRole]);
+    if (adminUser) {
+      setCurrentRole(adminUser.role);
+    } else if (workerUser) {
+      setCurrentRole('WORKER');
+    } else {
+      setCurrentRole(null);
+    }
+  }, [adminUser, workerUser]);
 
   // Worker Login Handler
   const loginWorker = async (credentials) => {
@@ -108,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('jh_worker_token');
     localStorage.removeItem('jh_worker_user');
     setWorkerUser(null);
+    setCurrentRole(null);
   };
 
   // Admin Login Handler
@@ -139,23 +156,19 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('jh_admin_token');
     localStorage.removeItem('jh_admin_user');
     setAdminUser(null);
+    setCurrentRole(null);
   };
 
+  // switchRole is restricted: an admin CANNOT change their statutory role
   const switchRole = (roleKey) => {
-    if (ROLES[roleKey]) {
-      setCurrentRole(roleKey);
-      if (adminUser) {
-        const updatedAdmin = { ...adminUser, role: roleKey };
-        setAdminUser(updatedAdmin);
-        localStorage.setItem('jh_admin_user', JSON.stringify(updatedAdmin));
-      }
-    }
+    // Role switching is disallowed for security; roles are immutable per login session
+    if (!adminUser && !workerUser) return;
   };
 
-  // Compute active currentUser based on role/session
-  const currentUser = adminUser && currentRole !== 'WORKER'
-    ? { ...ROLES[currentRole], ...adminUser }
-    : (workerUser || ROLES.WORKER);
+  // Compute active currentUser strictly from authenticated state
+  const currentUser = adminUser
+    ? { ...(ROLES[adminUser.role] || {}), ...adminUser, name: adminUser.fullName || adminUser.name }
+    : (workerUser ? { ...ROLES.WORKER, ...workerUser, name: workerUser.name || workerUser.fullName } : null);
 
   return (
     <AuthContext.Provider value={{
@@ -163,8 +176,8 @@ export const AuthProvider = ({ children }) => {
       currentUser,
       workerUser,
       adminUser,
-      isWorkerAuthenticated: !!workerUser,
-      isAdminAuthenticated: !!adminUser,
+      isWorkerAuthenticated: !!workerUser && !!localStorage.getItem('jh_worker_token'),
+      isAdminAuthenticated: !!adminUser && !!localStorage.getItem('jh_admin_token'),
       loginWorker,
       logoutWorker,
       loginAdmin,

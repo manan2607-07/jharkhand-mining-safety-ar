@@ -76,12 +76,7 @@ export default function Navbar({
     }
   }, []);
 
-  const handleAdminRoleChange = (roleKey) => {
-    switchRole(roleKey);
-    if (roleKey === 'SAFETY_OFFICER') setAdminTab('officer');
-    else if (roleKey === 'DGMS_INSPECTOR') setAdminTab('dgms');
-    else if (roleKey === 'STATE_NODAL_OFFICER') setAdminTab('state');
-  };
+  // Statutory Authority Role is strictly fixed to authenticated official (No role switching permitted)
 
   // Worker navigation items
   const workerNavTabs = [
@@ -597,7 +592,7 @@ export default function Navbar({
               </>
             ) : (
               <>
-                {/* Admin Persona Switcher Badge (Safety Officer, DGMS, State Nodal) */}
+                {/* Authenticated Authority Official Profile Chip (Strictly Single Profile - Zero Dropdown/Switcher) */}
                 <div style={{
                   border: '1px solid #CBD5E1',
                   background: '#F8FAFC',
@@ -617,32 +612,23 @@ export default function Navbar({
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
-                    <UserCheck size={18} />
+                    <Shield size={18} />
                   </div>
                   <div>
                     <div style={{ fontSize: '0.68rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                      Authority Persona:
+                      Logged-in Authority:
                     </div>
-                    <select
-                      value={currentRole}
-                      onChange={(e) => handleAdminRoleChange(e.target.value)}
-                      aria-label="Switch Administrative Persona"
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: '#0c4e7e',
-                        fontSize: '0.82rem',
-                        fontWeight: '700',
-                        fontFamily: "'Roboto Slab', serif",
-                        cursor: 'pointer',
-                        outline: 'none',
-                        padding: 0
-                      }}
-                    >
-                      <option value="SAFETY_OFFICER">Officer: Rajesh Mahato (BCCL #4)</option>
-                      <option value="DGMS_INSPECTOR">Inspector: Dr. A.K. Sengupta (DGMS Simulation)</option>
-                      <option value="STATE_NODAL_OFFICER">Nodal: Priya Soren (State Simulation)</option>
-                    </select>
+                    <div style={{
+                      fontSize: '0.82rem',
+                      fontWeight: '700',
+                      color: '#0c4e7e',
+                      fontFamily: "'Roboto Slab', serif"
+                    }}>
+                      {adminUser?.fullName || adminUser?.name || 'Accredited Official'}
+                      <span style={{ fontSize: '0.74rem', color: '#475569', fontWeight: '600', marginLeft: '0.4rem' }}>
+                        ({adminUser?.role === 'SAFETY_OFFICER' ? 'BCCL Safety Officer' : adminUser?.role === 'DGMS_INSPECTOR' ? 'DGMS Inspector' : 'State Nodal Officer'})
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -733,40 +719,41 @@ export default function Navbar({
                 );
               })
             ) : (
-              adminNavTabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = adminTab === tab.id;
+              adminNavTabs
+                .filter(tab => !adminUser || tab.role === adminUser.role)
+                .map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = adminTab === tab.id;
 
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      setAdminTab(tab.id);
-                      switchRole(tab.role);
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.45rem',
-                      padding: '0.7rem 1.15rem',
-                      background: isActive ? '#073556' : 'transparent',
-                      color: '#FFFFFF',
-                      fontSize: '0.88rem',
-                      fontWeight: isActive ? '700' : '600',
-                      fontFamily: "'Roboto Slab', serif",
-                      border: 'none',
-                      borderBottom: isActive ? '3px solid #2EE59D' : '3px solid transparent',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      transition: 'background-color 0.15s ease, border-color 0.15s ease'
-                    }}
-                    className={language === 'sat' ? 'font-ol-chiki' : ''}
-                  >
-                    <Icon size={16} color={isActive ? '#2EE59D' : '#CBD5E1'} />
-                    <span>{getTabLabel(tab)}</span>
-                  </button>
-                );
-              })
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setAdminTab(tab.id);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
+                        padding: '0.7rem 1.15rem',
+                        background: isActive ? '#073556' : 'transparent',
+                        color: '#FFFFFF',
+                        fontSize: '0.88rem',
+                        fontWeight: isActive ? '700' : '600',
+                        fontFamily: "'Roboto Slab', serif",
+                        border: 'none',
+                        borderBottom: isActive ? '3px solid #2EE59D' : '3px solid transparent',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        transition: 'background-color 0.15s ease, border-color 0.15s ease'
+                      }}
+                      className={language === 'sat' ? 'font-ol-chiki' : ''}
+                    >
+                      <Icon size={16} color={isActive ? '#2EE59D' : '#CBD5E1'} />
+                      <span>{getTabLabel(tab)}</span>
+                    </button>
+                  );
+                })
             )}
           </div>
 
