@@ -25,7 +25,7 @@ import {
   Info
 } from 'lucide-react';
 
-export default function WorkerPortal({ onNavigateToDGMS }) {
+export default function WorkerPortal({ onNavigateToDGMS, onActivityOccurred, workerSection = 'modules' }) {
   const { t, language, speak } = useLanguage();
   const { currentUser } = useAuth();
   const { saveOfflineSession, saveOfflineCertificate } = useOfflineSync();
@@ -37,6 +37,21 @@ export default function WorkerPortal({ onNavigateToDGMS }) {
   const [issuedCertificate, setIssuedCertificate] = useState(null);
   const [workerCerts, setWorkerCerts] = useState([]);
   const [loadingCerts, setLoadingCerts] = useState(false);
+
+  // Smooth scroll to targeted worker section when navigation tab changes
+  useEffect(() => {
+    if (activeView !== 'CATALOG') return;
+    if (workerSection === 'certificates') {
+      const el = document.getElementById('worker-certificates-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (workerSection === 'profile') {
+      const el = document.getElementById('worker-profile-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (workerSection === 'modules') {
+      const el = document.getElementById('worker-modules-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [workerSection, activeView]);
 
   // Fetch worker's active certificates from backend
   useEffect(() => {
@@ -156,6 +171,15 @@ export default function WorkerPortal({ onNavigateToDGMS }) {
           setIssuedCertificate(cert);
           setWorkerCerts((prev) => [cert, ...prev]);
           setActiveView('CERTIFICATE');
+
+          // Real-time broadcast for admin portal synchronization
+          try {
+            window.dispatchEvent(new CustomEvent('jh-safety-drill-completed', { detail: cert }));
+            localStorage.setItem('jh_last_activity_ts', Date.now().toString());
+            if (onActivityOccurred) onActivityOccurred(cert);
+          } catch (e) {
+            console.warn('Cross-portal event dispatch notice:', e);
+          }
           return;
         }
       }
@@ -194,6 +218,15 @@ export default function WorkerPortal({ onNavigateToDGMS }) {
     setIssuedCertificate(offlineCert);
     setWorkerCerts((prev) => [offlineCert, ...prev]);
     setActiveView('CERTIFICATE');
+
+    // Real-time broadcast for admin portal synchronization
+    try {
+      window.dispatchEvent(new CustomEvent('jh-safety-drill-completed', { detail: offlineCert }));
+      localStorage.setItem('jh_last_activity_ts', Date.now().toString());
+      if (onActivityOccurred) onActivityOccurred(offlineCert);
+    } catch (e) {
+      console.warn('Cross-portal event dispatch notice:', e);
+    }
   };
 
   return (
@@ -236,7 +269,7 @@ export default function WorkerPortal({ onNavigateToDGMS }) {
       {activeView === 'CATALOG' && (
         <div>
           {/* Official Worker E-Identity Card (Govt Style) */}
-          <div className="gov-card" style={{
+          <div id="worker-profile-section" className="gov-card" style={{
             padding: '1.5rem',
             marginBottom: '1.75rem',
             borderLeft: '5px solid #0c4e7e',
@@ -318,7 +351,7 @@ export default function WorkerPortal({ onNavigateToDGMS }) {
           </div>
 
           {/* Section Header */}
-          <div style={{
+          <div id="worker-modules-section" style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -452,26 +485,26 @@ export default function WorkerPortal({ onNavigateToDGMS }) {
           </div>
 
           {/* Official Issued Certificates Ledger */}
-          {workerCerts.length > 0 && (
-            <div>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1rem',
-                paddingBottom: '0.5rem',
-                borderBottom: '2px solid #E2E8F0'
-              }}>
-                <div>
-                  <h3 style={{ fontSize: '1.2rem', color: '#0c4e7e', fontWeight: '800', fontFamily: 'var(--font-heading)' }}>
-                    Verified Vocational Safety Passports (Simulation Records)
-                  </h3>
-                  <p style={{ fontSize: '0.84rem', color: '#64748B' }}>
-                    Cryptographically signed records benchmarked against Mines Act 1952 & DGMS vocational training standards.
-                  </p>
-                </div>
+          <div id="worker-certificates-section" style={{ marginTop: '2rem' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1rem',
+              paddingBottom: '0.5rem',
+              borderBottom: '2px solid #E2E8F0'
+            }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', color: '#0c4e7e', fontWeight: '800', fontFamily: 'var(--font-heading)' }}>
+                  Verified Vocational Safety Passports (Simulation Records)
+                </h3>
+                <p style={{ fontSize: '0.84rem', color: '#64748B' }}>
+                  Cryptographically signed records benchmarked against Mines Act 1952 & DGMS vocational training standards.
+                </p>
               </div>
+            </div>
 
+            {workerCerts.length > 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '1rem' }}>
                 {workerCerts.map((cert, index) => (
                   <div
@@ -525,8 +558,28 @@ export default function WorkerPortal({ onNavigateToDGMS }) {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="gov-card" style={{ padding: '1.75rem', textAlign: 'center', background: '#F8FAFC' }}>
+                <ShieldCheck size={36} color="#0c4e7e" style={{ margin: '0 auto 0.5rem auto' }} />
+                <h4 style={{ fontSize: '1rem', fontWeight: '700', color: '#0c4e7e', margin: '0.25rem 0' }}>
+                  No Passports Issued Yet
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: '#64748B', maxWidth: '480px', margin: '0 auto 1rem auto' }}>
+                  Complete the hands-on AR Fire Extinguisher or Methane Gas drill above, score ≥ 80% on the DGMS safety assessment, and your verified digital passport will automatically appear here and sync to the regulatory audit ledger.
+                </p>
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('worker-modules-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className="gov-btn-primary"
+                  style={{ padding: '0.45rem 1rem', fontSize: '0.82rem' }}
+                >
+                  Start an AR Drill Now
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

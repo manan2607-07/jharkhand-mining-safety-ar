@@ -31,6 +31,21 @@ export default function DGMSPortal({ initialHash = '' }) {
     if (initialHash) {
       handleVerify(initialHash);
     }
+
+    const handleUpdate = () => {
+      fetchAuditCertificates();
+    };
+
+    window.addEventListener('jh-safety-drill-completed', handleUpdate);
+    window.addEventListener('focus', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    document.addEventListener('visibilitychange', handleUpdate);
+    return () => {
+      window.removeEventListener('jh-safety-drill-completed', handleUpdate);
+      window.removeEventListener('focus', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+      document.removeEventListener('visibilitychange', handleUpdate);
+    };
   }, [initialHash]);
 
   const fetchAuditCertificates = async () => {

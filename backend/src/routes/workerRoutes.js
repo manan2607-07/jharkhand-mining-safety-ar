@@ -15,7 +15,10 @@ router.get('/', (req, res) => {
         w.designation, w.phone, w.joined_date,
         s.id AS site_id, s.name AS site_name, s.sector, s.district,
         c.id AS cohort_id, c.name AS cohort_name,
-        (SELECT COUNT(*) FROM certificates cert WHERE cert.worker_id = w.id AND cert.is_revoked = 0) AS active_certs_count
+        (SELECT COUNT(*) FROM certificates cert WHERE cert.worker_id = w.id AND cert.is_revoked = 0) AS active_certs_count,
+        (SELECT COUNT(*) FROM training_sessions sess WHERE sess.worker_id = w.id) AS training_sessions_count,
+        (SELECT MAX(score) FROM training_sessions sess WHERE sess.worker_id = w.id) AS latest_score,
+        (SELECT MAX(created_at) FROM training_sessions sess WHERE sess.worker_id = w.id) AS last_drill_date
       FROM workers w
       JOIN sites s ON w.site_id = s.id
       LEFT JOIN cohorts c ON w.cohort_id = c.id

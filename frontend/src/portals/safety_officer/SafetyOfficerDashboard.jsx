@@ -37,6 +37,22 @@ export default function SafetyOfficerDashboard() {
 
   useEffect(() => {
     fetchSiteData();
+
+    // Auto-refresh when worker completes drills or sync occurs
+    const handleUpdate = () => {
+      fetchSiteData();
+    };
+
+    window.addEventListener('jh-safety-drill-completed', handleUpdate);
+    window.addEventListener('focus', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    document.addEventListener('visibilitychange', handleUpdate);
+    return () => {
+      window.removeEventListener('jh-safety-drill-completed', handleUpdate);
+      window.removeEventListener('focus', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+      document.removeEventListener('visibilitychange', handleUpdate);
+    };
   }, [currentUser.siteId]);
 
   const fetchSiteData = async () => {
@@ -286,7 +302,12 @@ export default function SafetyOfficerDashboard() {
                     {w.designation}
                   </td>
                   <td style={{ fontWeight: '700', color: w.active_certs_count > 0 ? '#1E7B34' : '#B8860B' }}>
-                    {w.active_certs_count} / 2 Modules
+                    <div>{w.active_certs_count} / 2 Modules</div>
+                    {w.training_sessions_count > 0 && (
+                      <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: '500' }}>
+                        {w.training_sessions_count} drill(s) • Best: {w.latest_score}%
+                      </div>
+                    )}
                   </td>
                   <td>
                     {w.active_certs_count > 0 ? (

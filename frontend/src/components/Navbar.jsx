@@ -20,10 +20,21 @@ import {
   Type,
   Monitor,
   Phone,
-  Mail
+  Mail,
+  Award,
+  Shield,
+  ArrowRight,
+  ArrowLeft
 } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab }) {
+export default function Navbar({
+  portalMode = 'worker',
+  setPortalMode,
+  adminTab = 'officer',
+  setAdminTab,
+  workerSection = 'modules',
+  setWorkerSection
+}) {
   const { language, setLanguage, t, audioEnabled, setAudioEnabled, isSpeaking } = useLanguage();
   const { currentRole, switchRole, currentUser, ROLES } = useAuth();
   const { isOnline, pendingSyncCount, isSyncing, triggerSync } = useOfflineSync();
@@ -64,19 +75,64 @@ export default function Navbar({ activeTab, setActiveTab }) {
     }
   }, []);
 
-  const handleRoleChange = (roleKey) => {
+  const handleAdminRoleChange = (roleKey) => {
     switchRole(roleKey);
-    if (roleKey === 'WORKER') setActiveTab('worker');
-    else if (roleKey === 'SAFETY_OFFICER') setActiveTab('officer');
-    else if (roleKey === 'DGMS_INSPECTOR') setActiveTab('dgms');
-    else if (roleKey === 'STATE_NODAL_OFFICER') setActiveTab('state');
+    if (roleKey === 'SAFETY_OFFICER') setAdminTab('officer');
+    else if (roleKey === 'DGMS_INSPECTOR') setAdminTab('dgms');
+    else if (roleKey === 'STATE_NODAL_OFFICER') setAdminTab('state');
   };
 
-  const navTabs = [
-    { id: 'worker', labelEn: 'Worker AR Training', labelHi: 'कामगार प्रशिक्षण', labelSat: 'ᱠᱟᱹᱢᱤᱭᱟᱹ ᱥᱮᱪᱮᱫ', icon: HardHat, role: 'WORKER' },
-    { id: 'officer', labelEn: 'Safety Officer Roster', labelHi: 'सुरक्षा अधिकारी रोस्टर', labelSat: 'ᱨᱩᱠᱷᱤᱭᱟᱹ ᱚᱯᱷᱤᱥᱚᱨ', icon: Building2, role: 'SAFETY_OFFICER' },
-    { id: 'dgms', labelEn: 'DGMS Statutory Verifier', labelHi: 'डीजीएमएस धनबाद सत्यापन', labelSat: 'DGMS ᱪᱮᱠ ᱞᱮᱡᱚᱨ', icon: Scale, role: 'DGMS_INSPECTOR' },
-    { id: 'state', labelEn: 'State Nodal Analytics', labelHi: 'राज्य नोडल विश्लेषिकी', labelSat: 'ᱯᱚᱱᱚᱛ ᱞᱮᱠᱷᱟ', icon: BarChart3, role: 'STATE_NODAL_OFFICER' }
+  // Worker navigation items
+  const workerNavTabs = [
+    { 
+      id: 'modules', 
+      labelEn: 'AR Safety Drills', 
+      labelHi: 'एआर सुरक्षा सिमुलेशन', 
+      labelSat: 'AR ᱨᱩᱠᱷᱤᱭᱟᱹ ᱥᱮᱪᱮᱫ', 
+      icon: HardHat 
+    },
+    { 
+      id: 'certificates', 
+      labelEn: 'My Issued Passports (QR)', 
+      labelHi: 'प्रमाणित डिजिटल पासपोर्ट', 
+      labelSat: 'ᱥᱟᱹᱠᱷᱤ ᱥᱟᱠᱟᱢ (QR)', 
+      icon: Award 
+    },
+    { 
+      id: 'profile', 
+      labelEn: 'Worker E-Identity', 
+      labelHi: 'कामगार ई-पहचान पत्र', 
+      labelSat: 'ᱠᱟᱹᱢᱤᱭᱟᱹ ᱩᱯᱨᱩᱢ', 
+      icon: UserCheck 
+    }
+  ];
+
+  // Admin navigation items
+  const adminNavTabs = [
+    { 
+      id: 'officer', 
+      labelEn: 'Safety Officer Roster', 
+      labelHi: 'सुरक्षा अधिकारी रोस्टर', 
+      labelSat: 'ᱨᱩᱠᱷᱤᱭᱟᱹ ᱚᱯᱷᱤᱥᱚᱨ', 
+      icon: Building2, 
+      role: 'SAFETY_OFFICER' 
+    },
+    { 
+      id: 'dgms', 
+      labelEn: 'DGMS Statutory Verifier', 
+      labelHi: 'डीजीएमएस धनबाद सत्यापन', 
+      labelSat: 'DGMS ᱪᱮᱠ ᱞᱮᱡᱚᱨ', 
+      icon: Scale, 
+      role: 'DGMS_INSPECTOR' 
+    },
+    { 
+      id: 'state', 
+      labelEn: 'State Nodal Analytics', 
+      labelHi: 'राज्य नोडल विश्लेषिकी', 
+      labelSat: 'ᱯᱚᱱᱚᱛ ᱞᱮᱠᱷᱟ', 
+      icon: BarChart3, 
+      role: 'STATE_NODAL_OFFICER' 
+    }
   ];
 
   const getTabLabel = (tab) => {
@@ -398,25 +454,40 @@ export default function Navbar({ activeTab, setActiveTab }) {
 
             <div style={{ borderLeft: '1px solid #CBD5E1', paddingLeft: '1rem' }}>
               <div style={{
-                fontSize: '0.78rem',
+                fontSize: '0.76rem',
                 fontWeight: '800',
                 color: '#0c4e7e',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
                 fontFamily: "'Roboto Slab', serif",
                 textTransform: 'uppercase'
               }}>
                 Smart India Hackathon 2026 • Problem Statement ID: 26041
               </div>
-              <h1 style={{
-                fontSize: '1.25rem',
-                fontWeight: '800',
-                color: '#0c4e7e',
-                margin: '0.15rem 0',
-                lineHeight: 1.25,
-                fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif"
-              }}>
-                खान सुरक्षा प्रशिक्षण पोर्टल | AR Mining Safety Simulation Portal
-              </h1>
+
+              {portalMode === 'worker' ? (
+                <h1 style={{
+                  fontSize: '1.22rem',
+                  fontWeight: '800',
+                  color: '#0c4e7e',
+                  margin: '0.15rem 0',
+                  lineHeight: 1.25,
+                  fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif"
+                }}>
+                  खान सुरक्षा प्रशिक्षण पोर्टल | Frontline Worker AR Training Portal
+                </h1>
+              ) : (
+                <h1 style={{
+                  fontSize: '1.22rem',
+                  fontWeight: '800',
+                  color: '#0c4e7e',
+                  margin: '0.15rem 0',
+                  lineHeight: 1.25,
+                  fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif"
+                }}>
+                  खान सुरक्षा प्रशासनिक एवं विनियामक पोर्टल | Mining Safety Admin Console
+                </h1>
+              )}
+
               <div style={{
                 fontSize: '0.74rem',
                 color: '#475569',
@@ -424,8 +495,13 @@ export default function Navbar({ activeTab, setActiveTab }) {
                 margin: '0.1rem 0 0.35rem 0',
                 fontFamily: "'Open Sans', sans-serif"
               }}>
-                शैक्षणिक सिमुलेशन • Modeled on Curriculum of Dept. of Mines & Geology (Govt. of Jharkhand) & DGMS Standards
+                {portalMode === 'worker' ? (
+                  'कामगार ई-सुरक्षा इंटरफ़ेस • Interactive 3D WebAR Drills, Multilingual Audio & Digital Safety Passports'
+                ) : (
+                  'अधिकारी एवं विनियामक कंसोल • Safety Officer Oversight, DGMS Ledger Audit & State Nodal Compliance'
+                )}
               </div>
+
               <div style={{
                 fontSize: '0.76rem',
                 color: '#555555',
@@ -449,81 +525,152 @@ export default function Navbar({ activeTab, setActiveTab }) {
                 </span>
                 <span>•</span>
                 <span style={{ color: '#0c4e7e', fontWeight: '700' }}>
-                  AR Vocational Mining Safety Simulation Engine
+                  {portalMode === 'worker' ? 'Worker Workspace (कामगार कार्यक्षेत्र)' : 'Administrative Workspace (प्रशासनिक कंसोल)'}
                 </span>
-                <span>•</span>
-                <span>Evaluation Sandbox</span>
               </div>
             </div>
           </div>
 
-          {/* Right Header: Role Profile Switcher (e-Pramaan SSO) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <div style={{
-              border: '1px solid #CBD5E1',
-              borderRadius: '4px',
-              padding: '0.35rem 0.65rem',
-              background: '#F8FAFC',
-              fontSize: '0.7rem',
-              textAlign: 'right'
-            }} className="d-md-block">
-              <div style={{ fontWeight: '700', color: '#0c4e7e', fontFamily: "'Roboto Slab', serif" }}>
-                DGMS Regulatory Benchmark
-              </div>
-              <div style={{ color: '#64748B' }}>
-                Circular 2026/041 • SIH PS: <strong>26041</strong>
-              </div>
-            </div>
-
-            {/* Persona Switcher Badge */}
-            <div style={{
-              border: '1px solid #CBD5E1',
-              background: '#F8FAFC',
-              borderRadius: '4px',
-              padding: '0.35rem 0.75rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.65rem'
-            }}>
-              <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '3px',
-                background: '#0c4e7e',
-                color: '#FFFFFF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <UserCheck size={18} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.68rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                  Authority Persona:
+          {/* Right Header: Dedicated Mode Switcher & Profiles */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+            {portalMode === 'worker' ? (
+              <>
+                {/* Active Worker Profile Chip */}
+                <div style={{
+                  border: '1px solid #CBD5E1',
+                  background: '#F8FAFC',
+                  borderRadius: '4px',
+                  padding: '0.35rem 0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem'
+                }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '3px',
+                    background: '#0c4e7e',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <HardHat size={18} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.68rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
+                      Active Frontline Miner:
+                    </div>
+                    <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#0c4e7e', fontFamily: "'Roboto Slab', serif" }}>
+                      Birsa Hansda (JH-WRK-001)
+                    </div>
+                  </div>
                 </div>
-                <select
-                  value={currentRole}
-                  onChange={(e) => handleRoleChange(e.target.value)}
-                  aria-label="Switch E-Governance User Persona"
+
+                {/* Primary Button to Enter Admin Portal */}
+                <button
+                  type="button"
+                  onClick={() => setPortalMode('admin')}
                   style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#0c4e7e',
-                    fontSize: '0.82rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.55rem 1rem',
+                    background: '#0c4e7e',
+                    color: '#FFFFFF',
+                    border: '1px solid #073556',
+                    borderRadius: '4px',
                     fontWeight: '700',
+                    fontSize: '0.84rem',
                     fontFamily: "'Roboto Slab', serif",
                     cursor: 'pointer',
-                    outline: 'none',
-                    padding: 0
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                    transition: 'all 0.15s ease'
                   }}
+                  title="Switch to Administrative & Regulatory Console"
                 >
-                  <option value="WORKER">Worker: Birsa Hansda (JH-WRK-001)</option>
-                  <option value="SAFETY_OFFICER">Officer: Rajesh Mahato (BCCL #4)</option>
-                  <option value="DGMS_INSPECTOR">Inspector: Dr. A.K. Sengupta (DGMS Simulation)</option>
-                  <option value="STATE_NODAL_OFFICER">Nodal: Priya Soren (State Simulation)</option>
-                </select>
-              </div>
-            </div>
+                  <Shield size={16} color="#2EE59D" />
+                  <span>Official / Admin Console (अधिकारी लॉगिन) →</span>
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Admin Persona Switcher Badge (Safety Officer, DGMS, State Nodal) */}
+                <div style={{
+                  border: '1px solid #CBD5E1',
+                  background: '#F8FAFC',
+                  borderRadius: '4px',
+                  padding: '0.35rem 0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem'
+                }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '3px',
+                    background: '#0c4e7e',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <UserCheck size={18} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.68rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
+                      Authority Persona:
+                    </div>
+                    <select
+                      value={currentRole}
+                      onChange={(e) => handleAdminRoleChange(e.target.value)}
+                      aria-label="Switch Administrative Persona"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#0c4e7e',
+                        fontSize: '0.82rem',
+                        fontWeight: '700',
+                        fontFamily: "'Roboto Slab', serif",
+                        cursor: 'pointer',
+                        outline: 'none',
+                        padding: 0
+                      }}
+                    >
+                      <option value="SAFETY_OFFICER">Officer: Rajesh Mahato (BCCL #4)</option>
+                      <option value="DGMS_INSPECTOR">Inspector: Dr. A.K. Sengupta (DGMS Simulation)</option>
+                      <option value="STATE_NODAL_OFFICER">Nodal: Priya Soren (State Simulation)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Primary Button to Return to Worker Portal */}
+                <button
+                  type="button"
+                  onClick={() => setPortalMode('worker')}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.55rem 1rem',
+                    background: '#F8FAFC',
+                    color: '#0c4e7e',
+                    border: '1px solid #0c4e7e',
+                    borderRadius: '4px',
+                    fontWeight: '700',
+                    fontSize: '0.84rem',
+                    fontFamily: "'Roboto Slab', serif",
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                    transition: 'all 0.15s ease'
+                  }}
+                  title="Return to Frontline Worker Portal"
+                >
+                  <ArrowLeft size={16} color="#0c4e7e" />
+                  <span>← Return to Worker Portal (कामगार पोर्टल)</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -547,65 +694,123 @@ export default function Navbar({ activeTab, setActiveTab }) {
         }}>
           {/* Main Portal Navigation Tabs */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            {navTabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
+            {portalMode === 'worker' ? (
+              workerNavTabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = workerSection === tab.id;
 
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    switchRole(tab.role);
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.45rem',
-                    padding: '0.7rem 1.15rem',
-                    background: isActive ? '#073556' : 'transparent',
-                    color: '#FFFFFF',
-                    fontSize: '0.88rem',
-                    fontWeight: isActive ? '700' : '600',
-                    fontFamily: "'Roboto Slab', serif",
-                    border: 'none',
-                    borderBottom: isActive ? '3px solid #2EE59D' : '3px solid transparent',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    transition: 'background-color 0.15s ease, border-color 0.15s ease'
-                  }}
-                  className={language === 'sat' ? 'font-ol-chiki' : ''}
-                >
-                  <Icon size={16} color={isActive ? '#2EE59D' : '#CBD5E1'} />
-                  <span>{getTabLabel(tab)}</span>
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setWorkerSection(tab.id);
+                      window.location.hash = `#worker/${tab.id}`;
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.7rem 1.15rem',
+                      background: isActive ? '#073556' : 'transparent',
+                      color: '#FFFFFF',
+                      fontSize: '0.88rem',
+                      fontWeight: isActive ? '700' : '600',
+                      fontFamily: "'Roboto Slab', serif",
+                      border: 'none',
+                      borderBottom: isActive ? '3px solid #2EE59D' : '3px solid transparent',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      transition: 'background-color 0.15s ease, border-color 0.15s ease'
+                    }}
+                    className={language === 'sat' ? 'font-ol-chiki' : ''}
+                  >
+                    <Icon size={16} color={isActive ? '#2EE59D' : '#CBD5E1'} />
+                    <span>{getTabLabel(tab)}</span>
+                  </button>
+                );
+              })
+            ) : (
+              adminNavTabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = adminTab === tab.id;
+
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setAdminTab(tab.id);
+                      switchRole(tab.role);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.7rem 1.15rem',
+                      background: isActive ? '#073556' : 'transparent',
+                      color: '#FFFFFF',
+                      fontSize: '0.88rem',
+                      fontWeight: isActive ? '700' : '600',
+                      fontFamily: "'Roboto Slab', serif",
+                      border: 'none',
+                      borderBottom: isActive ? '3px solid #2EE59D' : '3px solid transparent',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      transition: 'background-color 0.15s ease, border-color 0.15s ease'
+                    }}
+                    className={language === 'sat' ? 'font-ol-chiki' : ''}
+                  >
+                    <Icon size={16} color={isActive ? '#2EE59D' : '#CBD5E1'} />
+                    <span>{getTabLabel(tab)}</span>
+                  </button>
+                );
+              })
+            )}
           </div>
 
-          {/* Right Side Quick Statutory Badges from jharkhand.gov.in/mines */}
+          {/* Right Side Quick Statutory Badges */}
           <div style={{ display: 'none', alignItems: 'center', gap: '0.5rem' }} className="d-lg-flex">
-            <span style={{
-              fontSize: '0.74rem',
-              color: '#E2E8F0',
-              background: 'rgba(255, 255, 255, 0.12)',
-              padding: '0.25rem 0.6rem',
-              borderRadius: '3px',
-              fontFamily: "'Roboto Slab', serif"
-            }}>
-              Acts & Rules | 42
-            </span>
-            <span style={{
-              fontSize: '0.74rem',
-              color: '#000000',
-              background: '#2EE59D',
-              fontWeight: '700',
-              padding: '0.25rem 0.6rem',
-              borderRadius: '3px',
-              fontFamily: "'Roboto Slab', serif"
-            }}>
-              DMFT / PMKKKY
-            </span>
+            {portalMode === 'worker' ? (
+              <span style={{
+                fontSize: '0.74rem',
+                color: '#2EE59D',
+                background: 'rgba(46, 229, 157, 0.15)',
+                border: '1px solid #2EE59D',
+                fontWeight: '700',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '3px',
+                fontFamily: "'Roboto Slab', serif",
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2EE59D', display: 'inline-block' }}></span>
+                Frontline Worker Portal Active
+              </span>
+            ) : (
+              <>
+                <span style={{
+                  fontSize: '0.74rem',
+                  color: '#E2E8F0',
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  padding: '0.25rem 0.6rem',
+                  borderRadius: '3px',
+                  fontFamily: "'Roboto Slab', serif"
+                }}>
+                  Acts & Rules | 42
+                </span>
+                <span style={{
+                  fontSize: '0.74rem',
+                  color: '#000000',
+                  background: '#2EE59D',
+                  fontWeight: '700',
+                  padding: '0.25rem 0.6rem',
+                  borderRadius: '3px',
+                  fontFamily: "'Roboto Slab', serif"
+                }}>
+                  DMFT / PMKKKY
+                </span>
+              </>
+            )}
           </div>
         </div>
       </nav>

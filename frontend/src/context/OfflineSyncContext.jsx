@@ -155,6 +155,12 @@ export const OfflineSyncProvider = ({ children }) => {
           syncedCertificates: data.syncedCertificates
         });
         await refreshPendingCount();
+
+        // Broadcast to admin portal so dashboards update immediately
+        try {
+          window.dispatchEvent(new CustomEvent('jh-safety-drill-completed', { detail: { synced: true, ...data } }));
+          localStorage.setItem('jh_last_activity_ts', Date.now().toString());
+        } catch (e) {}
       }
     } catch (err) {
       console.warn('Sync failed (will retry when connectivity improves):', err);

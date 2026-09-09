@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { OfflineSyncProvider } from './context/OfflineSyncContext';
@@ -13,25 +13,129 @@ import { Shield, ExternalLink, Info, CheckCircle } from 'lucide-react';
 
 function MainApp() {
   const { currentRole, switchRole } = useAuth();
-  const [activeTab, setActiveTab] = useState('worker');
+  const [portalMode, setPortalModeState] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.hash.startsWith('#admin')) return 'admin';
+    return localStorage.getItem('jh_safety_portal_mode') || 'worker';
+  });
+  const [adminTab, setAdminTabState] = useState(() => {
+    if (typeof window !== 'undefined') {
+      if (window.location.hash.includes('dgms')) return 'dgms';
+      if (window.location.hash.includes('state')) return 'state';
+    }
+    return 'officer';
+  });
+  const [workerSection, setWorkerSection] = useState('modules');
   const [verificationHash, setVerificationHash] = useState('');
+  const [lastSyncTimestamp, setLastSyncTimestamp] = useState(Date.now());
+
+  // Synchronize hash routing across page visits
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#admin')) {
+        setPortalModeState('admin');
+        if (hash.includes('dgms')) {
+          setAdminTabState('dgms');
+          switchRole('DGMS_INSPECTOR');
+        } else if (hash.includes('state')) {
+          setAdminTabState('state');
+          switchRole('STATE_NODAL_OFFICER');
+        } else {
+          setAdminTabState('officer');
+          switchRole('SAFETY_OFFICER');
+        }
+      } else {
+        setPortalModeState('worker');
+        if (hash.includes('certificates')) setWorkerSection('certificates');
+        else if (hash.includes('profile')) setWorkerSection('profile');
+        else setWorkerSection('modules');
+        switchRole('WORKER');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Listen for real-time worker completions & offline sync broadcasts
+  useEffect(() => {
+    const handleWorkerActivity = () => {
+      setLastSyncTimestamp(Date.now());
+    };
+    window.addEventListener('jh-safety-drill-completed', handleWorkerActivity);
+    window.addEventListener('storage', handleWorkerActivity);
+    return () => {
+      window.removeEventListener('jh-safety-drill-completed', handleWorkerActivity);
+      window.removeEventListener('storage', handleWorkerActivity);
+    };
+  }, []);
+
+  const setPortalMode = (mode) => {
+    setPortalModeState(mode);
+    localStorage.setItem('jh_safety_portal_mode', mode);
+    if (mode === 'admin') {
+      window.location.hash = `#admin/${adminTab}`;
+      if (currentRole === 'WORKER') {
+        switchRole('SAFETY_OFFICER');
+      }
+    } else {
+      window.location.hash = '#worker';
+      if (currentRole !== 'WORKER') {
+        switchRole('WORKER');
+      }
+    }
+  };
+
+  const setAdminTab = (tab) => {
+    setAdminTabState(tab);
+    window.location.hash = `#admin/${tab}`;
+    if (tab === 'officer') switchRole('SAFETY_OFFICER');
+    else if (tab === 'dgms') switchRole('DGMS_INSPECTOR');
+    else if (tab === 'state') switchRole('STATE_NODAL_OFFICER');
+  };
 
   const navigateToDGMS = (hash) => {
     setVerificationHash(hash);
     switchRole('DGMS_INSPECTOR');
-    setActiveTab('dgms');
+    setPortalModeState('admin');
+    setAdminTabState('dgms');
+    localStorage.setItem('jh_safety_portal_mode', 'admin');
+    window.location.hash = '#admin/dgms';
   };
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-primary)' }}>
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar
+        portalMode={portalMode}
+        setPortalMode={setPortalMode}
+        adminTab={adminTab}
+        setAdminTab={setAdminTab}
+        workerSection={workerSection}
+        setWorkerSection={setWorkerSection}
+      />
       <OfflineBanner />
 
       <main id="main-content" tabIndex="-1" style={{ flex: 1, outline: 'none' }}>
-        {activeTab === 'worker' && <WorkerPortal onNavigateToDGMS={navigateToDGMS} />}
-        {activeTab === 'officer' && <SafetyOfficerDashboard />}
-        {activeTab === 'dgms' && <DGMSPortal initialHash={verificationHash} />}
-        {activeTab === 'state' && <StateNodalDashboard />}
+        {portalMode === 'worker' ? (
+          <WorkerPortal
+            key={`worker-${lastSyncTimestamp}`}
+            onNavigateToDGMS={navigateToDGMS}
+            onActivityOccurred={() => setLastSyncTimestamp(Date.now())}
+            workerSection={workerSection}
+          />
+        ) : (
+          <>
+            {adminTab === 'officer' && (
+              <SafetyOfficerDashboard key={`officer-${lastSyncTimestamp}`} />
+            )}
+            {adminTab === 'dgms' && (
+              <DGMSPortal key={`dgms-${lastSyncTimestamp}`} initialHash={verificationHash} />
+            )}
+            {adminTab === 'state' && (
+              <StateNodalDashboard key={`state-${lastSyncTimestamp}`} />
+            )}
+          </>
+        )}
       </main>
 
       {/* Official Jharkhand State Mines Portal Footer (jharkhand.gov.in/mines) */}

@@ -31,14 +31,19 @@ router.get('/compliance-summary', (req, res) => {
       : 86;
 
     // Aggregate simulated base totals to match state-wide scale from PRD slide 10
+    const totalSessionsRow = db.prepare('SELECT COUNT(*) AS count FROM training_sessions WHERE pass_status = 1').get();
+    const allSessionsRow = db.prepare('SELECT COUNT(*) AS count FROM training_sessions').get();
+
     const stateWideStats = {
-      workersTrained: 12480 + (totalWorkersRow.count || 0),
+      workersTrained: 12480 + (totalSessionsRow.count || 0),
+      totalDrillsCompleted: allSessionsRow.count || 0,
       module1PassRate: mod1PassRate,
       sitesOnboarded: 341 + (totalSitesRow.count || 0),
       certsValidTodayPercent: 96,
       certsExpiringWarning: 14 + (expiringSoonRow.count || 0),
       activeDatabaseWorkers: totalWorkersRow.count,
-      activeDatabaseCertificates: validCertsRow.count
+      activeDatabaseCertificates: validCertsRow.count,
+      activeDatabaseSessions: allSessionsRow.count
     };
 
     res.json(stateWideStats);
@@ -60,6 +65,28 @@ router.get('/district-volumes', (req, res) => {
       { district: 'East Singhbhum (Jamshedpur)', coal: 0, steel: 3900, mica: 0, total: 3900, passRate: 94 },
       { district: 'Ranchi', coal: 150, steel: 1200, mica: 0, total: 1350, passRate: 89 }
     ];
+
+    // Add live certificates to matching districts
+    const liveCounts = db.prepare(`
+      SELECT s.district, s.sector, COUNT(c.id) AS cert_count
+      FROM certificates c
+      JOIN sites s ON c.site_id = s.id
+      WHERE c.is_revoked = 0
+      GROUP BY s.district, s.sector
+    `).all();
+
+    const districtMap = new Map();
+    districts.forEach(d => districtMap.set(d.district, d));
+
+    liveCounts.forEach(lc => {
+      const d = districtMap.get(lc.district);
+      if (d) {
+        if (lc.sector === 'COAL') d.coal += lc.cert_count;
+        else if (lc.sector === 'STEEL') d.steel += lc.cert_count;
+        else if (lc.sector === 'MICA') d.mica += lc.cert_count;
+        d.total += lc.cert_count;
+      }
+    });
 
     res.json(districts);
   } catch (err) {

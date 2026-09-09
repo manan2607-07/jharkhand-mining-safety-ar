@@ -74,6 +74,22 @@ export default function StateNodalDashboard() {
       }
     }
     loadAnalytics();
+
+    // Auto-refresh when training sessions or certificates are recorded
+    const handleUpdate = () => {
+      loadAnalytics();
+    };
+
+    window.addEventListener('jh-safety-drill-completed', handleUpdate);
+    window.addEventListener('focus', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    document.addEventListener('visibilitychange', handleUpdate);
+    return () => {
+      window.removeEventListener('jh-safety-drill-completed', handleUpdate);
+      window.removeEventListener('focus', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+      document.removeEventListener('visibilitychange', handleUpdate);
+    };
   }, []);
 
   // Chart 1: Weekly Certification Volume by District (Government Palette)
