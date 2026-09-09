@@ -444,7 +444,12 @@ export default function Navbar({
           {/* Logo & Department Branding */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <JharkhandGovSeal size={50} />
+              <img
+                src="/app-logo.png"
+                alt="Government of Jharkhand Mines Safety App Emblem"
+                style={{ width: '48px', height: '48px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', border: '1px solid #CBD5E1' }}
+              />
+              <JharkhandGovSeal size={48} />
               <AshokaLionCapital size={44} color="#0c4e7e" showMotto={true} />
             </div>
 

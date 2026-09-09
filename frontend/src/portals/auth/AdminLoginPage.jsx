@@ -94,10 +94,14 @@ export default function AdminLoginPage({ onLoginSuccess }) {
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+              <img
+                src="/app-logo.png"
+                alt="Government of Jharkhand Mines Safety App Logo"
+                style={{ width: '56px', height: '56px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)' }}
+              />
               <div style={{ background: '#FFFFFF', padding: '0.35rem', borderRadius: '4px', display: 'flex' }}>
                 <JharkhandGovSeal size={46} />
               </div>
-              <AshokaLionCapital size={44} color="#FFFFFF" showMotto={false} />
               <div>
                 <div style={{ fontSize: '0.7rem', fontWeight: '700', color: '#2EE59D', letterSpacing: '0.05em' }}>
                   E-GOVERNANCE SECURE SSO
