@@ -117,13 +117,18 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
           background: '#FFFFFF'
         }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
               <img
                 src="/app-logo.png"
-                alt="Government of Jharkhand Mines Safety App Logo"
-                style={{ width: '54px', height: '54px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.15)', border: '1px solid #CBD5E1' }}
+                alt="Khan Suraksha Official Mobile App Logo"
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  flexShrink: 0
+                }}
               />
-              <JharkhandGovSeal size={48} />
               <div>
                 <div style={{
                   fontSize: '0.72rem',

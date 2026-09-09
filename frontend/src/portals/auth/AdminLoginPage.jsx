@@ -93,21 +93,28 @@ export default function AdminLoginPage({ onLoginSuccess }) {
           justifyContent: 'space-between'
         }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
               <img
                 src="/app-logo.png"
-                alt="Government of Jharkhand Mines Safety App Logo"
-                style={{ width: '56px', height: '56px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)' }}
+                alt="Khan Suraksha Official Mobile App Logo"
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '14px',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.35)',
+                  border: '1.5px solid rgba(255,255,255,0.25)',
+                  flexShrink: 0
+                }}
               />
-              <div style={{ background: '#FFFFFF', padding: '0.35rem', borderRadius: '4px', display: 'flex' }}>
-                <JharkhandGovSeal size={46} />
-              </div>
               <div>
-                <div style={{ fontSize: '0.7rem', fontWeight: '700', color: '#2EE59D', letterSpacing: '0.05em' }}>
-                  E-GOVERNANCE SECURE SSO
+                <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#2EE59D', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  Government of Jharkhand • E-Governance SSO
                 </div>
-                <div style={{ fontSize: '1.1rem', fontWeight: '800', fontFamily: "'Roboto Slab', serif" }}>
-                  Regulatory Authority Console
+                <div style={{ fontSize: '1.15rem', fontWeight: '800', fontFamily: "'Roboto Slab', serif", color: '#FFFFFF', lineHeight: 1.25 }}>
+                  खान सुरक्षा विनियामक कंसोल
+                </div>
+                <div style={{ fontSize: '0.76rem', color: '#CBD5E1', marginTop: '0.15rem' }}>
+                  Mining Safety & DGMS Regulatory Portal
                 </div>
               </div>
             </div>
