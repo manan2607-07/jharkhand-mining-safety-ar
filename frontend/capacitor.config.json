@@ -1,0 +1,15 @@
+{
+  "appId": "gov.jharkhand.miningsafety.ar",
+  "appName": "Khan Suraksha AR",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "backgroundColor": "#0c4e7e"
+  }
+}

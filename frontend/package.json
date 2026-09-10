@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:android": "vite build && cap sync android",
+    "sync:android": "cap sync android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1",
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.4.8",
     "clsx": "^2.1.1",

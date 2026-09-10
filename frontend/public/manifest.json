@@ -1,7 +1,8 @@
 {
-  "short_name": "AR Mines Safety",
-  "name": "AR Mining Safety Simulator - Jharkhand",
-  "description": "Smart India Hackathon 2026 AR-Based Vocational Training & Safety Simulator",
+  "id": "gov.jharkhand.miningsafety.ar",
+  "short_name": "Khan Suraksha AR",
+  "name": "Khan Suraksha AR - Jharkhand Mining Safety",
+  "description": "Smart India Hackathon 2026 AR-Based Vocational Safety Training & DGMS Simulation Portal Prototype",
   "icons": [
     {
       "src": "/app-logo.png",

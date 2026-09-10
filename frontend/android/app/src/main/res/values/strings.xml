@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Khan Suraksha AR</string>
+    <string name="title_activity_main">Khan Suraksha AR</string>
+    <string name="package_name">gov.jharkhand.miningsafety.ar</string>
+    <string name="custom_url_scheme">gov.jharkhand.miningsafety.ar</string>
+</resources>
