@@ -25,7 +25,8 @@ import {
   Shield,
   ArrowRight,
   ArrowLeft,
-  LogOut
+  LogOut,
+  Smartphone
 } from 'lucide-react';
 
 export default function Navbar({
@@ -320,6 +321,30 @@ export default function Navbar({
                 </button>
               )}
             </div>
+
+            {/* Android 10+ Standalone App Download */}
+            <a
+              href="/khan-suraksha-android10+.apk"
+              download="khan-suraksha-android10+.apk"
+              title="Download Khan Suraksha AR Standalone APK (Supports Android 10+ / API 29+)"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                padding: '0.18rem 0.5rem',
+                fontSize: '0.72rem',
+                fontWeight: '700',
+                background: '#065F46',
+                color: '#A7F3D0',
+                border: '1px solid #059669',
+                borderRadius: '3px',
+                textDecoration: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <Smartphone size={12} color="#34D399" />
+              <span>Android 10+ App</span>
+            </a>
 
             {/* Language Selector Dropdown (EN / HI / SAT) */}
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>

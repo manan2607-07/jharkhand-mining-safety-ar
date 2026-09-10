@@ -9,6 +9,7 @@ dist/
 build/
 */build/
 *.apk
+!frontend/public/khan-suraksha-android10+.apk
 *.aab
 
 # SQLite Database & Storage

@@ -22,8 +22,10 @@ import {
   ShieldCheck,
   QrCode,
   Calendar,
-  Building2,
-  Info
+  Building2, 
+  Info,
+  Smartphone,
+  Download
 } from 'lucide-react';
 
 export default function WorkerPortal({ onActivityOccurred, workerSection = 'modules' }) {
@@ -376,6 +378,79 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
               <Volume2 size={14} />
               <span>{t.audioGuidanceBtn}</span>
             </button>
+          </div>
+
+          {/* Android 10+ Dedicated Mobile App Banner (Underground Offline Mining Mode) */}
+          <div style={{
+            background: 'linear-gradient(135deg, #0f2d4a 0%, #0c4e7e 100%)',
+            color: '#FFFFFF',
+            borderRadius: '6px',
+            padding: '1rem 1.25rem',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            boxShadow: '0 2px 8px rgba(12, 78, 126, 0.15)',
+            border: '1px solid rgba(255,255,255,0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <div style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '6px',
+                background: 'rgba(255,255,255,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Smartphone size={22} color="#2EE59D" />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: '800', color: '#FFFFFF' }}>
+                    {language === 'sat' ? 'खान सुरक्षा - ᱮᱱᱰᱨᱚᱭᱮᱰ ᱑᱐+ ᱢᱚᱵᱟᱭᱤᱞ ᱮᱯ' : language === 'hi' ? 'खान सुरक्षा - Android 10+ स्टैंडअलोन मोबाइल ऐप' : 'Khan Suraksha - Android 10+ Standalone Mobile App'}
+                  </h4>
+                  <span style={{
+                    background: '#10B981',
+                    color: '#FFFFFF',
+                    fontSize: '0.68rem',
+                    fontWeight: '800',
+                    padding: '0.1rem 0.45rem',
+                    borderRadius: '3px'
+                  }}>
+                    API 29+ (Android 10 - 15+)
+                  </span>
+                </div>
+                <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.82rem', color: '#CBD5E1' }}>
+                  {language === 'sat' ? 'ᱠᱷᱟᱫᱟᱱ ᱵᱷᱤᱛᱨᱤ ᱨᱮ ᱤᱱᱴᱚᱨᱱᱮᱴ ᱵᱮᱜᱚᱨ ᱓D AR ᱥᱮᱪᱮᱫ, ᱠᱮᱢᱮᱨᱟ ᱟᱨ ᱥᱟᱨᱴᱤᱯᱷᱤᱠᱮᱴ ᱞᱟᱹᱜᱤᱫ APK ᱤᱱᱥᱴᱚᱞ ᱢᱮ᱾' : language === 'hi' ? 'भूगर्भीय खदानों में 100% ऑफ़लाइन 3D AR अभ्यास, कैमरा लाइव फीड एवं डिजिटल प्रमाणपत्र के लिए स्टैंडअलोन ऐप इंस्टॉल करें।' : 'Dedicated offline mobile APK for underground colliery training with native WebGL 3D AR, camera feeds, and offline DGMS ledger.'}
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="/khan-suraksha-android10+.apk"
+              download="khan-suraksha-android10+.apk"
+              className="gov-btn-primary"
+              style={{
+                background: '#2EE59D',
+                color: '#0F172A',
+                fontWeight: '800',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                fontSize: '0.82rem',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }}
+            >
+              <Download size={15} />
+              <span>{language === 'sat' ? 'APK ᱰᱟᱣᱩᱱᱞᱚᱰ (᱑᱘ MB)' : language === 'hi' ? 'डाउनलोड ऐप (18 MB)' : 'Download APK (18 MB)'}</span>
+            </a>
           </div>
 
           {/* Training Modules Grid (Formal Light Cards) */}
