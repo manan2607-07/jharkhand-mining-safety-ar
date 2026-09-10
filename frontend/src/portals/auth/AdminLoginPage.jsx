@@ -50,7 +50,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
     setErrorMsg('');
 
     if (captchaInput.trim().toUpperCase() !== captchaCode.trim().toUpperCase()) {
-      setErrorMsg('Security CAPTCHA verification failed. Please enter the characters shown.');
+      setErrorMsg(t.captchaFailedMsg || 'Security CAPTCHA verification failed. Please enter the characters shown.');
       return;
     }
 
@@ -61,7 +61,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
     if (res.success) {
       if (onLoginSuccess) onLoginSuccess(res.admin);
     } else {
-      setErrorMsg(res.error || 'Invalid credentials or unauthorized authority access.');
+      setErrorMsg(res.error || t.adminInvalidCredsMsg || 'Invalid credentials or unauthorized authority access.');
     }
   };
 
@@ -167,7 +167,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
               lineHeight: 1.5,
               color: '#E2E8F0'
             }}>
-              <strong style={{ color: '#2EE59D' }}>Statutory Notice:</strong><br />
+              <strong style={{ color: '#2EE59D' }}>{t.statutoryNoticeLabel}:</strong><br />
               {t.adminRegulatoryNotice}
             </div>
 
@@ -300,7 +300,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                 <User size={18} color="#64748B" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
               </div>
               <span style={{ fontSize: '0.72rem', color: '#64748B', display: 'block', marginTop: '0.25rem' }}>
-                Try: <strong>officer1</strong>, <strong>dgms_inspector</strong>, or <strong>state_nodal</strong>
+                {t.adminRoleHintPrefix} <strong>officer1</strong>, <strong>dgms_inspector</strong>, {t.orWord} <strong>state_nodal</strong>
               </span>
             </div>
 
@@ -329,7 +329,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                 <Lock size={18} color="#64748B" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
               </div>
               <span style={{ fontSize: '0.72rem', color: '#64748B', display: 'block', marginTop: '0.25rem' }}>
-                Default Password: <strong>password123</strong>
+                {t.defaultPasswordLabel} <strong>password123</strong>
               </span>
             </div>
 
@@ -374,7 +374,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                 <button
                   type="button"
                   onClick={generateCaptcha}
-                  title="Generate new CAPTCHA"
+                  title={t.refreshCaptchaTitle || "Generate new CAPTCHA"}
                   style={{
                     background: '#F1F5F9',
                     border: '1px solid #CBD5E1',

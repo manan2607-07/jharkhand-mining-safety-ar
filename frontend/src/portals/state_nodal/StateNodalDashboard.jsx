@@ -97,7 +97,7 @@ export default function StateNodalDashboard() {
 
   // Chart 1: {t.stateChart1Title} (Government Palette)
   const weeklyChartData = {
-    labels: weeklyTrend?.labels || ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7 (Current)'],
+    labels: weeklyTrend?.labels || [t.week1 || 'Week 1', t.week2 || 'Week 2', t.week3 || 'Week 3', t.week4 || 'Week 4', t.week5 || 'Week 5', t.week6 || 'Week 6', t.week7Current || 'Week 7 (Current)'],
     datasets: [
       {
         label: 'Dhanbad (Coal)',

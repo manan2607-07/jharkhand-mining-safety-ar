@@ -176,7 +176,7 @@ export default function SafetyOfficerDashboard() {
                 <div style={{ fontSize: '0.98rem', fontWeight: '700', color: '#0c4e7e' }}>{coh.name}</div>
               </div>
               <span className={coh.status === 'COMPLETED' ? 'gov-badge-green' : 'gov-badge-amber'}>
-                {coh.status}
+                {coh.status === 'COMPLETED' ? (t.cohortStatusCompleted || 'COMPLETED') : (t.cohortStatusInProgress || 'IN PROGRESS')}
               </span>
             </div>
 
@@ -303,7 +303,7 @@ export default function SafetyOfficerDashboard() {
                     {w.designation}
                   </td>
                   <td style={{ fontWeight: '700', color: w.active_certs_count > 0 ? '#1E7B34' : '#B8860B' }}>
-                    <div>{w.active_certs_count} / 2 Modules</div>
+                    <div>{w.active_certs_count} / 2 {t.officerModulesUnit || 'Modules'}</div>
                     {w.training_sessions_count > 0 && (
                       <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: '500' }}>
                         {w.training_sessions_count} {t.officerDrillsCount} • {t.officerBestScore}: {w.latest_score}%
@@ -370,7 +370,7 @@ export default function SafetyOfficerDashboard() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Sanatan Murmu"
+                  placeholder={t.officerPlaceholderName || "e.g. Sanatan Murmu"}
                   value={newWorkerName}
                   onChange={(e) => setNewWorkerName(e.target.value)}
                   className="gov-input"

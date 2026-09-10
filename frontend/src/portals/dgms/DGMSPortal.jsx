@@ -445,7 +445,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                   </td>
                   <td>
                     <span className={cert.compliance_status === 'VALID' ? 'gov-badge-green' : cert.compliance_status === 'EXPIRING_SOON' ? 'gov-badge-amber' : 'gov-badge-red'}>
-                      {cert.compliance_status}
+                      {cert.compliance_status === 'VALID' ? (t.complianceStatusValid || 'VALID') : cert.compliance_status === 'EXPIRING_SOON' ? (t.complianceStatusExpiring || 'EXPIRING SOON') : (t.complianceStatusRevoked || 'REVOKED')}
                     </span>
                   </td>
                   <td>
