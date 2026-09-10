@@ -1,9 +1,11 @@
 import React from 'react';
 import { useOfflineSync } from '../context/OfflineSyncContext';
+import { useLanguage } from '../context/LanguageContext';
 import { WifiOff, RefreshCw, CheckCircle2, ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function OfflineBanner() {
   const { isOnline, pendingSyncCount, isSyncing, triggerSync, lastSyncResult } = useOfflineSync();
+  const { t } = useLanguage();
 
   if (isOnline && pendingSyncCount === 0 && !lastSyncResult) {
     return null;
@@ -38,21 +40,21 @@ export default function OfflineBanner() {
           <>
             <WifiOff size={16} color="#8B6508" />
             <span>
-              <strong>Statutory Field Notice:</strong> Portal operating in offline mode. Vocational training modules, adaptive evaluations, and issued certificates are cached in local IndexedDB storage.
+              <strong>{t.offlineNoticeTitle}</strong> {t.offlineNoticeDesc}
             </span>
           </>
         ) : hasPending ? (
           <>
             <AlertCircle size={16} color="#0c4e7e" />
             <span>
-              <strong>State Ledger Synchronization:</strong> {pendingSyncCount} cached training record(s) queued for transmission to the central simulation compliance ledger.
+              <strong>{t.syncPendingTitle}</strong> {pendingSyncCount} {t.syncPendingDesc}
             </span>
           </>
         ) : (
           <>
             <ShieldCheck size={16} color="#1E7B34" />
             <span>
-              <strong>Ledger Synchronized:</strong> Field training records successfully transmitted and recorded in the State Compliance Ledger ({lastSyncResult?.syncedSessions || 0} training session(s), {lastSyncResult?.syncedCertificates || 0} certificate(s)).
+              <strong>{t.syncSuccessTitle}</strong> {t.syncSuccessDesc} ({lastSyncResult?.syncedSessions || 0} training session(s), {lastSyncResult?.syncedCertificates || 0} certificate(s)).
             </span>
           </>
         )}
@@ -71,7 +73,7 @@ export default function OfflineBanner() {
           }}
         >
           <RefreshCw size={12} className={isSyncing ? 'animate-spin' : ''} />
-          {isSyncing ? 'Transmitting...' : 'Transmit Records Now'}
+          {isSyncing ? t.syncing : t.syncNow}
         </button>
       )}
     </div>

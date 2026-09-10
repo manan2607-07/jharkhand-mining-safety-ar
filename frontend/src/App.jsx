@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { OfflineSyncProvider } from './context/OfflineSyncContext';
 import Navbar from './components/Navbar';
@@ -25,6 +25,7 @@ const isCurrentDomainAdmin = () => {
 
 function MainApp() {
   const { adminUser, isWorkerAuthenticated, isAdminAuthenticated } = useAuth();
+  const { t } = useLanguage();
   
   const isAdminDomain = isCurrentDomainAdmin();
 
@@ -216,25 +217,25 @@ function MainApp() {
             fontSize: '0.8rem',
             fontFamily: "'Roboto Slab', serif"
           }}>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Home</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkHome}</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Simulator Info</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkSimulator}</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Curriculum Model</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkCurriculum}</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>RTI Disclosures</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkRti}</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Evaluation Team</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkEvaluation}</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Acts & Rules</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkActs}</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Safety Framework</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkSafety}</a>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Screen Reader Access</a>
+            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkScreenReader}</a>
             {isAdminDomain && !isAdminAuthenticated && (
               <>
                 <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-                <a href="#admin-login" style={{ color: '#2EE59D', textDecoration: 'none', fontWeight: '700' }}>Official Sign-In (विभागीय लॉगिन)</a>
+                <a href="#admin-login" style={{ color: '#2EE59D', textDecoration: 'none', fontWeight: '700' }}>{t.footerLinkOfficialLogin}</a>
               </>
             )}
           </div>
@@ -256,44 +257,44 @@ function MainApp() {
               <AshokaLionCapital size={32} color="#FFFFFF" showMotto={false} />
               <div>
                 <div style={{ fontWeight: '700', fontSize: '0.94rem', color: '#FFFFFF', fontFamily: "'Roboto Slab', serif" }}>
-                  Smart India Hackathon 2026 (PS ID: 26041)
+                  {t.footerDeptTitleText}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#2EE59D', fontWeight: '600' }}>
-                  AR Vocational Mining Safety Simulation Engine
+                  {t.footerDeptSubText}
                 </div>
               </div>
             </div>
             <p style={{ fontSize: '0.76rem', color: '#94A3B8', lineHeight: 1.55 }}>
-              Academic technical prototype developed for Smart India Hackathon 2026. Modeled on the vocational training curriculum of the Department of Mines & Geology (Govt. of Jharkhand) and statutory benchmarks of the Mines Act, 1952 and DGMS guidelines.
+              {t.footerDeptBodyText}
             </p>
           </div>
 
           {/* Statutory Mandates & Frameworks */}
           <div>
             <div style={{ fontWeight: '700', fontSize: '0.88rem', color: '#FFFFFF', marginBottom: '0.65rem', fontFamily: "'Roboto Slab', serif" }}>
-              Benchmarked Standards & Guidelines
+              {t.footerStandardsTitleText}
             </div>
             <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.76rem', color: '#CBD5E1', lineHeight: 1.8 }}>
-              <li>• Directorate General of Mines Safety (DGMS) Safety Criteria</li>
-              <li>• Mines Act, 1952 & Factories Act, 1948 Competency Metrics</li>
-              <li>• Smart India Hackathon 2026 — Problem Statement ID: 26041</li>
-              <li>• Guidelines for Indian Government Websites (GIGW 3.0 / WCAG 2.1 AA)</li>
+              <li>{t.footerStd1Text}</li>
+              <li>{t.footerStd2Text}</li>
+              <li>{t.footerStd3Text}</li>
+              <li>{t.footerStd4Text}</li>
             </ul>
           </div>
 
           {/* Hosting Credit, Visitor Stats & SIH Attribution */}
           <div>
             <div style={{ fontWeight: '700', fontSize: '0.88rem', color: '#FFFFFF', marginBottom: '0.65rem', fontFamily: "'Roboto Slab', serif" }}>
-              Development & Safe Harbor Provenance
+              {t.footerDevTitleText}
             </div>
             <div style={{ fontSize: '0.76rem', color: '#CBD5E1', lineHeight: 1.6 }}>
-              <div>Developed by <strong>SIH 2026 Team (Problem Statement ID: 26041)</strong></div>
-              <div>Educational & Research Prototype for <strong>Mining & Steel Safety Training</strong></div>
+              <div>{t.footerDevByText}</div>
+              <div>{t.footerDevSubText}</div>
               
               {/* Simulated Visitor Counter */}
               <div style={{ marginTop: '0.6rem' }}>
                 <span style={{ fontSize: '0.72rem', color: '#94A3B8', display: 'block', marginBottom: '0.25rem' }}>
-                  Simulated Workforce Drill Count:
+                  {t.footerDrillCountText}
                 </span>
                 <div style={{ display: 'inline-flex' }}>
                   <span className="visitorspan">0</span>
@@ -320,10 +321,10 @@ function MainApp() {
           lineHeight: 1.6
         }}>
           <div>
-            <strong>Legal Disclaimer & Fair Dealing Notice:</strong> This platform is an independent educational and technical simulation prototype created for the <strong>Smart India Hackathon 2026 (Problem Statement ID: 26041)</strong>. It is <strong>NOT</strong> an official government portal and is not operated by or formally affiliated with the Government of Jharkhand, Directorate General of Mines Safety (DGMS), or National Informatics Centre (NIC).
+            {t.footerLegalDisclaimerText}
           </div>
           <div style={{ marginTop: '0.25rem', color: '#64748B' }}>
-            All statutory names, insignia representations, and regulatory benchmarks are referenced solely for competition evaluation and academic demonstration under the Fair Dealing provisions of Section 52 of the Indian Copyright Act, 1957.
+            {t.footerCopyrightNoticeText}
           </div>
         </div>
       </footer>

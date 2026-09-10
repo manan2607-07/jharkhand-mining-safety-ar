@@ -82,23 +82,17 @@ export default function Navbar({
   const workerNavTabs = [
     { 
       id: 'modules', 
-      labelEn: 'AR Safety Drills', 
-      labelHi: 'एआर सुरक्षा सिमुलेशन', 
-      labelSat: 'AR ᱨᱩᱠᱷᱤᱭᱟᱹ ᱥᱮᱪᱮᱫ', 
+      label: t.tabModules, 
       icon: HardHat 
     },
     { 
       id: 'certificates', 
-      labelEn: 'My Issued Passports (QR)', 
-      labelHi: 'प्रमाणित डिजिटल पासपोर्ट', 
-      labelSat: 'ᱥᱟᱹᱠᱷᱤ ᱥᱟᱠᱟᱢ (QR)', 
+      label: t.tabCertificates, 
       icon: Award 
     },
     { 
       id: 'profile', 
-      labelEn: 'Worker E-Identity', 
-      labelHi: 'कामगार ई-पहचान पत्र', 
-      labelSat: 'ᱠᱟᱹᱢᱤᱭᱟᱹ ᱩᱯᱨᱩᱢ', 
+      label: t.tabProfile, 
       icon: UserCheck 
     }
   ];
@@ -107,35 +101,25 @@ export default function Navbar({
   const adminNavTabs = [
     { 
       id: 'officer', 
-      labelEn: 'Safety Officer Roster', 
-      labelHi: 'सुरक्षा अधिकारी रोस्टर', 
-      labelSat: 'ᱨᱩᱠᱷᱤᱭᱟᱹ ᱚᱯᱷᱤᱥᱚᱨ', 
+      label: t.tabOfficer, 
       icon: Building2, 
       role: 'SAFETY_OFFICER' 
     },
     { 
       id: 'dgms', 
-      labelEn: 'DGMS Statutory Verifier', 
-      labelHi: 'डीजीएमएस धनबाद सत्यापन', 
-      labelSat: 'DGMS ᱪᱮᱠ ᱞᱮᱡᱚᱨ', 
+      label: t.tabDgms, 
       icon: Scale, 
       role: 'DGMS_INSPECTOR' 
     },
     { 
       id: 'state', 
-      labelEn: 'State Nodal Analytics', 
-      labelHi: 'राज्य नोडल विश्लेषिकी', 
-      labelSat: 'ᱯᱚᱱᱚᱛ ᱞᱮᱠᱷᱟ', 
+      label: t.tabState, 
       icon: BarChart3, 
       role: 'STATE_NODAL_OFFICER' 
     }
   ];
 
-  const getTabLabel = (tab) => {
-    if (language === 'sat') return tab.labelSat;
-    if (language === 'hi') return tab.labelHi;
-    return tab.labelEn;
-  };
+  const getTabLabel = (tab) => tab.label;
 
   return (
     <header className="no-print" style={{ position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 2px 4px rgba(0,0,0,0.06)' }}>
@@ -164,17 +148,16 @@ export default function Navbar({
           letterSpacing: '0.04em',
           textTransform: 'uppercase'
         }}>
-          Academic Prototype
+          {t.sihAcademicBadge}
         </span>
         <span>
-          <strong>Smart India Hackathon 2026 (Problem Statement ID: 26041)</strong> — Technical Vocational Training & Safety Simulator. 
-          <span style={{ color: '#78350F', fontWeight: '500' }}> Not an official Government of Jharkhand or DGMS portal. Created solely for academic demonstration and hackathon evaluation.</span>
+          {t.sihDisclaimer}
         </span>
       </div>
 
       {/* Skip to Main Content Link (GIGW Accessibility) */}
       <a href="#main-content" className="skip-to-content">
-        Skip to Main Content / मुख्य सामग्री पर जाएं
+        {t.skipToContent}
       </a>
 
       {/* 1. Indian National Tricolour Top Accent Strip */}
@@ -213,17 +196,17 @@ export default function Navbar({
                 textDecoration: 'none',
                 fontWeight: '500'
               }}
-              title="Screen Reader Access"
+              title={t.screenReader}
             >
               <Monitor size={12} color="#2EE59D" />
-              <span>Screen Reader</span>
+              <span>{t.screenReader}</span>
             </a>
 
             <span style={{ color: '#4B5563' }}>|</span>
 
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#FFFFFF', fontWeight: '600' }}>
               <Phone size={12} color="#2EE59D" />
-              <span>SIH Helpdesk: PS-26041</span>
+              <span>{t.sihHelpdesk}</span>
             </span>
 
             <span style={{ color: '#4B5563' }}>|</span>
@@ -359,7 +342,7 @@ export default function Navbar({
               }}
             >
               {audioEnabled ? <Volume2 size={12} color="#1E7B34" /> : <VolumeX size={12} />}
-              <span>{audioEnabled ? (isSpeaking ? 'Speaking...' : 'Audio On') : 'Audio Muted'}</span>
+              <span>{audioEnabled ? (isSpeaking ? t.speaking : t.soundOn) : t.soundOff}</span>
             </button>
 
             {/* Offline Sync Status Indicator */}
@@ -376,7 +359,7 @@ export default function Navbar({
               fontWeight: '600'
             }}>
               {isOnline ? <Wifi size={11} /> : <WifiOff size={11} />}
-              <span>{isOnline ? 'Cloud Synced' : `Offline (${pendingSyncCount})`}</span>
+              <span>{isOnline ? t.cloudSynced : `${t.offlineCount} (${pendingSyncCount})`}</span>
               {pendingSyncCount > 0 && isOnline && (
                 <button
                   onClick={triggerSync}
@@ -393,7 +376,7 @@ export default function Navbar({
                     fontWeight: '700'
                   }}
                 >
-                  {isSyncing ? '...' : 'Sync'}
+                  {isSyncing ? '...' : t.syncNow}
                 </button>
               )}
             </div>
@@ -405,7 +388,7 @@ export default function Navbar({
                 id="portal-language-selector"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                aria-label="Select Portal Language"
+                aria-label={t.selectLanguage}
                 style={{
                   padding: '0.2rem 0.45rem',
                   borderRadius: '2px',
@@ -461,7 +444,7 @@ export default function Navbar({
                 fontFamily: "'Roboto Slab', serif",
                 textTransform: 'uppercase'
               }}>
-                Smart India Hackathon 2026 • Problem Statement ID: 26041
+                {t.sihTitle}
               </div>
 
               {portalMode === 'worker' ? (
@@ -473,7 +456,7 @@ export default function Navbar({
                   lineHeight: 1.25,
                   fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif"
                 }}>
-                  खान सुरक्षा प्रशिक्षण पोर्टल | Frontline Worker AR Training Portal
+                  {t.workerLoginHeader}
                 </h1>
               ) : (
                 <h1 style={{
@@ -484,7 +467,7 @@ export default function Navbar({
                   lineHeight: 1.25,
                   fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif"
                 }}>
-                  खान सुरक्षा प्रशासनिक एवं विनियामक पोर्टल | Mining Safety Admin Console
+                  {t.adminLoginHeader}
                 </h1>
               )}
 
@@ -496,9 +479,9 @@ export default function Navbar({
                 fontFamily: "'Open Sans', sans-serif"
               }}>
                 {portalMode === 'worker' ? (
-                  'कामगार ई-सुरक्षा इंटरफ़ेस • Interactive 3D WebAR Drills, Multilingual Audio & Digital Safety Passports'
+                  t.workerLoginSubheader
                 ) : (
-                  'अधिकारी एवं विनियामक कंसोल • Safety Officer Oversight, DGMS Ledger Audit & State Nodal Compliance'
+                  t.adminLoginSubheader
                 )}
               </div>
 
@@ -521,11 +504,11 @@ export default function Navbar({
                   fontWeight: '700',
                   fontSize: '0.68rem'
                 }}>
-                  SIH 2026 Technical Prototype (Non-Governmental)
+                  {t.sihAcademicBadge}
                 </span>
                 <span>•</span>
                 <span style={{ color: '#0c4e7e', fontWeight: '700' }}>
-                  {portalMode === 'worker' ? 'Worker Workspace (कामगार कार्यक्षेत्र)' : 'Administrative Workspace (प्रशासनिक कंसोल)'}
+                  {portalMode === 'worker' ? t.workerWorkspace : t.adminWorkspace}
                 </span>
               </div>
             </div>
@@ -559,7 +542,7 @@ export default function Navbar({
                   </div>
                   <div>
                     <div style={{ fontSize: '0.68rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                      Active Frontline Miner:
+                      {t.activeMinerBadge}:
                     </div>
                     <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#0c4e7e', fontFamily: "'Roboto Slab', serif" }}>
                       {workerUser?.name || 'Birsa Hansda'} ({workerUser?.workerCode || 'JH-WRK-001'})
@@ -588,10 +571,10 @@ export default function Navbar({
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
-                  title="कामगार लॉग आउट (Log Out)"
+                  title={t.logOut}
                 >
                   <LogOut size={15} color="#9B1C1C" />
-                  <span>लॉग आउट (Log Out)</span>
+                  <span>{t.logOut}</span>
                 </button>
               </>
             ) : (
@@ -620,7 +603,7 @@ export default function Navbar({
                   </div>
                   <div>
                     <div style={{ fontSize: '0.68rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                      Logged-in Authority:
+                      {t.activeAdminBadge}:
                     </div>
                     <div style={{
                       fontSize: '0.82rem',
@@ -630,7 +613,7 @@ export default function Navbar({
                     }}>
                       {adminUser?.fullName || adminUser?.name || 'Accredited Official'}
                       <span style={{ fontSize: '0.74rem', color: '#475569', fontWeight: '600', marginLeft: '0.4rem' }}>
-                        ({adminUser?.role === 'SAFETY_OFFICER' ? 'BCCL Safety Officer' : adminUser?.role === 'DGMS_INSPECTOR' ? 'DGMS Inspector' : 'State Nodal Officer'})
+                        ({adminUser?.role === 'SAFETY_OFFICER' ? t.roleSafetyOfficerTitle : adminUser?.role === 'DGMS_INSPECTOR' ? t.roleDgmsTitle : t.roleStateTitle})
                       </span>
                     </div>
                   </div>
@@ -657,10 +640,10 @@ export default function Navbar({
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
-                  title="प्राधिकरण साइन आउट (Sign Out)"
+                  title={t.logOut}
                 >
                   <LogOut size={15} color="#9B1C1C" />
-                  <span>साइन आउट (Sign Out)</span>
+                  <span>{t.logOut}</span>
                 </button>
               </>
             )}
@@ -778,7 +761,7 @@ export default function Navbar({
                 gap: '0.4rem'
               }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2EE59D', display: 'inline-block' }}></span>
-                Frontline Worker Portal Active
+                {t.portalWorker}
               </span>
             ) : (
               <>

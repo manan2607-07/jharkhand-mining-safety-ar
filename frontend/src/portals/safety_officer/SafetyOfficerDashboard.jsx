@@ -133,10 +133,10 @@ export default function SafetyOfficerDashboard() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
             <span className="gov-badge-navy">
-              Statutory Supervisory Station
+              {t.officerStationTitle}
             </span>
             <span style={{ fontSize: '0.82rem', color: '#64748B' }}>
-              District: <strong>{currentUser.district}</strong> • Sector: <strong>{currentUser.sector}</strong>
+              {t.officerDistrict}: <strong>{currentUser.district}</strong> • {t.officerSector}: <strong>{currentUser.sector}</strong>
             </span>
           </div>
 
@@ -145,7 +145,7 @@ export default function SafetyOfficerDashboard() {
           </h2>
 
           <p style={{ fontSize: '0.86rem', color: '#4A5568', marginTop: '0.25rem' }}>
-            Supervisory Officer: <strong>{currentUser.name}</strong> • DGMS Statutory Training Station #4
+            {t.officerSupervisoryOfficer}: <strong>{currentUser.name}</strong> • {t.officerStationSub}
           </p>
         </div>
 
@@ -155,7 +155,7 @@ export default function SafetyOfficerDashboard() {
           style={{ padding: '0.65rem 1.25rem', fontSize: '0.88rem' }}
         >
           <UserPlus size={16} />
-          <span>Onboard New Recruit</span>
+          <span>{t.officerOnboardRecruit}</span>
         </button>
       </div>
 
@@ -171,7 +171,7 @@ export default function SafetyOfficerDashboard() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
               <div>
                 <span style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: '600', textTransform: 'uppercase' }}>
-                  Training Cohort Batch
+                  {t.officerCohortBatch}
                 </span>
                 <div style={{ fontSize: '0.98rem', fontWeight: '700', color: '#0c4e7e' }}>{coh.name}</div>
               </div>
@@ -181,8 +181,8 @@ export default function SafetyOfficerDashboard() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', color: '#4A5568', marginBottom: '0.5rem' }}>
-              <span>Enrolled: <strong>{coh.total_enrolled || 12}</strong> miners</span>
-              <span>Certified: <strong style={{ color: '#1E7B34' }}>{coh.certified_count || 6}</strong></span>
+              <span>{t.officerEnrolledMiners}: <strong>{coh.total_enrolled || 12}</strong> {t.officerMinersLabel}</span>
+              <span>{t.officerCertifiedMiners}: <strong style={{ color: '#1E7B34' }}>{coh.certified_count || 6}</strong></span>
             </div>
 
             {/* Official Progress Bar */}
@@ -218,10 +218,10 @@ export default function SafetyOfficerDashboard() {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)' }}>
-              Frontline Workforce Roster & DGMS Certification Status
+              {t.officerRosterTitle}
             </h3>
             <p style={{ fontSize: '0.84rem', color: '#64748B' }}>
-              Monitoring tribal language preferences, literacy indicators, and active statutory safety certifications
+              {t.officerRosterSubtitle}
             </p>
           </div>
 
@@ -239,7 +239,7 @@ export default function SafetyOfficerDashboard() {
               <Search size={15} color="#64748B" />
               <input
                 type="text"
-                placeholder="Search by worker name or ID..."
+                placeholder={t.officerSearchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
@@ -260,7 +260,7 @@ export default function SafetyOfficerDashboard() {
               className="gov-select"
               style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.84rem' }}
             >
-              <option value="ALL">All Training Cohorts</option>
+              <option value="ALL">{t.officerAllCohorts}</option>
               {cohorts.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
@@ -273,13 +273,13 @@ export default function SafetyOfficerDashboard() {
           <table className="gov-table">
             <thead>
               <tr>
-                <th>Worker Code</th>
-                <th>Full Name</th>
-                <th>Tribal Language</th>
-                <th>Literacy</th>
-                <th>Designation</th>
-                <th>Active Certs</th>
-                <th>Statutory Status</th>
+                <th>{t.officerThWorkerCode}</th>
+                <th>{t.officerThFullName}</th>
+                <th>{t.officerThTribalLang}</th>
+                <th>{t.officerThLiteracy}</th>
+                <th>{t.officerThDesignation}</th>
+                <th>{t.officerThActiveCerts}</th>
+                <th>{t.officerThStatus}</th>
               </tr>
             </thead>
             <tbody>
@@ -306,18 +306,18 @@ export default function SafetyOfficerDashboard() {
                     <div>{w.active_certs_count} / 2 Modules</div>
                     {w.training_sessions_count > 0 && (
                       <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: '500' }}>
-                        {w.training_sessions_count} drill(s) • Best: {w.latest_score}%
+                        {w.training_sessions_count} {t.officerDrillsCount} • {t.officerBestScore}: {w.latest_score}%
                       </div>
                     )}
                   </td>
                   <td>
                     {w.active_certs_count > 0 ? (
                       <span className="gov-badge-green">
-                        <CheckCircle2 size={13} /> DGMS Compliant
+                        <CheckCircle2 size={13} /> {t.officerCompliantBadge}
                       </span>
                     ) : (
                       <span className="gov-badge-amber">
-                        <Clock size={13} /> Training Due
+                        <Clock size={13} /> {t.officerTrainingDueBadge}
                       </span>
                     )}
                   </td>
@@ -347,10 +347,10 @@ export default function SafetyOfficerDashboard() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', borderBottom: '2px solid #0c4e7e', paddingBottom: '0.75rem' }}>
               <div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)', margin: 0 }}>
-                  Onboard Frontline Tribal Recruit
+                  {t.officerModalTitle}
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '0.2rem' }}>
-                  Register recruit into {currentUser.siteName} for camera-based AR training.
+                  {t.officerModalSubtitle}
                 </p>
               </div>
               <button
@@ -365,7 +365,7 @@ export default function SafetyOfficerDashboard() {
             <form onSubmit={handleEnrollWorker}>
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
-                  Full Name (with Tribal Surname):
+                  {t.officerFieldFullName}
                 </label>
                 <input
                   type="text"
@@ -380,7 +380,7 @@ export default function SafetyOfficerDashboard() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
-                    Primary Language:
+                    {t.officerFieldPrimaryLang}
                   </label>
                   <select
                     value={newWorkerLang}
@@ -397,7 +397,7 @@ export default function SafetyOfficerDashboard() {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
-                    Designation:
+                    {t.officerFieldDesignation}
                   </label>
                   <input
                     type="text"
@@ -410,7 +410,7 @@ export default function SafetyOfficerDashboard() {
 
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
-                  Contact Phone Number:
+                  {t.officerFieldContact}
                 </label>
                 <input
                   type="text"
@@ -422,7 +422,7 @@ export default function SafetyOfficerDashboard() {
 
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
-                  Assign to Training Cohort:
+                  {t.officerFieldAssignCohort}
                 </label>
                 <select
                   value={newWorkerCohort}
@@ -444,14 +444,14 @@ export default function SafetyOfficerDashboard() {
                   className="gov-btn-secondary"
                   style={{ padding: '0.55rem 1.15rem' }}
                 >
-                  Cancel
+                  {t.officerBtnCancel}
                 </button>
                 <button
                   type="submit"
                   className="gov-btn-primary"
                   style={{ padding: '0.55rem 1.25rem' }}
                 >
-                  Enroll Worker & Assign AR Modules
+                  {t.officerBtnSubmitEnroll}
                 </button>
               </div>
             </form>

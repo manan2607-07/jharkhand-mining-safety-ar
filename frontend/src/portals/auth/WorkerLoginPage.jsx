@@ -138,7 +138,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                   fontFamily: "'Roboto Slab', serif",
                   textTransform: 'uppercase'
                 }}>
-                  Smart India Hackathon 2026 • PS ID: 26041
+                  {t.sihTitle}
                 </div>
                 <h1 style={{
                   fontSize: '1.25rem',
@@ -148,10 +148,10 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                   fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif",
                   lineHeight: 1.3
                 }}>
-                  खान सुरक्षा प्रशिक्षण पोर्टल
+                  {t.workerLoginHeader}
                 </h1>
                 <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: '600' }}>
-                  Frontline Worker AR Vocational Safety Portal
+                  {t.workerLoginSubheader}
                 </div>
               </div>
             </div>
@@ -166,8 +166,8 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
               color: '#0c4e7e',
               lineHeight: 1.5
             }}>
-              <strong>कामगार निर्देश / Worker Guidance:</strong><br />
-              यह पोर्टल खदान एवं उद्योग कामगारों के लिए व्यवहारिक AR सुरक्षा सिमुलेशन (अग्निशामक PASS तकनीक एवं गैस रिसाव) एवं DGMS डिजिटल सुरक्षा पासपोर्ट प्रदान करता है।
+              <strong>{t.workerLoginGuidanceTitle}</strong><br />
+              {t.workerLoginGuidanceText}
             </div>
 
             {/* Language Selection & Voiceover Assistance */}
@@ -181,7 +181,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
                 <span style={{ fontSize: '0.78rem', fontWeight: '700', color: '#334155', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <Globe size={14} color="#0c4e7e" />
-                  भाषा चुनें / Select Language:
+                  {t.selectLanguage}:
                 </span>
 
                 <button
@@ -200,10 +200,10 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                     fontWeight: '700',
                     cursor: 'pointer'
                   }}
-                  title="Play Voiceover Guidance"
+                  title={t.voiceNarration}
                 >
                   <Volume2 size={13} />
-                  <span>आवाज से सुनें</span>
+                  <span>{t.voiceNarration}</span>
                 </button>
               </div>
 
@@ -266,7 +266,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
             {/* Quick Demo Miner Selector */}
             <div>
               <div style={{ fontSize: '0.76rem', fontWeight: '700', color: '#475569', marginBottom: '0.5rem' }}>
-                त्वरित कामगार चयन (Demo Miner Profiles):
+                {t.demoMinersTitle}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                 {demoMiners.map((m) => {
@@ -299,7 +299,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
           </div>
 
           <div style={{ marginTop: '1.5rem', fontSize: '0.72rem', color: '#94A3B8', borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem' }}>
-            DGMS Vocational Training Standard • Mines Act 1952 Benchmarks
+            {t.statutoryComplianceNotice}
           </div>
         </div>
 
@@ -334,10 +334,10 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
               fontFamily: "'Roboto Slab', serif",
               margin: '0.2rem 0'
             }}>
-              कामगार प्रवेश (Sign In)
+              {t.loginSubmitBtn}
             </h2>
             <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0 }}>
-              Enter your Workforce Code or Mobile Number
+              {t.workforceIdLabel}
             </p>
           </div>
 
@@ -362,7 +362,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '700', color: '#334155', marginBottom: '0.35rem' }}>
-                कामगार कोड अथवा मोबाइल नंबर (Workforce ID / Mobile):
+                {t.workforceIdLabel}:
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -370,7 +370,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="उदा. JH-WRK-001 या 9431120401"
+                  placeholder={t.workforceIdPlaceholder}
                   style={{
                     width: '100%',
                     padding: '0.65rem 0.75rem 0.65rem 2.4rem',
@@ -387,13 +387,13 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                 <HardHat size={18} color="#64748B" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
               </div>
               <span style={{ fontSize: '0.72rem', color: '#64748B', display: 'block', marginTop: '0.25rem' }}>
-                Try <strong>JH-WRK-001</strong> for Birsa Hansda or <strong>JH-WRK-002</strong> for Shibu Soren
+                Try <strong>JH-WRK-001</strong> (Birsa Hansda) or <strong>JH-WRK-002</strong> (Shibu Soren)
               </span>
             </div>
 
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '700', color: '#334155', marginBottom: '0.35rem' }}>
-                सुरक्षा पिन (Security PIN):
+                {t.workerPinLabel}:
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -401,7 +401,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                   required
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  placeholder="Default PIN: 1234"
+                  placeholder="1234"
                   style={{
                     width: '100%',
                     padding: '0.65rem 0.75rem 0.65rem 2.4rem',
@@ -416,7 +416,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                 <KeyRound size={18} color="#64748B" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
               </div>
               <span style={{ fontSize: '0.72rem', color: '#64748B', display: 'block', marginTop: '0.25rem' }}>
-                Default Hackathon PIN: <strong>1234</strong>
+                {t.workerPinHelp}
               </span>
             </div>
 
@@ -436,7 +436,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
                 marginTop: '0.5rem'
               }}
             >
-              <span>{loading ? 'सत्यापित हो रहा है...' : 'सुरक्षा पोर्टल में प्रवेश करें (Enter Portal)'}</span>
+              <span>{loading ? t.loginSubmitting : t.loginSubmitBtn}</span>
               <ArrowRight size={18} />
             </button>
           </form>
@@ -451,7 +451,7 @@ export default function WorkerLoginPage({ onLoginSuccess }) {
             color: '#64748B',
             textAlign: 'center'
           }}>
-            🔒 On-device offline authentication supported. Passwords and biometrics processed locally during network disconnection.
+            🔒 {t.offlineNoticeDesc}
           </div>
         </div>
       </div>

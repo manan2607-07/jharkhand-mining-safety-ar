@@ -126,12 +126,12 @@ export default function DigitalCertificate({ certificate, onDone }) {
           </div>
           <div>
             <div style={{ fontSize: '0.94rem', fontWeight: '800', color: '#FFFFFF' }}>
-              Statutory Vocational Safety Credential Ready
+              {t.certActionBarTitle}
             </div>
             <div style={{ fontSize: '0.73rem', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span>High-resolution A4 format</span>
+              <span>{t.certA4Format}</span>
               <span>•</span>
-              <span style={{ color: '#2EE59D', fontWeight: '600' }}>Official Mines Safety Record</span>
+              <span style={{ color: '#2EE59D', fontWeight: '600' }}>{t.certOfficialRecord}</span>
             </div>
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
             }}
           >
             <Printer size={16} />
-            <span>Print Certificate</span>
+            <span>{t.printCertificate}</span>
           </button>
 
           <button
@@ -177,7 +177,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
             }}
           >
             <Download size={15} />
-            <span>Save as PDF</span>
+            <span>{t.saveAsPdf}</span>
           </button>
 
           {onDone && (
@@ -194,7 +194,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
                 cursor: 'pointer'
               }}
             >
-              Return to Portal
+              {t.returnToPortal}
             </button>
           )}
         </div>

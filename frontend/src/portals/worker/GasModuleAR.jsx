@@ -140,7 +140,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
     else if (currentStep === 1) speak(t.audioGasAlarm);
     else if (currentStep === 2) speak(t.gasPpeDesc);
     else if (currentStep === 3) speak(t.audioBuddyConfirm);
-    else if (currentStep === 4) speak("Protocol verified. Confined space entry approved.");
+    else if (currentStep === 4) speak(t.gasProtocolSuccessVoice);
   }, [currentStep]);
 
   // Simulate gas leak detection when stepping forward
@@ -197,7 +197,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
             fontSize: '0.78rem',
             textAlign: 'center'
           }}>
-            DGMS CONFINED COAL SEAM HEADING #3 • ATMOSPHERIC GAS SENSORS ACTIVE
+            {t.gasHeadingLabel}
           </div>
         </div>
       )}
@@ -241,7 +241,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
             color: alarmTriggered ? '#DC2626' : 'var(--gov-navy)',
             letterSpacing: '0.03em'
           }}>
-            {alarmTriggered ? 'DGMS DANGER: CONFINED GAS THRESHOLD EXCEEDED (CMR 142)' : 'DGMS STATUTORY SENSOR: ATMOSPHERIC GAS AUDIT'}
+            {alarmTriggered ? t.gasAlarmNotice : t.gasHudAuditNotice}
           </span>
         </div>
 
@@ -301,31 +301,31 @@ export default function GasModuleAR({ onComplete, onCancel }) {
         }}>
           <Activity size={16} color={alarmTriggered ? '#DC2626' : 'var(--gov-navy)'} />
           <span style={{ fontSize: '0.74rem', fontWeight: '700', letterSpacing: '0.04em', color: 'var(--gov-navy)', textTransform: 'uppercase' }}>
-            STATUTORY MULTI-GAS DETECTOR
+            {t.gasHudTitle}
           </span>
         </div>
 
         {/* Methane CH4 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
-          <span style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '500' }}>CH₄ (DGMS &lt;1.25%):</span>
+          <span style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '500' }}>{t.gasMethaneLimit}</span>
           <span className={methaneLevel >= 1.25 ? 'gov-badge-red' : 'gov-badge-green'}>
-            {methaneLevel}% {methaneLevel >= 1.25 ? 'CRITICAL' : 'OK'}
+            {methaneLevel}% {methaneLevel >= 1.25 ? t.sensorCritical : t.sensorOk}
           </span>
         </div>
 
         {/* Carbon Monoxide CO */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
-          <span style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '500' }}>CO (DGMS &lt;50ppm):</span>
+          <span style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '500' }}>{t.gasCoLimit}</span>
           <span className={coLevel >= 50 ? 'gov-badge-red' : 'gov-badge-green'}>
-            {coLevel} ppm {coLevel >= 50 ? 'TOXIC' : 'OK'}
+            {coLevel} ppm {coLevel >= 50 ? t.sensorToxic : t.sensorOk}
           </span>
         </div>
 
         {/* Oxygen O2 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '500' }}>O₂ (DGMS 19.5-21%):</span>
+          <span style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '500' }}>{t.gasOxygenLimit}</span>
           <span className={oxygenLevel < 19.5 ? 'gov-badge-red' : 'gov-badge-green'}>
-            {oxygenLevel}% {oxygenLevel < 19.5 ? 'DEFICIENT' : 'OK'}
+            {oxygenLevel}% {oxygenLevel < 19.5 ? t.sensorDeficient : t.sensorOk}
           </span>
         </div>
       </div>
@@ -358,7 +358,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
               className="gov-btn-primary"
               style={{ width: '100%', padding: '0.75rem' }}
             >
-              Simulate Coal Face Gas Inflow Test →
+              {t.gasDetectBtn}
             </button>
           </div>
         )}
@@ -379,10 +379,10 @@ export default function GasModuleAR({ onComplete, onCancel }) {
               <AlertTriangle size={22} color="#DC2626" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#B91C1C', marginBottom: '0.2rem' }}>
-                  STATUTORY ALARM: CMR REGULATION 142 EXCEEDED
+                  {t.gasAlarmTitle}
                 </h4>
                 <p style={{ fontSize: '0.82rem', color: '#7F1D1D', lineHeight: '1.4' }}>
-                  Methane level at {methaneLevel}% exceeds statutory DGMS explosive boundary (1.25%). Do NOT advance without certified Level-A Positive-Pressure Breathing Apparatus.
+                  {t.gasAlarmDesc}
                 </p>
               </div>
             </div>
@@ -400,7 +400,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
                 fontSize: '0.9rem'
               }}
             >
-              Initiate Mandatory PPE Donning Sequence →
+              {t.gasAlarmBtn}
             </button>
           </div>
         )}
@@ -412,7 +412,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
               {t.gasPpeTitle}
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.85rem' }}>
-              Verify each mandatory personal protective item under Mines Act 1952:
+              {t.gasPpeVerifyPrompt}
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -432,8 +432,8 @@ export default function GasModuleAR({ onComplete, onCancel }) {
                   cursor: 'pointer'
                 }}
               >
-                <span>1. Positive-Pressure SCBA Oxygen Mask</span>
-                {ppeSCBA ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>[Tap to Fit Mask]</span>}
+                <span>{t.gasPpeMask}</span>
+                {ppeSCBA ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>{t.gasPpeFitMask}</span>}
               </button>
 
               <button
@@ -452,8 +452,8 @@ export default function GasModuleAR({ onComplete, onCancel }) {
                   cursor: 'pointer'
                 }}
               >
-                <span>2. Antistatic Helmet with Intrinsically Safe LED Lamp</span>
-                {ppeHelmet ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>[Tap to Lock Helmet]</span>}
+                <span>{t.gasPpeHelmet}</span>
+                {ppeHelmet ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>{t.gasPpeLockHelmet}</span>}
               </button>
 
               <button
@@ -472,8 +472,8 @@ export default function GasModuleAR({ onComplete, onCancel }) {
                   cursor: 'pointer'
                 }}
               >
-                <span>3. Full-Body Safety Harness with Retrievable Lifeline</span>
-                {ppeHarness ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>[Tap to Attach Lifeline]</span>}
+                <span>{t.gasPpeHarness}</span>
+                {ppeHarness ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>{t.gasPpeAttachLifeline}</span>}
               </button>
             </div>
 
@@ -488,7 +488,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
                 cursor: allPPECompleted ? 'pointer' : 'not-allowed'
               }}
             >
-              {allPPECompleted ? 'PPE Verified • Proceed to Buddy Communication Check →' : 'Fit All 3 Mandatory Items to Proceed'}
+              {allPPECompleted ? t.gasPpeProceedBtn : t.gasPpeRequiredPrompt}
             </button>
           </div>
         )}
@@ -500,7 +500,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
               {t.gasBuddyTitle}
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.85rem' }}>
-              Mines Act Section 22 requires standby surface buddy communication verification:
+              {t.gasBuddyReqPrompt}
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -522,9 +522,9 @@ export default function GasModuleAR({ onComplete, onCancel }) {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Radio size={16} />
-                  <span>Radio Comms Frequency Check (Channel 4 Mining Band)</span>
+                  <span>{t.gasBuddyRadio}</span>
                 </div>
-                {radioConfirmed ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>[Check Signal]</span>}
+                {radioConfirmed ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>{t.gasBuddyCheckRadio}</span>}
               </button>
 
               <button
@@ -545,9 +545,9 @@ export default function GasModuleAR({ onComplete, onCancel }) {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <UserCheck size={16} />
-                  <span>Lifeline Tug Protocol (2-Tugs = Normal, 3-Tugs = Emergency)</span>
+                  <span>{t.gasBuddyLifeline}</span>
                 </div>
-                {lifelineSecured ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>[Confirm Tug]</span>}
+                {lifelineSecured ? <CheckCircle2 size={18} /> : <span style={{ color: '#64748B' }}>{t.gasBuddyConfirmLifeline}</span>}
               </button>
             </div>
 
@@ -562,7 +562,7 @@ export default function GasModuleAR({ onComplete, onCancel }) {
                 cursor: allBuddyCompleted ? 'pointer' : 'not-allowed'
               }}
             >
-              {allBuddyCompleted ? 'Confirm Protocol & Authorize Confined Space Entry →' : 'Complete Buddy Protocol to Continue'}
+              {allBuddyCompleted ? t.gasBuddyBtn : t.gasBuddyRequiredPrompt}
             </button>
           </div>
         )}
@@ -574,17 +574,17 @@ export default function GasModuleAR({ onComplete, onCancel }) {
               <CheckCircle2 size={32} color="var(--gov-success)" />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--gov-navy)', marginBottom: '0.25rem' }}>
-              Confined Space Entry & Atmospheric Protocol Certified
+              {t.gasCompleteTitle}
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-              Atmospheric gas detection, Level-A PPE verification, and surface buddy communications verified compliant with Mines Act 1952.
+              {t.gasCompleteDesc}
             </p>
             <button
               onClick={() => onComplete({ accuracy: 0.96, completionTimeSec: 210 })}
               className="gov-btn-gold"
               style={{ width: '100%', padding: '0.85rem', fontSize: '0.92rem' }}
             >
-              Proceed to Graded DGMS Examination →
+              {t.gasCompleteBtn}
             </button>
           </div>
         )}

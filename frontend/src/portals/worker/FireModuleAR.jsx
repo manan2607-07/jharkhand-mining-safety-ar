@@ -309,7 +309,7 @@ export default function FireModuleAR({ onComplete, onCancel }) {
             background: '#1E7B34'
           }} />
           <span style={{ fontSize: '0.78rem', fontWeight: '700', color: 'var(--gov-navy)', letterSpacing: '0.03em' }}>
-            DGMS STATUTORY SIMULATION • CMR REG. 136 (PASS DRILL)
+            {t.fireHudTitle}
           </span>
         </div>
 
@@ -365,7 +365,7 @@ export default function FireModuleAR({ onComplete, onCancel }) {
         boxShadow: '0 3px 10px rgba(0, 0, 0, 0.4)'
       }}>
         <Compass size={18} />
-        <span>EMERGENCY SHAFT ESCAPE WAY (25m) →</span>
+        <span>{t.emergencyExitSign}</span>
       </div>
 
       {/* Target Crosshair when in Aim step */}
@@ -402,7 +402,7 @@ export default function FireModuleAR({ onComplete, onCancel }) {
             borderRadius: '2px',
             whiteSpace: 'nowrap'
           }}>
-            TAP BASE TO LOCK NOZZLE AIM
+            {t.tapToLockAim}
           </span>
         </div>
       )}
@@ -470,17 +470,17 @@ export default function FireModuleAR({ onComplete, onCancel }) {
         {currentStep === 0 && (
           <div>
             <h3 style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--gov-navy)', marginBottom: '0.35rem' }}>
-              Statutory Hazard Assessment & Evacuation Route
+              {t.passStep0Title}
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: '1.45' }}>
-              Class B Coal Dust / Electrical Fire detected in Heading #4. Ensure emergency escape shaft is unobstructed behind you before commencing suppression.
+              {t.passStep0Desc}
             </p>
             <button
               onClick={() => setCurrentStep(1)}
               className="gov-btn-primary"
               style={{ width: '100%', padding: '0.75rem' }}
             >
-              Verify Route & Unlatch Fire Extinguisher →
+              {t.passStep0Btn}
             </button>
           </div>
         )}
@@ -498,7 +498,7 @@ export default function FireModuleAR({ onComplete, onCancel }) {
               className="gov-btn-primary"
               style={{ width: '100%', padding: '0.75rem' }}
             >
-              Pull Safety Seal Pin (P) 🔓
+              {t.passP_btn}
             </button>
           </div>
         )}
@@ -516,7 +516,7 @@ export default function FireModuleAR({ onComplete, onCancel }) {
               className="gov-btn-primary"
               style={{ width: '100%', padding: '0.75rem' }}
             >
-              Lock Crosshair on Base of Fire (A) 🎯
+              {t.passA_btn}
             </button>
           </div>
         )}
@@ -547,7 +547,7 @@ export default function FireModuleAR({ onComplete, onCancel }) {
                 transition: 'background 0.15s ease'
               }}
             >
-              {isSqueezing ? 'DISCHARGING DRY CHEMICAL FOAM 💨' : 'HOLD & SQUEEZE OPERATING LEVER (S) ✊'}
+              {isSqueezing ? t.passS1_btnRelease : t.passS1_btnHold}
             </button>
           </div>
         )}
@@ -601,7 +601,7 @@ export default function FireModuleAR({ onComplete, onCancel }) {
                 color: '#FFFFFF'
               }}
             >
-              {isSqueezing ? 'SWEEPING NOZZLE SIDE-TO-SIDE ↔️' : 'HOLD TO SWEEP NOZZLE ACROSS FLAMES (S) ↔️'}
+              {t.passS2_btn}
             </button>
           </div>
         )}
@@ -612,17 +612,17 @@ export default function FireModuleAR({ onComplete, onCancel }) {
               <CheckCircle2 size={32} color="var(--gov-success)" />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--gov-navy)', marginBottom: '0.25rem' }}>
-              Fire Hazard Neutralized & Extinguished
+              {t.fireCompleteTitle}
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-              PASS Protocol successfully executed with 94% statutory compliance. Complete the DGMS statutory examination paper to record completion.
+              {t.fireCompleteDesc}
             </p>
             <button
               onClick={() => onComplete({ accuracy: 0.94, completionTimeSec: 180 })}
               className="gov-btn-gold"
               style={{ width: '100%', padding: '0.85rem', fontSize: '0.92rem' }}
             >
-              Proceed to Graded DGMS Examination →
+              {t.fireCompleteBtn}
             </button>
           </div>
         )}

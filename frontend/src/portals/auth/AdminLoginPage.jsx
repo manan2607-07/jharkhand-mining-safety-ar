@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { AshokaLionCapital, JharkhandGovSeal } from '../../components/Emblem';
 import { 
   Shield, 
@@ -12,11 +13,13 @@ import {
   RefreshCw, 
   AlertCircle,
   KeyRound,
-  CheckCircle2
+  CheckCircle2,
+  Globe
 } from 'lucide-react';
 
 export default function AdminLoginPage({ onLoginSuccess }) {
   const { loginAdmin } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -69,9 +72,44 @@ export default function AdminLoginPage({ onLoginSuccess }) {
       backgroundImage: 'radial-gradient(circle at 50% 20%, #0c4e7e 0%, #073556 100%)',
       padding: '2.5rem 1rem',
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center'
     }}>
+      {/* Top Language Bar */}
+      <div style={{
+        maxWidth: '1000px',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginBottom: '1rem',
+        gap: '0.5rem'
+      }}>
+        <Globe size={14} color="#2EE59D" />
+        <span style={{ fontSize: '0.78rem', color: '#E2E8F0', fontWeight: '600' }}>
+          {t.selectLanguage}:
+        </span>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          style={{
+            padding: '0.2rem 0.6rem',
+            borderRadius: '4px',
+            border: '1px solid rgba(255,255,255,0.2)',
+            background: '#1b2733',
+            color: '#FFFFFF',
+            fontWeight: '700',
+            fontSize: '0.78rem',
+            cursor: 'pointer'
+          }}
+        >
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="sat">ᱥᱟᱱᱛᱟᱲᱤ</option>
+        </select>
+      </div>
+
       <div style={{
         maxWidth: '1000px',
         width: '100%',
@@ -80,7 +118,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
         gap: '2rem',
         alignItems: 'stretch'
       }}>
-        {/* Left Side: Regulatory Notice & Statutory Directives (Zero Admin Profile Leakage) */}
+        {/* Left Side: Regulatory Notice & Statutory Directives */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.06)',
           backdropFilter: 'blur(10px)',
@@ -108,13 +146,13 @@ export default function AdminLoginPage({ onLoginSuccess }) {
               />
               <div>
                 <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#2EE59D', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                  Government of Jharkhand • E-Governance SSO
+                  {t.sihTitle}
                 </div>
                 <div style={{ fontSize: '1.15rem', fontWeight: '800', fontFamily: "'Roboto Slab', serif", color: '#FFFFFF', lineHeight: 1.25 }}>
-                  खान सुरक्षा विनियामक कंसोल
+                  {t.adminLoginHeader}
                 </div>
                 <div style={{ fontSize: '0.76rem', color: '#CBD5E1', marginTop: '0.15rem' }}>
-                  Mining Safety & DGMS Regulatory Portal
+                  {t.adminLoginSubheader}
                 </div>
               </div>
             </div>
@@ -129,44 +167,44 @@ export default function AdminLoginPage({ onLoginSuccess }) {
               lineHeight: 1.5,
               color: '#E2E8F0'
             }}>
-              <strong style={{ color: '#2EE59D' }}>Statutory Access Restriction:</strong><br />
-              This gateway is restricted strictly to accredited Site Safety Officers, DGMS Statutory Inspectors, and State Nodal Directors under Section 38 of the Mines Act, 1952.
+              <strong style={{ color: '#2EE59D' }}>Statutory Notice:</strong><br />
+              {t.adminRegulatoryNotice}
             </div>
 
-            {/* Official Statutory Directives */}
+            {/* Official Statutory Roles */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-                <Shield size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
+                <Building2 size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
                 <div>
                   <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#FFFFFF' }}>
-                    Role-Isolated Authority Sessions
+                    {t.roleSafetyOfficerTitle}
                   </div>
                   <div style={{ fontSize: '0.74rem', color: '#94A3B8', lineHeight: 1.4 }}>
-                    Upon authentication, your console is strictly confined to your accredited statutory jurisdiction. Cross-role impersonation or visibility into other administrative accounts is strictly prohibited.
+                    {t.roleSafetyOfficerDesc}
                   </div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-                <KeyRound size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
+                <Scale size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
                 <div>
                   <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#FFFFFF' }}>
-                    Statutory Audit & Forensic Trail
+                    {t.roleDgmsTitle}
                   </div>
                   <div style={{ fontSize: '0.74rem', color: '#94A3B8', lineHeight: 1.4 }}>
-                    All logins, workforce certifications, and regulatory ledger verifications are immutably signed and timestamped per DGMS safety circulars.
+                    {t.roleDgmsDesc}
                   </div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-                <CheckCircle2 size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
+                <BarChart3 size={20} color="#2EE59D" style={{ marginTop: '0.15rem', flexShrink: 0 }} />
                 <div>
                   <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#FFFFFF' }}>
-                    Statutory Credentials Assistance
+                    {t.roleStateTitle}
                   </div>
                   <div style={{ fontSize: '0.74rem', color: '#94A3B8', lineHeight: 1.4 }}>
-                    Official credentials are provided through the DGMS Dhanbad Headquarters or Dept. of Mines & Geology, Govt. of Jharkhand.
+                    {t.roleStateDesc}
                   </div>
                 </div>
               </div>
@@ -174,7 +212,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
           </div>
 
           <div style={{ marginTop: '1.75rem', fontSize: '0.72rem', color: '#94A3B8', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.75rem' }}>
-            Smart India Hackathon 2026 • Academic Technical Demonstration (PS ID: 26041)
+            {t.adminDemoCredsNotice}
           </div>
         </div>
 
@@ -210,10 +248,10 @@ export default function AdminLoginPage({ onLoginSuccess }) {
               fontFamily: "'Roboto Slab', serif",
               margin: '0.2rem 0'
             }}>
-              प्राधिकरण साइन-इन (Official Sign-In)
+              {t.adminLoginBtn}
             </h2>
             <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0 }}>
-              Access Safety Officer, DGMS, or State Nodal Console
+              {t.adminLoginSubheader}
             </p>
           </div>
 
@@ -238,7 +276,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '700', color: '#334155', marginBottom: '0.35rem' }}>
-                विभागीय उपयोगकर्ता नाम (Official Username):
+                {t.adminRoleLabel}:
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -246,7 +284,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g. officer1, dgms_inspector, state_nodal"
+                  placeholder={t.adminRolePlaceholder}
                   style={{
                     width: '100%',
                     padding: '0.65rem 0.75rem 0.65rem 2.4rem',
@@ -261,11 +299,14 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                 />
                 <User size={18} color="#64748B" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
               </div>
+              <span style={{ fontSize: '0.72rem', color: '#64748B', display: 'block', marginTop: '0.25rem' }}>
+                Try: <strong>officer1</strong>, <strong>dgms_inspector</strong>, or <strong>state_nodal</strong>
+              </span>
             </div>
 
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '700', color: '#334155', marginBottom: '0.35rem' }}>
-                पासवर्ड (Statutory Password):
+                {t.adminPassLabel}:
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -273,7 +314,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="e.g. password123"
+                  placeholder={t.adminPassPlaceholder}
                   style={{
                     width: '100%',
                     padding: '0.65rem 0.75rem 0.65rem 2.4rem',
@@ -287,12 +328,15 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                 />
                 <Lock size={18} color="#64748B" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
               </div>
+              <span style={{ fontSize: '0.72rem', color: '#64748B', display: 'block', marginTop: '0.25rem' }}>
+                Default Password: <strong>password123</strong>
+              </span>
             </div>
 
             {/* Security CAPTCHA verification */}
             <div>
               <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '700', color: '#334155', marginBottom: '0.35rem' }}>
-                सुरक्षा सत्यापन कोड (Security Verification Code):
+                {t.captchaLabel}:
               </label>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <input
@@ -300,7 +344,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                   required
                   value={captchaInput}
                   onChange={(e) => setCaptchaInput(e.target.value)}
-                  placeholder="Enter Code"
+                  placeholder={t.captchaPlaceholder}
                   style={{
                     flex: 1,
                     padding: '0.65rem 0.75rem',
@@ -360,7 +404,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
                 marginTop: '0.5rem'
               }}
             >
-              <span>{loading ? 'सत्यापित हो रहा है...' : 'प्राधिकरण कंसोल में प्रवेश करें (Sign In)'}</span>
+              <span>{loading ? t.adminLoggingIn : t.adminLoginBtn}</span>
               <ArrowRight size={18} />
             </button>
           </form>
@@ -375,7 +419,7 @@ export default function AdminLoginPage({ onLoginSuccess }) {
             color: '#64748B',
             textAlign: 'center'
           }}>
-            🛡️ Official DGMS & Jharkhand Mines Audit Log Tracking Enabled.
+            🛡️ {t.statutoryComplianceNotice}
           </div>
         </div>
       </div>

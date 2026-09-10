@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiFetch } from '../../services/api';
 import { AshokaLionCapital } from '../../components/Emblem';
 import DigitalCertificate from '../worker/DigitalCertificate';
@@ -23,6 +24,7 @@ import {
 
 export default function DGMSPortal({ initialHash = '' }) {
   const { currentUser } = useAuth();
+  const { t } = useLanguage();
   const [hashInput, setHashInput] = useState(initialHash);
   const [verificationResult, setVerificationResult] = useState(null);
   const [viewingCertificate, setViewingCertificate] = useState(null);
@@ -142,19 +144,19 @@ export default function DGMSPortal({ initialHash = '' }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
               <span className="gov-badge-navy">
-                Regulatory Simulation Console
+                {t.dgmsConsoleBadge}
               </span>
               <span style={{ fontSize: '0.82rem', color: '#64748B' }}>
-                DGMS Standards Benchmark Console • Dhanbad Regulatory Framework
+                {t.dgmsBenchmarkSub}
               </span>
             </div>
 
             <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)', margin: 0 }}>
-              Mines Act 1952 Compliance Ledger (DGMS Regulatory Simulation)
+              {t.dgmsLedgerTitle}
             </h2>
 
             <p style={{ fontSize: '0.86rem', color: '#4A5568', marginTop: '0.25rem' }}>
-              Simulated Auditor / Inspector: <strong>{currentUser.name}</strong> • Regulatory Benchmark Ref: DGMS/S&T/Circular-2026/041
+              {t.dgmsAuditorLabel}: <strong>{currentUser.name}</strong> • {t.dgmsBenchmarkRef}
             </p>
           </div>
         </div>
@@ -165,17 +167,17 @@ export default function DGMSPortal({ initialHash = '' }) {
           style={{ padding: '0.65rem 1.25rem', fontSize: '0.88rem' }}
         >
           <Download size={16} />
-          <span>Export Statutory Audit Log (CSV)</span>
+          <span>{t.dgmsExportCsv}</span>
         </button>
       </div>
 
       {/* Live QR / Hash Verification Widget */}
       <div className="gov-card" style={{ padding: '1.75rem', marginBottom: '1.75rem' }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)', marginBottom: '0.35rem' }}>
-          Live On-Site QR Certificate Verifier & Anti-Forgery Scanner
+          {t.dgmsScannerTitle}
         </h3>
         <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1.25rem' }}>
-          Scan physical worker card QR code or paste Certificate ID / SHA-256 HMAC hash to verify ledger authenticity in real-time
+          {t.dgmsScannerDesc}
         </p>
 
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
@@ -193,7 +195,7 @@ export default function DGMSPortal({ initialHash = '' }) {
             <QrCode size={18} color="#0c4e7e" />
             <input
               type="text"
-              placeholder="Paste QR Hash (e.g. bb44da...) or Certificate ID (e.g. CERT-JH-2026-10004)..."
+              placeholder={t.dgmsInputPlaceholder}
               value={hashInput}
               onChange={(e) => setHashInput(e.target.value)}
               className="font-mono"
@@ -214,7 +216,7 @@ export default function DGMSPortal({ initialHash = '' }) {
             className="gov-btn-primary"
             style={{ padding: '0.6rem 1.5rem', opacity: hashInput ? 1 : 0.6 }}
           >
-            {loading ? 'Querying DGMS Ledger...' : 'Verify Authenticity →'}
+            {loading ? t.dgmsVerifying : t.dgmsVerifyBtn}
           </button>
 
           {/* Quick Demo Test Buttons */}
@@ -229,7 +231,7 @@ export default function DGMSPortal({ initialHash = '' }) {
             className="gov-btn-secondary"
             style={{ padding: '0.6rem 0.95rem', fontSize: '0.8rem' }}
           >
-            Test Valid Cert
+            {t.dgmsTestValid}
           </button>
 
           <button
@@ -241,7 +243,7 @@ export default function DGMSPortal({ initialHash = '' }) {
             className="gov-btn-secondary"
             style={{ padding: '0.6rem 0.95rem', fontSize: '0.8rem', borderColor: '#F8B4B4', color: '#9B1C1C' }}
           >
-            Test Forgery Check
+            {t.dgmsTestForgery}
           </button>
         </div>
 
@@ -266,13 +268,13 @@ export default function DGMSPortal({ initialHash = '' }) {
                   color: verificationResult.verified ? '#1E7B34' : '#9B1C1C'
                 }}>
                   {verificationResult.verified
-                    ? 'VERIFIED AUTHENTIC: STATUTORY DGMS COMPLIANT'
-                    : 'RECORD NOT FOUND OR FRAUDULENT FORGERY DETECTED'}
+                    ? t.dgmsVerifiedAuthentic
+                    : t.dgmsFraudDetected}
                 </div>
                 <div style={{ fontSize: '0.84rem', color: '#4A5568', marginTop: '0.2rem' }}>
                   {verificationResult.verified
-                    ? 'Cryptographic SHA-256 HMAC digital signature validated against state ledger. Zero data tampering detected.'
-                    : verificationResult.error || 'The submitted QR hash does not match records or has been altered.'}
+                    ? t.dgmsVerifiedDetail
+                    : verificationResult.error || t.dgmsFraudDetail}
                 </div>
               </div>
             </div>
@@ -290,30 +292,30 @@ export default function DGMSPortal({ initialHash = '' }) {
                   fontSize: '0.85rem'
                 }}>
                   <div>
-                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Worker Details</span>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>{t.dgmsWorkerDetails}</span>
                     <div style={{ fontWeight: '700', color: '#0c4e7e' }}>{verificationResult.certificate.worker_name}</div>
                     <div style={{ fontSize: '0.78rem', color: '#4A5568' }} className="font-mono">{verificationResult.certificate.worker_code}</div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Mine Facility Site</span>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>{t.dgmsMineFacility}</span>
                     <div style={{ fontWeight: '700', color: '#1A202C' }}>{verificationResult.certificate.site_name}</div>
                     <div style={{ fontSize: '0.78rem', color: '#4A5568' }}>{verificationResult.certificate.district} ({verificationResult.certificate.sector})</div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Module Competency</span>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>{t.dgmsModuleCompetency}</span>
                     <div style={{ fontWeight: '700', color: '#1A202C' }}>{verificationResult.certificate.module_title}</div>
-                    <div style={{ fontSize: '0.78rem', color: '#1E7B34', fontWeight: '700' }}>Score: {verificationResult.certificate.score}% (PASSED)</div>
+                    <div style={{ fontSize: '0.78rem', color: '#1E7B34', fontWeight: '700' }}>{(t.dgmsPassedTag || 'Score: {score}% (PASSED)').replace('{score}', verificationResult.certificate.score)}</div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Statutory Validity Window</span>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>{t.dgmsValidityWindow}</span>
                     <div style={{ fontWeight: '700', color: '#8B6508' }}>
-                      Expires: {verificationResult.certificate.expiry_date}
+                      {t.dgmsExpiresLabel}: {verificationResult.certificate.expiry_date}
                     </div>
                     <div style={{ fontSize: '0.78rem', color: verificationResult.daysRemaining < 30 ? '#9B1C1C' : '#1E7B34', fontWeight: '600' }}>
-                      {verificationResult.daysRemaining} day(s) until mandatory refresher
+                      {verificationResult.daysRemaining} {t.dgmsRefresherDays}
                     </div>
                   </div>
                 </div>
@@ -352,7 +354,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                     }}
                   >
                     <Printer size={16} />
-                    <span>View &amp; Print Certificate</span>
+                    <span>{t.dgmsViewPrintCert}</span>
                   </button>
                 </div>
               </>
@@ -375,25 +377,25 @@ export default function DGMSPortal({ initialHash = '' }) {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)' }}>
-              Mines Act, 1952 Statutory Audit Register
+              {t.dgmsAuditRegisterTitle}
             </h3>
             <p style={{ fontSize: '0.84rem', color: '#64748B' }}>
-              Mandatory digital registry of all issued competency certificates with cryptographic hashes
+              {t.dgmsAuditRegisterDesc}
             </p>
           </div>
 
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', color: '#4A5568', fontWeight: '600' }}>Filter by Sector:</span>
+            <span style={{ fontSize: '0.82rem', color: '#4A5568', fontWeight: '600' }}>{t.dgmsFilterSector}</span>
             <select
               value={filterSector}
               onChange={(e) => setFilterSector(e.target.value)}
               className="gov-select"
               style={{ width: 'auto', padding: '0.4rem 0.75rem', fontSize: '0.84rem' }}
             >
-              <option value="ALL">All Industrial Sectors</option>
-              <option value="COAL">Coal Mining (BCCL / CCL)</option>
-              <option value="STEEL">Steel Processing (SAIL / Tata)</option>
-              <option value="MICA">Mica Beneficiation (Koderma / Giridih)</option>
+              <option value="ALL">{t.dgmsSectorAll}</option>
+              <option value="COAL">{t.dgmsSectorCoal}</option>
+              <option value="STEEL">{t.dgmsSectorSteel}</option>
+              <option value="MICA">{t.dgmsSectorMica}</option>
             </select>
           </div>
         </div>
@@ -402,16 +404,16 @@ export default function DGMSPortal({ initialHash = '' }) {
           <table className="gov-table">
             <thead>
               <tr>
-                <th>Certificate ID</th>
-                <th>Worker Code</th>
-                <th>Worker Name</th>
-                <th>Mine / Plant Site</th>
-                <th>District</th>
-                <th>Score</th>
-                <th>Issue Date</th>
-                <th>Expiry Date</th>
-                <th>Statutory Status</th>
-                <th>Verify</th>
+                <th>{t.dgmsThCertId}</th>
+                <th>{t.dgmsThWorkerCode}</th>
+                <th>{t.dgmsThWorkerName}</th>
+                <th>{t.dgmsThMineSite}</th>
+                <th>{t.dgmsThDistrict}</th>
+                <th>{t.dgmsThScore}</th>
+                <th>{t.dgmsThIssueDate}</th>
+                <th>{t.dgmsThExpiryDate}</th>
+                <th>{t.dgmsThStatus}</th>
+                <th>{t.dgmsThVerify}</th>
               </tr>
             </thead>
             <tbody>
@@ -457,7 +459,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                         className="gov-btn-secondary"
                         style={{ padding: '0.25rem 0.55rem', fontSize: '0.74rem' }}
                       >
-                        Audit
+                        {t.dgmsBtnAudit}
                       </button>
                       <button
                         type="button"
@@ -491,7 +493,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                         }}
                       >
                         <Printer size={12} />
-                        <span>Print</span>
+                        <span>{t.dgmsBtnPrint}</span>
                       </button>
                     </div>
                   </td>
@@ -533,7 +535,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                   boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
                 }}
               >
-                ✕ Close Inspector Preview
+                {t.dgmsClosePreview}
               </button>
             </div>
             <DigitalCertificate

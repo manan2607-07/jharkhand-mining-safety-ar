@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { apiFetch } from '../../services/api';
 import { AshokaLionCapital } from '../../components/Emblem';
 import { 
@@ -44,6 +45,7 @@ ChartJS.register(
 
 export default function StateNodalDashboard() {
   const { currentUser } = useAuth();
+  const { t } = useLanguage();
   const [summary, setSummary] = useState(null);
   const [districtVolumes, setDistrictVolumes] = useState([]);
   const [weeklyTrend, setWeeklyTrend] = useState(null);
@@ -93,7 +95,7 @@ export default function StateNodalDashboard() {
     };
   }, []);
 
-  // Chart 1: Weekly Certification Volume by District (Government Palette)
+  // Chart 1: {t.stateChart1Title} (Government Palette)
   const weeklyChartData = {
     labels: weeklyTrend?.labels || ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7 (Current)'],
     datasets: [
@@ -184,19 +186,19 @@ export default function StateNodalDashboard() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
               <span className="gov-badge-navy">
-                State Nodal Analytics
+                {t.stateConsoleBadge}
               </span>
               <span style={{ fontSize: '0.82rem', color: '#64748B' }}>
-                Academic Simulation Console • Modeled on Dept. of Mines & Geology (Govt. of Jharkhand)
+                {t.stateConsoleSub}
               </span>
             </div>
 
             <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)', margin: 0 }}>
-              Jharkhand Industrial Mine Safety — State Analytics & Compliance Simulation
+              {t.stateMainTitle}
             </h2>
 
             <p style={{ fontSize: '0.86rem', color: '#4A5568', marginTop: '0.25rem' }}>
-              Simulated State Nodal Officer: <strong>{currentUser.name}</strong> • Technical Evaluation Sandbox • Real-Time Regulatory Metrics
+              {t.stateOfficerLine}: <strong>{currentUser.name}</strong> • {t.stateSandboxNotice}
             </p>
           </div>
         </div>
@@ -209,7 +211,7 @@ export default function StateNodalDashboard() {
           fontSize: '0.78rem',
           color: '#4A5568'
         }}>
-          Statutory Framework: <strong>Mines Act 1952 (DGMS Circulars)</strong>
+          {t.stateFrameworkTag}
         </div>
       </div>
 
@@ -225,13 +227,13 @@ export default function StateNodalDashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600', textTransform: 'uppercase' }}>
-                Total Workers Certified
+                {t.stateKpiCertified}
               </div>
               <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0c4e7e', margin: '0.2rem 0' }}>
                 {summary?.workersTrained ? summary.workersTrained.toLocaleString() : '12,492'}
               </div>
               <div style={{ fontSize: '0.74rem', color: '#1E7B34', fontWeight: '600' }}>
-                ↑ 18.4% month-over-month
+                {t.stateKpiGrowth}
               </div>
             </div>
             <div style={{
@@ -254,13 +256,13 @@ export default function StateNodalDashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600', textTransform: 'uppercase' }}>
-                Overall Pass Rate
+                {t.stateKpiPassRate}
               </div>
               <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1E7B34', margin: '0.2rem 0' }}>
                 86%
               </div>
               <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
-                DGMS Benchmark: 75%
+                {t.stateKpiDgmsBenchmark}
               </div>
             </div>
             <div style={{
@@ -283,13 +285,13 @@ export default function StateNodalDashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600', textTransform: 'uppercase' }}>
-                Active Mining Sites
+                {t.stateKpiActiveSites}
               </div>
               <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#B8860B', margin: '0.2rem 0' }}>
                 348
               </div>
               <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
-                Coal, Steel & Mica units
+                {t.stateKpiUnits}
               </div>
             </div>
             <div style={{
@@ -312,13 +314,13 @@ export default function StateNodalDashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600', textTransform: 'uppercase' }}>
-                Refresher Due (&lt;30d)
+                {t.stateKpiRefresherDue}
               </div>
               <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#9B1C1C', margin: '0.2rem 0' }}>
                 {summary?.certsExpiringWarning || 15}
               </div>
               <div style={{ fontSize: '0.74rem', color: '#9B1C1C', fontWeight: '600' }}>
-                Notice issued to site officers
+                {t.stateKpiNoticeIssued}
               </div>
             </div>
             <div style={{
@@ -349,10 +351,10 @@ export default function StateNodalDashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)' }}>
-                Weekly Certification Volume by District
+                {t.stateChart1Title}
               </h3>
               <p style={{ fontSize: '0.8rem', color: '#64748B' }}>
-                Training progression across Dhanbad, Bokaro, Ramgarh & Koderma
+                {t.stateChart1Sub}
               </p>
             </div>
             <span className="gov-badge-navy">Q3 2026</span>
@@ -367,10 +369,10 @@ export default function StateNodalDashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)' }}>
-                Tribal Language Distribution in AR Training
+                {t.stateChart2Title}
               </h3>
               <p style={{ fontSize: '0.8rem', color: '#64748B' }}>
-                Breakdown of voiceover & script usage among frontline workers
+                {t.stateChart2Sub}
               </p>
             </div>
             <span className="gov-badge-amber">55% Santali</span>
@@ -407,14 +409,14 @@ export default function StateNodalDashboard() {
         }}>
           <div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)' }}>
-              Statutory 30-Day Certificate Expiry Early Warning Radar
+              {t.stateRadarTitle}
             </h3>
             <p style={{ fontSize: '0.84rem', color: '#64748B' }}>
-              Mines Act 1952 mandates annual refresher training. Workers expiring within 30 days are flagged below.
+              {t.stateRadarSub}
             </p>
           </div>
           <span className="gov-badge-amber">
-            Action Required by Site Supervisors
+            {t.stateActionRequired}
           </span>
         </div>
 
@@ -422,14 +424,14 @@ export default function StateNodalDashboard() {
           <table className="gov-table">
             <thead>
               <tr>
-                <th>Certificate ID</th>
-                <th>Worker Code</th>
-                <th>Worker Name</th>
-                <th>Contact Phone</th>
-                <th>Mine Site</th>
-                <th>Issue Date</th>
-                <th>Statutory Expiry</th>
-                <th>Status</th>
+                <th>{t.stateThCertId}</th>
+                <th>{t.stateThWorkerCode}</th>
+                <th>{t.stateThWorkerName}</th>
+                <th>{t.stateThContactPhone}</th>
+                <th>{t.stateThMineSite}</th>
+                <th>{t.stateThIssueDate}</th>
+                <th>{t.stateThExpiryDate}</th>
+                <th>{t.stateThStatus}</th>
               </tr>
             </thead>
             <tbody>
@@ -459,7 +461,7 @@ export default function StateNodalDashboard() {
                     </td>
                     <td>
                       <span className="gov-badge-amber">
-                        ⚠ Refresher Due
+                        {t.stateRefresherDueBadge}
                       </span>
                     </td>
                   </tr>
@@ -467,7 +469,7 @@ export default function StateNodalDashboard() {
               ) : (
                 <tr>
                   <td colSpan={8} style={{ textAlign: 'center', color: '#64748B', padding: '1.5rem' }}>
-                    All statutory certifications are currently within their compliant validity window.
+                    {t.stateAllCompliant}
                   </td>
                 </tr>
               )}

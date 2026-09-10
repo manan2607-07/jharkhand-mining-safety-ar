@@ -101,7 +101,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     {
       id: 'MOD-003',
       title: t.module3Title,
-      subtitle: 'Conveyor belt lock-out tag-out (LOTO), roller pinch points, and emergency pull cords',
+      subtitle: t.module3Subtitle,
       icon: Cog,
       color: '#4B5563',
       isMvp: false,
@@ -112,7 +112,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     {
       id: 'MOD-004',
       title: t.module4Title,
-      subtitle: 'Flameproof enclosure inspection, explosive magazine handling, and shot-firing cordon',
+      subtitle: t.module4Subtitle,
       icon: Zap,
       color: '#4B5563',
       isMvp: false,
@@ -123,7 +123,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     {
       id: 'MOD-005',
       title: t.module5Title,
-      subtitle: 'Mandatory DGMS 11-point gear protocol, cap lamp inspection, and dust respirator fitting',
+      subtitle: t.module5Subtitle,
       icon: HardHat,
       color: '#4B5563',
       isMvp: false,
@@ -300,7 +300,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                     {currentUser.name}
                   </h2>
                   <span className="gov-badge-green">
-                    ✓ Statutory Active Miner
+                    ✓ {t.activeMinerStatus}
                   </span>
                 </div>
 
@@ -309,11 +309,11 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                 </p>
 
                 <div style={{ fontSize: '0.8rem', color: '#718096' }}>
-                  Workforce Code: <strong className="font-mono" style={{ color: '#0c4e7e' }}>{currentUser.workerCode}</strong>
+                  {t.workforceCode}: <strong className="font-mono" style={{ color: '#0c4e7e' }}>{currentUser.workerCode}</strong>
                   <span style={{ margin: '0 0.5rem' }}>•</span>
-                  Sector: <strong>{currentUser.sector || 'COAL'}</strong>
+                  {t.sectorLabel}: <strong>{currentUser.sector || 'COAL'}</strong>
                   <span style={{ margin: '0 0.5rem' }}>•</span>
-                  District: <strong>{currentUser.district || 'Dhanbad'}</strong>
+                  {t.districtLabel}: <strong>{currentUser.district || 'Dhanbad'}</strong>
                 </div>
               </div>
             </div>
@@ -333,7 +333,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                   {workerCerts.length}
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                  Active DGMS Certs
+                  {t.activeCertsCounter}
                 </div>
               </div>
 
@@ -344,7 +344,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                   2
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                  Mandatory Drills
+                  {t.mandatoryDrillsCounter}
                 </div>
               </div>
             </div>
@@ -361,10 +361,10 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
           }}>
             <div>
               <h3 style={{ fontSize: '1.25rem', color: '#0c4e7e', fontWeight: '800', fontFamily: 'var(--font-heading)' }}>
-                Statutory Vocational AR Safety Modules
+                {t.modulesSectionTitle}
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#64748B' }}>
-                Directorate General of Mines Safety (DGMS) prescribed practical camera-overlaid competency drills
+                {t.modulesSectionSubtitle}
               </p>
             </div>
 
@@ -374,7 +374,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
             >
               <Volume2 size={14} />
-              <span>Audio Guidance</span>
+              <span>{t.audioGuidanceBtn}</span>
             </button>
           </div>
 
@@ -422,11 +422,11 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                       <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                         {isCertified && (
                           <span className="gov-badge-green">
-                            ✓ Certified
+                            ✓ {t.certifiedBadge}
                           </span>
                         )}
                         <span className={mod.isMvp ? 'gov-badge-amber' : 'gov-badge-grey'}>
-                          {mod.isMvp ? 'Statutory Drill' : 'Phase 2 Pipeline'}
+                          {mod.isMvp ? t.statutoryDrillBadge : t.phase2Badge}
                         </span>
                       </div>
                     </div>
@@ -455,7 +455,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                         <Clock size={13} /> {mod.duration}
                       </span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <Award size={13} /> Benchmark: {mod.threshold}
+                        <Award size={13} /> {t.passThresholdLabel} {mod.threshold}
                       </span>
                     </div>
 
@@ -475,7 +475,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                         className="gov-btn-secondary"
                         style={{ width: '100%', padding: '0.65rem', opacity: 0.6, cursor: 'not-allowed' }}
                       >
-                        Under DGMS Specification
+                        {t.underDgmsSpec}
                       </button>
                     )}
                   </div>
@@ -496,10 +496,10 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
             }}>
               <div>
                 <h3 style={{ fontSize: '1.2rem', color: '#0c4e7e', fontWeight: '800', fontFamily: 'var(--font-heading)' }}>
-                  Verified Vocational Safety Passports (Simulation Records)
+                  {t.passportsSectionTitle}
                 </h3>
                 <p style={{ fontSize: '0.84rem', color: '#64748B' }}>
-                  Cryptographically signed records benchmarked against Mines Act 1952 & DGMS vocational training standards.
+                  {t.passportsSectionSubtitle}
                 </p>
               </div>
             </div>
@@ -520,7 +520,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                   >
                     <div>
                       <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: '600' }}>
-                        Certificate Number
+                        {t.certNumberLabel}
                       </div>
                       <div className="font-mono" style={{ fontSize: '0.92rem', fontWeight: '700', color: '#0c4e7e' }}>
                         {cert.certificate_id || cert.certificateId}
@@ -529,7 +529,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                         {cert.module_title || cert.moduleTitle || 'Fire Safety Certification'}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#8B6508', marginTop: '0.2rem' }}>
-                        Statutory Validity: <strong>{cert.expiry_date || cert.expiryDate}</strong>
+                        {t.statutoryValidityLabel} <strong>{cert.expiry_date || cert.expiryDate}</strong>
                       </div>
                     </div>
 
@@ -562,10 +562,10 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
               <div className="gov-card" style={{ padding: '1.75rem', textAlign: 'center', background: '#F8FAFC' }}>
                 <ShieldCheck size={36} color="#0c4e7e" style={{ margin: '0 auto 0.5rem auto' }} />
                 <h4 style={{ fontSize: '1rem', fontWeight: '700', color: '#0c4e7e', margin: '0.25rem 0' }}>
-                  No Passports Issued Yet
+                  {t.noPassportsTitle}
                 </h4>
                 <p style={{ fontSize: '0.82rem', color: '#64748B', maxWidth: '480px', margin: '0 auto 1rem auto' }}>
-                  Complete the hands-on AR Fire Extinguisher or Methane Gas drill above, score ≥ 80% on the DGMS safety assessment, and your verified digital passport will automatically appear here and sync to the regulatory audit ledger.
+                  {t.noPassportsDesc}
                 </p>
                 <button
                   onClick={() => {
@@ -575,7 +575,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                   className="gov-btn-primary"
                   style={{ padding: '0.45rem 1rem', fontSize: '0.82rem' }}
                 >
-                  Start an AR Drill Now
+                  {t.startDrillCta}
                 </button>
               </div>
             )}

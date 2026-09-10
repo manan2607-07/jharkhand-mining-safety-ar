@@ -8,7 +8,7 @@ import {
   Award, 
   RotateCcw, 
   ArrowRight,
-  ShieldCheck,
+  ShieldCheck, 
   AlertTriangle,
   FileCheck
 } from 'lucide-react';
@@ -49,7 +49,11 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
               sat: "ᱵᱤᱯᱚᱫᱽ ᱜᱷᱟᱱᱴᱤ ᱵᱟᱡᱟᱣ ᱟᱨ ᱟᱢ ᱛᱟᱭᱚᱢ ᱨᱮ ᱚᱰᱚᱠᱚᱜ ᱰᱟᱦᱟᱨ ᱧᱮᱞ"
             },
             isCorrect: true,
-            rationale: "DGMS Mines Safety Circular 2026 mandates acoustic alert and clear retreat path before engaging."
+            rationale: {
+              en: "DGMS Mines Safety Circular 2026 mandates acoustic alert and clear retreat path before engaging.",
+              hi: "डीजीएमएस खान सुरक्षा परिपत्र 2026 आगे बढ़ने से पहले श्रव्य चेतावनी और स्पष्ट वापसी मार्ग अनिवार्य करता है।",
+              sat: "DGMS ᱠᱷᱟᱫᱟᱱ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱟᱹᱱ ᱞᱮᱠᱟᱛᱮ ᱞᱟᱦᱟ ᱨᱮ ᱜᱷᱟᱱᱴᱤ ᱵᱟᱡᱟᱣ ᱟᱨ ᱨᱩᱣᱟᱹᱲ ᱰᱟᱦᱟᱨ ᱧᱮᱞ ᱞᱟᱹᱠᱛᱤᱭᱟ᱾"
+            }
           },
           {
             id: 'C',
@@ -78,7 +82,11 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
               sat: "ᱯᱤᱱ ᱚᱨ → ᱞᱟᱛᱟᱨ ᱥᱮᱫ ᱴᱷᱤᱠᱟᱹᱭ → ᱦᱮᱱᱰᱮᱞ ᱞᱤᱱ → ᱞᱮᱸᱜᱟ-ᱡᱚᱡᱚᱢ ᱦᱤᱞᱟᱹᱣ"
             },
             isCorrect: true,
-            rationale: "Statutory PASS sequence: Pull pin, Aim low, Squeeze lever, Sweep across base."
+            rationale: {
+              en: "Statutory PASS sequence: Pull pin, Aim low, Squeeze lever, Sweep across base.",
+              hi: "वैधानिक PASS क्रम: पिन खींचें, आग के निचले हिस्से पर निशाना साधें, लीवर दबाएं, आधार पर घुमाएं।",
+              sat: "ᱟᱹᱱ PASS ᱦᱩᱱᱟᱹᱨ: ᱯᱤᱱ ᱚᱨ, ᱞᱟᱛᱟᱨ ᱴᱷᱤᱠᱟᱹᱭ, ᱦᱮᱱᱰᱮᱞ ᱞᱤᱱ, ᱞᱮᱸᱜᱟ-ᱡᱚᱡᱚᱢ ᱦᱤᱞᱟᱹᱣ᱾"
+            }
           },
           {
             id: 'B',
@@ -116,7 +124,11 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
               sat: "ᱥᱟᱶᱛᱮ ᱤᱬᱤᱡ ᱵᱟᱹᱜᱤ ᱠᱟᱛᱮ ᱩᱥᱟᱹᱨᱟ ᱥᱟᱯᱷᱟ ᱦᱚᱭ ᱰᱟᱦᱟᱨ ᱛᱮ ᱚᱰᱚᱠ ᱪᱟᱞᱟᱜ"
             },
             isCorrect: true,
-            rationale: "Mines Act 1952 specifies that toxic smoke and electrical arcing outweigh firefighting attempts once flame bounds are breached."
+            rationale: {
+              en: "Mines Act 1952 specifies that toxic smoke and electrical arcing outweigh firefighting attempts once flame bounds are breached.",
+              hi: "खान अधिनियम 1952 निर्दिष्ट करता है कि आग बेकाबू होने पर जहरीला धुआं और बिजली का खतरा बुझाने से अधिक गंभीर होता है।",
+              sat: "ᱠᱷᱟᱫᱟᱱ ᱟᱹᱱ ᱑᱙᱕᱒ ᱞᱮᱠᱟᱛᱮ ᱥᱮᱸᱜᱮᱞ ᱰᱷᱮᱨ ᱞᱮᱱᱠᱷᱟᱱ ᱵᱤᱥ ᱫᱷᱩᱸᱣᱟᱹ ᱠᱷᱚᱱ ᱵᱟᱧᱪᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱩᱥᱟᱹᱨᱟ ᱚᱰᱚᱠᱚᱜ ᱦᱩᱭᱩᱜ-ᱟ᱾"
+            }
           }
         ]
       }
@@ -139,7 +151,11 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
               sat: "᱑.᱒᱕% ᱠᱷᱚᱱ ᱰᱷᱮᱨ ᱢᱤᱛᱷᱮᱱ ᱵᱤᱥᱯᱷᱚᱴ ᱦᱩᱭ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ: ᱵᱤᱡᱽᱞᱤ ᱵᱚᱸᱫᱽ ᱠᱟᱛᱮ ᱥᱟᱱᱟᱢ ᱦᱚᱲ ᱚᱰᱚᱠ"
             },
             isCorrect: true,
-            rationale: "DGMS limits explosive gas presence to 1.25% max in work areas."
+            rationale: {
+              en: "DGMS limits explosive gas presence to 1.25% max in work areas.",
+              hi: "डीजीएमएस कार्य क्षेत्रों में विस्फोटक गैस की उपस्थिति को अधिकतम 1.25% तक सीमित करता है।",
+              sat: "DGMS ᱠᱟᱹᱢᱤ ᱴᱷᱟᱶ ᱨᱮ ᱵᱤᱥᱯᱷᱚᱴ ᱜᱮᱥ ᱡᱟᱹᱥᱛᱤ ᱠᱷᱚᱱ ᱡᱟᱹᱥᱛᱤ ᱑.᱒᱕% ᱦᱟᱹᱵᱤᱡ ᱜᱮ ᱪᱷᱟᱹᱲ ᱮᱢᱚᱜ-ᱟ᱾"
+            }
           },
           {
             id: 'B',
@@ -168,7 +184,11 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
               sat: "ᱵᱟᱦᱨᱮ ᱨᱮ ᱛᱟᱦᱮᱸᱱ ᱡᱚᱴᱟᱣ ᱥᱟᱶ ᱨᱮᱰᱤᱭᱳ ᱟᱨ ᱢᱮᱫ ᱛᱮ ᱧᱮᱯᱮᱞ ᱥᱟᱹᱜᱟᱹᱭ ᱫᱚᱦᱚ"
             },
             isCorrect: true,
-            rationale: "Factories Act & Mines Act require an external sentinel who never enters alone but coordinates extraction."
+            rationale: {
+              en: "Factories Act & Mines Act require an external sentinel who never enters alone but coordinates extraction.",
+              hi: "कारखाना अधिनियम एवं खान अधिनियम के तहत एक बाहरी साथी आवश्यक है जो कभी अकेला अंदर नहीं जाता बल्कि बचाव का समन्वय करता है।",
+              sat: "ᱠᱟᱹᱨᱜᱟᱲ ᱟᱹᱱ ᱟᱨ ᱠᱷᱟᱫᱟᱱ ᱟᱹᱱ ᱞᱮᱠᱟᱛᱮ ᱵᱟᱦᱨᱮ ᱨᱮ ᱢᱤᱫ ᱡᱚᱴᱟᱣ ᱛᱟᱦᱮᱸᱱ ᱞᱟᱹᱠᱛᱤᱭᱟ ᱡᱟᱦᱟᱸᱭ ᱮᱠᱞᱟ ᱵᱟᱭ ᱵᱚᱞᱚᱱᱟ ᱢᱮᱱᱠᱷᱟᱱ ᱵᱟᱧᱪᱟᱣ ᱮ ᱧᱮᱞᱟ᱾"
+            }
           },
           {
             id: 'B',
@@ -197,7 +217,11 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
               sat: "ᱟᱹᱰᱤ ᱩᱥᱟᱹᱨᱟ ᱵᱟᱧᱪᱟᱣ: ᱵᱟᱵᱮᱨ ᱥᱟᱵ ᱠᱟᱛᱮ ᱵᱟᱦᱨᱮ ᱚᱰᱚᱠᱚᱜ ᱢᱮ"
             },
             isCorrect: true,
-            rationale: "Standard mining rope signal: 1 tug = stop, 2 tugs = advance/slack, 3 tugs = emergency extract."
+            rationale: {
+              en: "Standard mining rope signal: 1 tug = stop, 2 tugs = advance/slack, 3 tugs = emergency extract.",
+              hi: "मानक खनन रस्सी संकेत: 1 झटका = रुकें, 2 झटके = आगे बढ़ें, 3 झटके = आपातकालीन निकास।",
+              sat: "ᱠᱷᱟᱫᱟᱱ ᱵᱟᱵᱮᱨ ᱥᱤᱜᱽᱱᱟᱞ: ᱑ ᱚᱨ = ᱛᱤᱸᱜᱩ, ᱒ ᱚᱨ = ᱞᱟᱦᱟᱜ, ᱓ ᱚᱨ = ᱵᱤᱯᱚᱫᱽ ᱚᱰᱚᱠ᱾"
+            }
           },
           {
             id: 'B',
@@ -236,9 +260,9 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
     setAnswers(newAnswers);
 
     if (isCorrect) {
-      speak("Correct decision!");
+      speak(t.voiceCorrect);
     } else {
-      speak("Incorrect. Review the DGMS regulatory rationale.");
+      speak(t.voiceIncorrect);
     }
   };
 
@@ -282,13 +306,11 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
         </div>
 
         <h2 style={{ fontSize: '1.45rem', fontWeight: '800', color: passed ? '#1E7B34' : '#9B1C1C', marginBottom: '0.4rem' }}>
-          {passed ? 'DGMS Statutory Assessment: PASSED' : 'Competency Standard Not Met'}
+          {passed ? t.quizPassedTitle : t.quizFailedTitle}
         </h2>
 
         <p style={{ color: '#4A5568', fontSize: '0.9rem', marginBottom: '1.75rem', lineHeight: 1.6 }}>
-          {passed
-            ? 'Candidate has satisfied statutory safety decision benchmarks under Mines Act 1952. Cryptographic QR certificate is being generated.'
-            : 'Candidate scored below the mandatory 75% DGMS passing benchmark. Review statutory emergency instructions and retake the simulation drill.'}
+          {passed ? t.quizPassedDesc : t.quizFailedDesc}
         </p>
 
         {/* Scorecard Box */}
@@ -302,21 +324,21 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
           marginBottom: '1.75rem'
         }}>
           <div>
-            <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>Decision Accuracy</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>{t.scoreAccuracyLabel}</div>
             <div style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0c4e7e' }}>
               {correctCount} / {currentQuestions.length}
             </div>
           </div>
           <div style={{ width: '1px', background: '#CBD5E1' }} />
           <div>
-            <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>AR Technique Score</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>{t.scoreTechniqueLabel}</div>
             <div style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0c4e7e' }}>
               {Math.round(arAccuracy * 100)}%
             </div>
           </div>
           <div style={{ width: '1px', background: '#CBD5E1' }} />
           <div>
-            <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>Final Evaluation</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>{t.scoreEvaluationLabel}</div>
             <div style={{ fontSize: '1.35rem', fontWeight: '800', color: passed ? '#1E7B34' : '#9B1C1C' }}>
               {compositeScore}%
             </div>
@@ -325,17 +347,23 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
 
         {passed ? (
           <div className="gov-badge-green" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
-            ✓ Verified for Statutory Certificate Issuance
+            {t.verifiedForIssuance}
           </div>
         ) : (
           <button onClick={onRetake} className="gov-btn-primary" style={{ padding: '0.65rem 1.5rem' }}>
             <RotateCcw size={15} />
-            <span>Retake Vocational Drill</span>
+            <span>{t.retakeDrillBtn}</span>
           </button>
         )}
       </div>
     );
   }
+
+  const correctOpt = q.options.find((o) => o.isCorrect);
+  const correctRationale = correctOpt?.rationale;
+  const rationaleText = typeof correctRationale === 'object' && correctRationale !== null
+    ? (correctRationale[language] || correctRationale.en)
+    : correctRationale;
 
   return (
     <div className="gov-card" style={{ maxWidth: '780px', margin: '1.5rem auto', padding: '2rem', borderTop: '4px solid #0c4e7e' }}>
@@ -354,17 +382,17 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
           <AshokaLionCapital size={24} color="#0c4e7e" showMotto={false} />
           <div>
             <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#0c4e7e', fontFamily: 'var(--font-heading)' }}>
-              DGMS STATUTORY COMPETENCY ASSESSMENT
+              {t.quizAssessmentTitle}
             </div>
             <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
-              Mines Act 1952 • Examination Paper
+              {t.quizPaperSub}
             </div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <span style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: '600' }}>
-            Question {currentQuestionIndex + 1} of {currentQuestions.length}
+            {t.questionCounter} {currentQuestionIndex + 1} {t.ofLabel} {currentQuestions.length}
           </span>
           <button
             onClick={() => speak(q.title[language] || q.title.en)}
@@ -372,7 +400,7 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
             style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
           >
             <Volume2 size={13} />
-            <span>Audio</span>
+            <span>{t.voiceNarration}</span>
           </button>
         </div>
       </div>
@@ -467,10 +495,10 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
             marginBottom: '0.25rem'
           }}>
             {selectedOption?.isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-            <span>{selectedOption?.isCorrect ? 'Correct Regulatory Decision' : 'DGMS Safety Violation'}</span>
+            <span>{selectedOption?.isCorrect ? t.quizCorrectDecision : t.quizViolation}</span>
           </div>
           <p style={{ fontSize: '0.84rem', color: '#4A5568', lineHeight: 1.5 }}>
-            {q.options.find((o) => o.isCorrect)?.rationale}
+            {rationaleText}
           </p>
         </div>
       )}
@@ -483,7 +511,7 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
           className="gov-btn-primary"
           style={{ width: '100%', padding: '0.75rem', opacity: selectedOption ? 1 : 0.5 }}
         >
-          Submit Answer & Verify Decision →
+          {t.quizSubmitBtn}
         </button>
       ) : (
         <button
@@ -491,7 +519,7 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
           className="gov-btn-gold"
           style={{ width: '100%', padding: '0.75rem' }}
         >
-          {currentQuestionIndex + 1 < currentQuestions.length ? 'Next Question →' : 'View Evaluation Results →'}
+          {currentQuestionIndex + 1 < currentQuestions.length ? t.quizNextBtn : t.quizViewResultsBtn}
         </button>
       )}
     </div>
