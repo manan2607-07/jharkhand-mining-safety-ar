@@ -6,15 +6,11 @@ import { useAuth } from '../../context/AuthContext';
 import { useOfflineSync } from '../../context/OfflineSyncContext';
 import { AshokaLionCapital, JharkhandGovSeal } from '../../components/Emblem';
 import { 
-  ShieldCheck, 
   Printer, 
   CheckCircle2, 
   Download, 
   Lock, 
-  Star, 
-  Check,
-  LayoutGrid,
-  FileText
+  Star
 } from 'lucide-react';
 
 export default function DigitalCertificate({ certificate, onDone }) {
@@ -23,8 +19,6 @@ export default function DigitalCertificate({ certificate, onDone }) {
   const { saveOfflineCertificate } = useOfflineSync();
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [copiedHash, setCopiedHash] = useState(false);
-  // Default to Landscape mode: official statutory certificate format (fits strictly on 1 single page)
-  const [orientation, setOrientation] = useState('landscape');
   const certRef = useRef(null);
 
   const certData = certificate || {};
@@ -94,27 +88,43 @@ export default function DigitalCertificate({ certificate, onDone }) {
     }
   };
 
-  const isLandscape = orientation === 'landscape';
-
   return (
     <div 
       className="print-certificate-container" 
       style={{ 
-        maxWidth: isLandscape ? '1060px' : '820px', 
-        margin: '1rem auto',
-        transition: 'max-width 0.25s ease'
+        maxWidth: '1060px', 
+        margin: '1rem auto'
       }}
     >
-      {/* Injected Dynamic @page Style to enforce selected single-page orientation in browser print preview */}
+      {/* Injected @page Rule to enforce single-page A4 landscape in browser print preview */}
       <style>{`
         @page {
-          size: ${isLandscape ? 'A4 landscape' : 'A4 portrait'};
-          margin: ${isLandscape ? '4mm 6mm' : '5mm 6mm'};
+          size: A4 landscape;
+          margin: 4mm 6mm;
         }
         @media print {
-          .print-page {
-            max-height: ${isLandscape ? '198mm' : '285mm'} !important;
+          html, body {
+            height: 100% !important;
+            max-height: 100% !important;
             overflow: hidden !important;
+          }
+          .print-certificate-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+          }
+          .print-page {
+            max-height: 198mm !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+            page-break-before: avoid !important;
+            break-before: avoid !important;
+            overflow: hidden !important;
+            box-shadow: none !important;
           }
         }
       `}</style>
@@ -152,74 +162,19 @@ export default function DigitalCertificate({ certificate, onDone }) {
               {t.certActionBarTitle || 'DGMS Mines Act Statutory Certificate'}
             </div>
             <div style={{ fontSize: '0.72rem', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span>Single-Page A4 {isLandscape ? 'Landscape' : 'Portrait'}</span>
+              <span>Single-Page A4 Landscape</span>
               <span>•</span>
-              <span style={{ color: '#2EE59D', fontWeight: '600' }}>{t.certOfficialRecord || 'Official Record'}</span>
+              <span style={{ color: '#2EE59D', fontWeight: '600' }}>{t.certOfficialRecord || 'Official Statutory Record'}</span>
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* Orientation Switcher Pill (Landscape by default, single-page guaranteed) */}
-          <div style={{
-            display: 'inline-flex',
-            background: 'rgba(0, 0, 0, 0.25)',
-            padding: '2px',
-            borderRadius: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            marginRight: '0.35rem'
-          }}>
-            <button
-              type="button"
-              onClick={() => setOrientation('landscape')}
-              title="Official Statutory Landscape Format (Single Page)"
-              style={{
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.78rem',
-                fontWeight: '700',
-                background: isLandscape ? '#2EE59D' : 'transparent',
-                color: isLandscape ? '#073556' : '#E2E8F0',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              <LayoutGrid size={14} />
-              <span>Landscape</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setOrientation('portrait')}
-              title="Compact Single-Page Portrait Format"
-              style={{
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.78rem',
-                fontWeight: '700',
-                background: !isLandscape ? '#2EE59D' : 'transparent',
-                color: !isLandscape ? '#073556' : '#E2E8F0',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              <FileText size={14} />
-              <span>Portrait</span>
-            </button>
-          </div>
-
+        <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <button
             onClick={handlePrint}
             style={{
-              padding: '0.48rem 1.05rem',
-              fontSize: '0.82rem',
+              padding: '0.5rem 1.15rem',
+              fontSize: '0.84rem',
               fontWeight: '800',
               background: '#2EE59D',
               color: '#073556',
@@ -228,11 +183,11 @@ export default function DigitalCertificate({ certificate, onDone }) {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.45rem',
               boxShadow: '0 2px 8px rgba(46, 229, 157, 0.4)'
             }}
           >
-            <Printer size={15} />
+            <Printer size={16} />
             <span>{t.printCertificate || 'Print Certificate'}</span>
           </button>
 
@@ -240,8 +195,8 @@ export default function DigitalCertificate({ certificate, onDone }) {
             onClick={handlePrint}
             title="Open browser print dialog to save as single-page PDF"
             style={{
-              padding: '0.48rem 0.95rem',
-              fontSize: '0.82rem',
+              padding: '0.5rem 1.05rem',
+              fontSize: '0.84rem',
               fontWeight: '700',
               background: '#D4AF37',
               color: '#073556',
@@ -250,11 +205,11 @@ export default function DigitalCertificate({ certificate, onDone }) {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
+              gap: '0.4rem',
               boxShadow: '0 2px 8px rgba(212, 175, 55, 0.3)'
             }}
           >
-            <Download size={14} />
+            <Download size={15} />
             <span>{t.saveAsPdf || 'Save PDF'}</span>
           </button>
 
@@ -262,8 +217,8 @@ export default function DigitalCertificate({ certificate, onDone }) {
             <button
               onClick={onDone}
               style={{
-                padding: '0.48rem 0.85rem',
-                fontSize: '0.82rem',
+                padding: '0.5rem 0.9rem',
+                fontSize: '0.84rem',
                 fontWeight: '700',
                 background: 'rgba(255, 255, 255, 0.15)',
                 color: '#FFFFFF',
@@ -280,16 +235,16 @@ export default function DigitalCertificate({ certificate, onDone }) {
 
       {/* ====================================================================
           HIGH-FIDELITY COLORED STATUTORY CERTIFICATE
-          Guaranteed single-page layout (A4 Landscape 297mm x 210mm or Portrait)
+          Guaranteed single-page A4 Landscape (297mm x 210mm)
           ==================================================================== */}
       <div
         ref={certRef}
-        className={`print-page ${isLandscape ? 'print-landscape' : 'print-portrait'}`}
+        className="print-page print-landscape"
         style={{
           background: 'radial-gradient(ellipse at 50% 25%, #FFFFFF 0%, #FDFBF7 60%, #F7F1E5 100%)',
           border: '4px solid #073556',
           borderRadius: '4px',
-          padding: isLandscape ? '0.85rem 1.4rem' : '1.1rem 1.6rem',
+          padding: '0.85rem 1.4rem',
           position: 'relative',
           boxShadow: '0 8px 26px rgba(0, 0, 0, 0.12)',
           color: '#1A202C',
@@ -403,8 +358,8 @@ export default function DigitalCertificate({ certificate, onDone }) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: isLandscape ? '440px' : '340px',
-          height: isLandscape ? '440px' : '340px',
+          width: '440px',
+          height: '440px',
           borderRadius: '50%',
           border: '10px solid rgba(212, 175, 55, 0.04)',
           background: 'radial-gradient(circle, rgba(7, 53, 86, 0.02) 0%, rgba(212, 175, 55, 0.04) 70%, transparent 100%)',
@@ -421,19 +376,19 @@ export default function DigitalCertificate({ certificate, onDone }) {
             color: 'rgba(7, 53, 86, 0.05)',
             fontFamily: "'Roboto Slab', serif",
             fontWeight: '900',
-            fontSize: isLandscape ? '1.8rem' : '1.5rem',
+            fontSize: '1.8rem',
             letterSpacing: '0.12em',
             textTransform: 'uppercase'
           }}>
             KHAN SURAKSHA<br />
-            <span style={{ fontSize: isLandscape ? '1rem' : '0.85rem', letterSpacing: '0.08em' }}>DGMS BENCHMARK COMPLIANT</span>
+            <span style={{ fontSize: '1rem', letterSpacing: '0.08em' }}>DGMS BENCHMARK COMPLIANT</span>
           </div>
         </div>
 
         {/* ================================================================
             CERTIFICATE HEADER (Official Crests & State Seal)
             ================================================================ */}
-        <div style={{ position: 'relative', zIndex: 2, marginBottom: isLandscape ? '0.6rem' : '0.8rem' }}>
+        <div style={{ position: 'relative', zIndex: 2, marginBottom: '0.6rem' }}>
           {/* Top Tri-Insignia Row: Jharkhand Seal, Ashoka Lion Capital, Khan Suraksha Logo */}
           <div style={{
             display: 'flex',
@@ -444,7 +399,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
           }}>
             {/* Left Insignia: Official State Seal */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: '150px' }}>
-              <JharkhandGovSeal size={isLandscape ? 44 : 48} />
+              <JharkhandGovSeal size={44} />
               <div style={{ textAlign: 'left' }}>
                 <div style={{ fontSize: '0.66rem', fontWeight: '800', color: '#138808', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
                   झारखंड सरकार
@@ -458,10 +413,10 @@ export default function DigitalCertificate({ certificate, onDone }) {
             {/* Center Insignia: National Emblem & Departmental Title */}
             <div style={{ textAlign: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem' }}>
-                <AshokaLionCapital size={isLandscape ? 36 : 42} color="#073556" showMotto={true} />
+                <AshokaLionCapital size={36} color="#073556" showMotto={true} />
                 <div>
                   <div style={{
-                    fontSize: isLandscape ? '0.78rem' : '0.82rem',
+                    fontSize: '0.78rem',
                     fontWeight: '800',
                     color: '#073556',
                     letterSpacing: '0.06em',
@@ -470,7 +425,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
                     झारखंड सरकार • खान एवं भूतत्व विभाग
                   </div>
                   <div style={{
-                    fontSize: isLandscape ? '0.68rem' : '0.72rem',
+                    fontSize: '0.68rem',
                     fontWeight: '700',
                     color: '#8B6508',
                     letterSpacing: '0.04em',
@@ -499,8 +454,8 @@ export default function DigitalCertificate({ certificate, onDone }) {
                 src="/app-logo.png"
                 alt="Khan Suraksha Official Emblem"
                 style={{
-                  width: isLandscape ? '40px' : '44px',
-                  height: isLandscape ? '40px' : '44px',
+                  width: '40px',
+                  height: '40px',
                   borderRadius: '10px',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
                   border: '1.5px solid #D4AF37'
@@ -512,407 +467,51 @@ export default function DigitalCertificate({ certificate, onDone }) {
         </div>
 
         {/* ================================================================
-            MAIN CONTENT BODY — LANDSCAPE 2-COLUMN VS PORTRAIT STACK
+            MAIN CONTENT BODY — PERFECTED 2-COLUMN SINGLE-PAGE LANDSCAPE
             ================================================================ */}
-        {isLandscape ? (
-          /* ── LANDSCAPE LAYOUT (2 Columns side-by-side) ────────────────── */
-          <div style={{
-            position: 'relative',
-            zIndex: 2,
-            display: 'grid',
-            gridTemplateColumns: '1.45fr 1fr',
-            gap: '0.9rem',
-            alignItems: 'stretch',
-            marginBottom: '0.65rem'
-          }}>
-            {/* Left Column: Title Banner, Recipient Details, & Drill Summary */}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              {/* Prestigious Title Banner */}
-              <div style={{
-                background: 'linear-gradient(135deg, #073556 0%, #0c4e7e 50%, #073556 100%)',
-                border: '1.5px solid #D4AF37',
-                borderRadius: '4px',
-                padding: '0.4rem 0.85rem',
-                textAlign: 'center',
-                boxShadow: '0 2px 8px rgba(7, 53, 86, 0.25)',
-                WebkitPrintColorAdjust: 'exact',
-                printColorAdjust: 'exact'
-              }}>
-                <div style={{
-                  fontSize: '0.96rem',
-                  fontWeight: '800',
-                  color: '#FDFBF7',
-                  fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif",
-                  letterSpacing: '0.03em',
-                  lineHeight: 1.2
-                }}>
-                  व्यावसायिक खान सुरक्षा एवं योग्यता प्रमाण-पत्र
-                </div>
-                <div style={{
-                  fontSize: '0.66rem',
-                  fontWeight: '700',
-                  color: '#FDE68A',
-                  fontFamily: "'Noto Sans Ol Chiki', sans-serif",
-                  marginTop: '0.05rem'
-                }}>
-                  ᱠᱷᱟᱫᱟᱱ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱟᱨ ᱟᱯᱚᱛᱠᱟᱞᱤᱱ ᱥᱟᱹᱵᱩᱫ ᱥᱟᱠᱟᱢ
-                </div>
-                <div style={{
-                  fontSize: '0.74rem',
-                  fontWeight: '800',
-                  color: '#F59E0B',
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                  marginTop: '0.1rem'
-                }}>
-                  CERTIFICATE OF VOCATIONAL MINING SAFETY & EMERGENCY COMPETENCY
-                </div>
-                <div style={{
-                  fontSize: '0.58rem',
-                  color: '#E2E8F0',
-                  marginTop: '0.1rem'
-                }}>
-                  Accredited under Mandatory Safety Regulations of the Mines Act, 1952 & Factories Act, 1948
-                </div>
-              </div>
-
-              {/* Recipient Details & Competency Statement */}
-              <div style={{ textAlign: 'center', marginTop: '0.45rem' }}>
-                <div style={{ fontSize: '0.72rem', color: '#4A5568', fontStyle: 'italic' }}>
-                  This is to officially certify that
-                </div>
-
-                <div style={{
-                  fontSize: '1.35rem',
-                  fontWeight: '900',
-                  color: '#073556',
-                  fontFamily: "'Roboto Slab', serif",
-                  marginTop: '0.15rem',
-                  marginBottom: '0.15rem',
-                  letterSpacing: '0.02em'
-                }}>
-                  {workerName}
-                </div>
-                <div style={{
-                  width: '200px',
-                  height: '2px',
-                  background: 'linear-gradient(90deg, transparent 0%, #D4AF37 50%, transparent 100%)',
-                  margin: '0 auto 0.45rem auto',
-                  WebkitPrintColorAdjust: 'exact',
-                  printColorAdjust: 'exact'
-                }} />
-
-                {/* 4-Item Recipient Details Grid */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(4, 1fr)',
-                  gap: '0.35rem',
-                  background: '#FFFFFF',
-                  border: '1px solid #CBD5E1',
-                  borderRadius: '4px',
-                  padding: '0.4rem 0.55rem',
-                  textAlign: 'left',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                  WebkitPrintColorAdjust: 'exact',
-                  printColorAdjust: 'exact'
-                }}>
-                  <div>
-                    <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                      {t.workforceCode || 'Workforce ID'}
-                    </span>
-                    <span className="font-mono" style={{ fontSize: '0.76rem', fontWeight: '800', color: '#073556' }}>
-                      {workerCode}
-                    </span>
-                  </div>
-                  <div>
-                    <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                      {t.officerThDesignation || 'Designation'}
-                    </span>
-                    <span style={{ fontSize: '0.74rem', fontWeight: '700', color: '#1A202C' }}>
-                      {getLocalizedDesignation ? getLocalizedDesignation(certData.designation || currentUser?.designation || 'Underground Miner') : (certData.designation || currentUser?.designation || 'Underground Miner')}
-                    </span>
-                  </div>
-                  <div>
-                    <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                      {t.thFacility || 'Mine / Facility'}
-                    </span>
-                    <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#1A202C', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={siteName}>
-                      {siteName}
-                    </span>
-                  </div>
-                  <div>
-                    <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                      {t.districtLabel || 'District'} & Sector
-                    </span>
-                    <span style={{ fontSize: '0.74rem', fontWeight: '700', color: '#1E7B34' }}>
-                      {district} ({sector})
-                    </span>
-                  </div>
-                </div>
-
-                {/* Competency Statement */}
-                <div style={{
-                  fontSize: '0.72rem',
-                  lineHeight: 1.35,
-                  color: '#2D3748',
-                  textAlign: 'justify',
-                  margin: '0.45rem 0'
-                }}>
-                  has successfully completed mandatory practical augmented reality simulation training and passed statutory on-device DGMS competency evaluation under simulated high-hazard conditions in:
-                </div>
-
-                {/* Highlighted Module Card */}
-                <div style={{
-                  background: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
-                  border: '1px solid #86EFAC',
-                  borderLeft: '4px solid #1E7B34',
-                  borderRadius: '4px',
-                  padding: '0.45rem 0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  textAlign: 'left',
-                  boxShadow: '0 1px 4px rgba(30, 123, 52, 0.06)',
-                  WebkitPrintColorAdjust: 'exact',
-                  printColorAdjust: 'exact'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '0.6rem', fontWeight: '800', color: '#15803D', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                      Prescribed DGMS Vocational Curriculum Drill
-                    </div>
-                    <div style={{ fontSize: '0.86rem', fontWeight: '900', color: '#073556', marginTop: '0.05rem' }}>
-                      {moduleTitle}
-                    </div>
-                    <div style={{ fontSize: '0.62rem', color: '#374151', marginTop: '0.1rem' }}>
-                      Emergency response sequencing, hazard clearance verification, and personal protective protocols.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Score Rosette, Verifiable QR Passport, & Crypto Ledger */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', justifyContent: 'space-between' }}>
-              {/* Rosette Distinction Badge & Reg Pills Row */}
-              <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'stretch' }}>
-                {/* Distinction Badge */}
-                <div style={{
-                  flex: 1,
-                  background: '#FFFFFF',
-                  border: '1.5px solid #D4AF37',
-                  borderRadius: '4px',
-                  padding: '0.35rem 0.55rem',
-                  textAlign: 'center',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-                  WebkitPrintColorAdjust: 'exact',
-                  printColorAdjust: 'exact'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem' }}>
-                    <Star size={13} color="#D97706" fill="#F59E0B" />
-                    <span style={{ fontSize: '0.94rem', fontWeight: '900', color: '#15803D' }}>
-                      {score}%
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '0.58rem', fontWeight: '800', color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                    Passed with Distinction
-                  </div>
-                  <div style={{ fontSize: '0.52rem', color: '#6B7280' }}>
-                    Min. Threshold: 75%
-                  </div>
-                </div>
-
-                {/* Registration Pills Stack */}
-                <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column', gap: '0.3rem', justifyContent: 'center' }}>
-                  <div style={{
-                    background: '#FEF3C7',
-                    border: '1px solid #F59E0B',
-                    borderRadius: '3px',
-                    padding: '0.2rem 0.45rem',
-                    fontSize: '0.62rem',
-                    color: '#92400E',
-                    fontWeight: '700',
-                    WebkitPrintColorAdjust: 'exact',
-                    printColorAdjust: 'exact'
-                  }}>
-                    <span style={{ display: 'block', fontSize: '0.52rem', color: '#78350F' }}>Registration No:</span>
-                    <strong className="font-mono" style={{ color: '#073556', fontSize: '0.72rem' }}>{certId}</strong>
-                  </div>
-
-                  <div style={{
-                    background: '#ECFDF5',
-                    border: '1px solid #10B981',
-                    borderRadius: '3px',
-                    padding: '0.2rem 0.45rem',
-                    fontSize: '0.62rem',
-                    color: '#065F46',
-                    fontWeight: '700',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    WebkitPrintColorAdjust: 'exact',
-                    printColorAdjust: 'exact'
-                  }}>
-                    <CheckCircle2 size={11} color="#059669" />
-                    <span>DGMS Statutory Certified</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* DigiLocker High-Res QR Card */}
-              <div style={{
-                background: '#FFFFFF',
-                border: '1.5px solid #D4AF37',
-                borderRadius: '4px',
-                padding: '0.5rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.65rem',
-                boxShadow: '0 2px 6px rgba(212, 175, 55, 0.12)',
-                WebkitPrintColorAdjust: 'exact',
-                printColorAdjust: 'exact'
-              }}>
-                <div style={{
-                  border: '1px solid #073556',
-                  padding: '3px',
-                  borderRadius: '3px',
-                  background: '#FFFFFF',
-                  flexShrink: 0
-                }}>
-                  {qrCodeUrl ? (
-                    <img
-                      src={qrCodeUrl}
-                      alt="DGMS Verifiable Cryptographic QR Passport"
-                      style={{ width: '85px', height: '85px', display: 'block' }}
-                    />
-                  ) : (
-                    <div style={{ width: '85px', height: '85px', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', color: '#64748B' }}>
-                      QR Code
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ textAlign: 'left', flex: 1 }}>
-                  <div style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    background: '#ECFDF5',
-                    border: '1px solid #10B981',
-                    borderRadius: '3px',
-                    padding: '0.15rem 0.4rem',
-                    fontSize: '0.58rem',
-                    fontWeight: '800',
-                    color: '#065F46',
-                    WebkitPrintColorAdjust: 'exact',
-                    printColorAdjust: 'exact'
-                  }}>
-                    <CheckCircle2 size={10} color="#059669" />
-                    <span>DIGITALLY SIGNED & VERIFIED</span>
-                  </div>
-                  <div style={{ fontSize: '0.58rem', color: '#64748B', marginTop: '0.2rem', lineHeight: 1.25 }}>
-                    Instant QR inspection via smartphone or statutory DGMS portal.
-                  </div>
-                  <div style={{ fontSize: '0.62rem', color: '#073556', fontWeight: '700', marginTop: '0.2rem' }}>
-                    Sig: {signature}
-                  </div>
-                </div>
-              </div>
-
-              {/* Statutory Dates & Cryptographic Ledger Card */}
-              <div style={{
-                background: '#FFFFFF',
-                border: '1px solid #CBD5E1',
-                borderRadius: '4px',
-                padding: '0.45rem 0.65rem',
-                fontSize: '0.66rem',
-                WebkitPrintColorAdjust: 'exact',
-                printColorAdjust: 'exact'
-              }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.45rem', marginBottom: '0.35rem' }}>
-                  <div>
-                    <span style={{ fontSize: '0.54rem', color: '#64748B', display: 'block', textTransform: 'uppercase', fontWeight: '700' }}>
-                      Issue Date
-                    </span>
-                    <strong style={{ color: '#1A202C', fontSize: '0.74rem' }}>{issueDate}</strong>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '0.54rem', color: '#64748B', display: 'block', textTransform: 'uppercase', fontWeight: '700' }}>
-                      Refresher Expiry
-                    </span>
-                    <strong style={{ color: '#B45309', fontSize: '0.74rem' }}>{expiryDate}</strong>
-                  </div>
-                </div>
-
-                <div style={{
-                  background: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
-                  borderRadius: '3px',
-                  padding: '0.3rem 0.45rem'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.52rem', fontWeight: '700', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                      <Lock size={9} color="#073556" />
-                      SHA-256 HMAC Hash
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleCopyHash}
-                      className="no-print"
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '0.52rem',
-                        color: copiedHash ? '#1E7B34' : '#073556',
-                        cursor: 'pointer',
-                        fontWeight: '700'
-                      }}
-                    >
-                      {copiedHash ? '✓ Copied' : 'Copy'}
-                    </button>
-                  </div>
-                  <div className="font-mono" style={{ fontSize: '0.56rem', color: '#073556', wordBreak: 'break-all', lineHeight: 1.2 }}>
-                    {qrHash.slice(0, 32)}...
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* ── PORTRAIT LAYOUT (Streamlined Compact Stack — Single Page) ─── */
-          <div style={{ position: 'relative', zIndex: 2, marginBottom: '0.75rem' }}>
-            {/* Title Banner */}
+        <div style={{
+          position: 'relative',
+          zIndex: 2,
+          display: 'grid',
+          gridTemplateColumns: '1.45fr 1fr',
+          gap: '0.9rem',
+          alignItems: 'stretch',
+          marginBottom: '0.65rem'
+        }}>
+          {/* Left Column: Title Banner, Recipient Details, & Drill Summary */}
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            {/* Prestigious Title Banner */}
             <div style={{
               background: 'linear-gradient(135deg, #073556 0%, #0c4e7e 50%, #073556 100%)',
               border: '1.5px solid #D4AF37',
               borderRadius: '4px',
-              padding: '0.45rem 1rem',
+              padding: '0.4rem 0.85rem',
               textAlign: 'center',
               boxShadow: '0 2px 8px rgba(7, 53, 86, 0.25)',
-              marginBottom: '0.55rem',
               WebkitPrintColorAdjust: 'exact',
               printColorAdjust: 'exact'
             }}>
               <div style={{
-                fontSize: '1rem',
+                fontSize: '0.96rem',
                 fontWeight: '800',
                 color: '#FDFBF7',
-                fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif"
+                fontFamily: "'Roboto Slab', 'Noto Sans Devanagari', serif",
+                letterSpacing: '0.03em',
+                lineHeight: 1.2
               }}>
                 व्यावसायिक खान सुरक्षा एवं योग्यता प्रमाण-पत्र
               </div>
               <div style={{
-                fontSize: '0.68rem',
+                fontSize: '0.66rem',
                 fontWeight: '700',
                 color: '#FDE68A',
-                fontFamily: "'Noto Sans Ol Chiki', sans-serif"
+                fontFamily: "'Noto Sans Ol Chiki', sans-serif",
+                marginTop: '0.05rem'
               }}>
                 ᱠᱷᱟᱫᱟᱱ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱟᱨ ᱟᱯᱚᱛᱠᱟᱞᱤᱱ ᱥᱟᱹᱵᱩᱫ ᱥᱟᱠᱟᱢ
               </div>
               <div style={{
-                fontSize: '0.76rem',
+                fontSize: '0.74rem',
                 fontWeight: '800',
                 color: '#F59E0B',
                 letterSpacing: '0.04em',
@@ -921,72 +520,84 @@ export default function DigitalCertificate({ certificate, onDone }) {
               }}>
                 CERTIFICATE OF VOCATIONAL MINING SAFETY & EMERGENCY COMPETENCY
               </div>
+              <div style={{
+                fontSize: '0.58rem',
+                color: '#E2E8F0',
+                marginTop: '0.1rem'
+              }}>
+                Accredited under Mandatory Safety Regulations of the Mines Act, 1952 & Factories Act, 1948
+              </div>
             </div>
 
-            {/* Recipient Certification Header */}
-            <div style={{ textAlign: 'center', margin: '0.35rem 0' }}>
-              <div style={{ fontSize: '0.74rem', color: '#4A5568', fontStyle: 'italic' }}>
+            {/* Recipient Details & Competency Statement */}
+            <div style={{ textAlign: 'center', marginTop: '0.45rem' }}>
+              <div style={{ fontSize: '0.72rem', color: '#4A5568', fontStyle: 'italic' }}>
                 This is to officially certify that
               </div>
+
               <div style={{
-                fontSize: '1.45rem',
+                fontSize: '1.35rem',
                 fontWeight: '900',
                 color: '#073556',
                 fontFamily: "'Roboto Slab', serif",
-                margin: '0.15rem 0',
+                marginTop: '0.15rem',
+                marginBottom: '0.15rem',
                 letterSpacing: '0.02em'
               }}>
                 {workerName}
               </div>
               <div style={{
-                width: '220px',
+                width: '200px',
                 height: '2px',
                 background: 'linear-gradient(90deg, transparent 0%, #D4AF37 50%, transparent 100%)',
-                margin: '0 auto 0.5rem auto'
+                margin: '0 auto 0.45rem auto',
+                WebkitPrintColorAdjust: 'exact',
+                printColorAdjust: 'exact'
               }} />
 
               {/* 4-Item Recipient Details Grid */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '0.4rem',
+                gap: '0.35rem',
                 background: '#FFFFFF',
                 border: '1px solid #CBD5E1',
                 borderRadius: '4px',
-                padding: '0.45rem 0.65rem',
+                padding: '0.4rem 0.55rem',
                 textAlign: 'left',
-                margin: '0 auto 0.5rem auto',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                WebkitPrintColorAdjust: 'exact',
+                printColorAdjust: 'exact'
               }}>
                 <div>
-                  <span style={{ display: 'block', fontSize: '0.58rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
+                  <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
                     {t.workforceCode || 'Workforce ID'}
                   </span>
-                  <span className="font-mono" style={{ fontSize: '0.78rem', fontWeight: '800', color: '#073556' }}>
+                  <span className="font-mono" style={{ fontSize: '0.76rem', fontWeight: '800', color: '#073556' }}>
                     {workerCode}
                   </span>
                 </div>
                 <div>
-                  <span style={{ display: 'block', fontSize: '0.58rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
+                  <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
                     {t.officerThDesignation || 'Designation'}
                   </span>
-                  <span style={{ fontSize: '0.76rem', fontWeight: '700', color: '#1A202C' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: '700', color: '#1A202C' }}>
                     {getLocalizedDesignation ? getLocalizedDesignation(certData.designation || currentUser?.designation || 'Underground Miner') : (certData.designation || currentUser?.designation || 'Underground Miner')}
                   </span>
                 </div>
                 <div>
-                  <span style={{ display: 'block', fontSize: '0.58rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
+                  <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
                     {t.thFacility || 'Mine / Facility'}
                   </span>
-                  <span style={{ fontSize: '0.74rem', fontWeight: '700', color: '#1A202C' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#1A202C', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={siteName}>
                     {siteName}
                   </span>
                 </div>
                 <div>
-                  <span style={{ display: 'block', fontSize: '0.58rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
+                  <span style={{ display: 'block', fontSize: '0.56rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
                     {t.districtLabel || 'District'} & Sector
                   </span>
-                  <span style={{ fontSize: '0.76rem', fontWeight: '700', color: '#1E7B34' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: '700', color: '#1E7B34' }}>
                     {district} ({sector})
                   </span>
                 </div>
@@ -994,119 +605,237 @@ export default function DigitalCertificate({ certificate, onDone }) {
 
               {/* Competency Statement */}
               <div style={{
-                fontSize: '0.74rem',
+                fontSize: '0.72rem',
                 lineHeight: 1.35,
                 color: '#2D3748',
                 textAlign: 'justify',
-                margin: '0.4rem 0'
+                margin: '0.45rem 0'
               }}>
-                has successfully completed mandatory practical augmented reality simulation training and passed statutory on-device DGMS competency evaluation in:
+                has successfully completed mandatory practical augmented reality simulation training and passed statutory on-device DGMS competency evaluation under simulated high-hazard conditions in:
               </div>
 
-              {/* Module Card & Score Distinction Rosette */}
+              {/* Highlighted Module Card */}
               <div style={{
                 background: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
                 border: '1px solid #86EFAC',
                 borderLeft: '4px solid #1E7B34',
                 borderRadius: '4px',
-                padding: '0.5rem 0.85rem',
+                padding: '0.45rem 0.75rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 textAlign: 'left',
-                margin: '0.45rem 0'
+                boxShadow: '0 1px 4px rgba(30, 123, 52, 0.06)',
+                WebkitPrintColorAdjust: 'exact',
+                printColorAdjust: 'exact'
               }}>
                 <div>
-                  <div style={{ fontSize: '0.62rem', fontWeight: '800', color: '#15803D', textTransform: 'uppercase' }}>
-                    Prescribed DGMS Curriculum Drill
+                  <div style={{ fontSize: '0.6rem', fontWeight: '800', color: '#15803D', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                    Prescribed DGMS Vocational Curriculum Drill
                   </div>
-                  <div style={{ fontSize: '0.92rem', fontWeight: '900', color: '#073556' }}>
+                  <div style={{ fontSize: '0.86rem', fontWeight: '900', color: '#073556', marginTop: '0.05rem' }}>
                     {moduleTitle}
                   </div>
-                </div>
-                <div style={{
-                  background: '#FFFFFF',
-                  border: '1.5px solid #D4AF37',
-                  borderRadius: '4px',
-                  padding: '0.3rem 0.65rem',
-                  textAlign: 'center'
-                }}>
-                  <span style={{ fontSize: '0.95rem', fontWeight: '900', color: '#15803D' }}>
-                    {score}%
-                  </span>
-                  <div style={{ fontSize: '0.56rem', fontWeight: '800', color: '#B45309' }}>
-                    Distinction
+                  <div style={{ fontSize: '0.62rem', color: '#374151', marginTop: '0.1rem' }}>
+                    Emergency response sequencing, hazard clearance verification, and personal protective protocols.
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* QR & Verification Section (Side-by-Side in Portrait) */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1.5fr 1fr',
-              gap: '0.65rem',
-              alignItems: 'center',
-              marginTop: '0.45rem'
-            }}>
-              {/* Left: Ledger & Hash */}
-              <div style={{
-                background: '#FFFFFF',
-                border: '1px solid #CBD5E1',
-                borderRadius: '4px',
-                padding: '0.5rem 0.75rem',
-                fontSize: '0.7rem'
-              }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginBottom: '0.3rem' }}>
-                  <div>
-                    <span style={{ fontSize: '0.56rem', color: '#64748B', display: 'block', textTransform: 'uppercase', fontWeight: '700' }}>
-                      Issue Date
-                    </span>
-                    <strong style={{ color: '#1A202C' }}>{issueDate}</strong>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '0.56rem', color: '#64748B', display: 'block', textTransform: 'uppercase', fontWeight: '700' }}>
-                      Refresher Expiry
-                    </span>
-                    <strong style={{ color: '#B45309' }}>{expiryDate}</strong>
-                  </div>
-                </div>
-                <div style={{ fontSize: '0.62rem', color: '#4A5568', marginBottom: '0.3rem' }}>
-                  <strong>Reg No:</strong> {certId} • <strong>Benchmark:</strong> Mines Act 1952 Sec 22A
-                </div>
-                <div className="font-mono" style={{ fontSize: '0.58rem', color: '#073556', wordBreak: 'break-all', background: '#F8FAFC', padding: '0.2rem 0.4rem', borderRadius: '2px' }}>
-                  SHA-256: {qrHash.slice(0, 36)}...
-                </div>
-              </div>
-
-              {/* Right: QR Code Card */}
-              <div style={{
-                background: '#FFFFFF',
-                border: '1.5px solid #D4AF37',
-                borderRadius: '4px',
-                padding: '0.45rem',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center'
-              }}>
-                {qrCodeUrl && (
-                  <img
-                    src={qrCodeUrl}
-                    alt="DGMS Verifiable QR"
-                    style={{ width: '80px', height: '80px', display: 'block' }}
-                  />
-                )}
-                <div style={{ fontSize: '0.56rem', fontWeight: '800', color: '#065F46', marginTop: '0.2rem' }}>
-                  ✓ DIGITALLY SIGNED & VERIFIED
                 </div>
               </div>
             </div>
           </div>
-        )}
+
+          {/* Right Column: Score Rosette, Verifiable QR Passport, & Crypto Ledger */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', justifyContent: 'space-between' }}>
+            {/* Rosette Distinction Badge & Reg Pills Row */}
+            <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'stretch' }}>
+              {/* Distinction Badge */}
+              <div style={{
+                flex: 1,
+                background: '#FFFFFF',
+                border: '1.5px solid #D4AF37',
+                borderRadius: '4px',
+                padding: '0.35rem 0.55rem',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+                WebkitPrintColorAdjust: 'exact',
+                printColorAdjust: 'exact'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem' }}>
+                  <Star size={13} color="#D97706" fill="#F59E0B" />
+                  <span style={{ fontSize: '0.94rem', fontWeight: '900', color: '#15803D' }}>
+                    {score}%
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.58rem', fontWeight: '800', color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                  Passed with Distinction
+                </div>
+                <div style={{ fontSize: '0.52rem', color: '#6B7280' }}>
+                  Min. Threshold: 75%
+                </div>
+              </div>
+
+              {/* Registration Pills Stack */}
+              <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column', gap: '0.3rem', justifyContent: 'center' }}>
+                <div style={{
+                  background: '#FEF3C7',
+                  border: '1px solid #F59E0B',
+                  borderRadius: '3px',
+                  padding: '0.2rem 0.45rem',
+                  fontSize: '0.62rem',
+                  color: '#92400E',
+                  fontWeight: '700',
+                  WebkitPrintColorAdjust: 'exact',
+                  printColorAdjust: 'exact'
+                }}>
+                  <span style={{ display: 'block', fontSize: '0.52rem', color: '#78350F' }}>Registration No:</span>
+                  <strong className="font-mono" style={{ color: '#073556', fontSize: '0.72rem' }}>{certId}</strong>
+                </div>
+
+                <div style={{
+                  background: '#ECFDF5',
+                  border: '1px solid #10B981',
+                  borderRadius: '3px',
+                  padding: '0.2rem 0.45rem',
+                  fontSize: '0.62rem',
+                  color: '#065F46',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  WebkitPrintColorAdjust: 'exact',
+                  printColorAdjust: 'exact'
+                }}>
+                  <CheckCircle2 size={11} color="#059669" />
+                  <span>DGMS Statutory Certified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* DigiLocker High-Res QR Card */}
+            <div style={{
+              background: '#FFFFFF',
+              border: '1.5px solid #D4AF37',
+              borderRadius: '4px',
+              padding: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              boxShadow: '0 2px 6px rgba(212, 175, 55, 0.12)',
+              WebkitPrintColorAdjust: 'exact',
+              printColorAdjust: 'exact'
+            }}>
+              <div style={{
+                border: '1px solid #073556',
+                padding: '3px',
+                borderRadius: '3px',
+                background: '#FFFFFF',
+                flexShrink: 0
+              }}>
+                {qrCodeUrl ? (
+                  <img
+                    src={qrCodeUrl}
+                    alt="DGMS Verifiable Cryptographic QR Passport"
+                    style={{ width: '85px', height: '85px', display: 'block' }}
+                  />
+                ) : (
+                  <div style={{ width: '85px', height: '85px', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', color: '#64748B' }}>
+                    QR Code
+                  </div>
+                )}
+              </div>
+
+              <div style={{ textAlign: 'left', flex: 1 }}>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  background: '#ECFDF5',
+                  border: '1px solid #10B981',
+                  borderRadius: '3px',
+                  padding: '0.15rem 0.4rem',
+                  fontSize: '0.58rem',
+                  fontWeight: '800',
+                  color: '#065F46',
+                  WebkitPrintColorAdjust: 'exact',
+                  printColorAdjust: 'exact'
+                }}>
+                  <CheckCircle2 size={10} color="#059669" />
+                  <span>DIGITALLY SIGNED & VERIFIED</span>
+                </div>
+                <div style={{ fontSize: '0.58rem', color: '#64748B', marginTop: '0.2rem', lineHeight: 1.25 }}>
+                  Instant QR inspection via smartphone or statutory DGMS portal.
+                </div>
+                <div style={{ fontSize: '0.62rem', color: '#073556', fontWeight: '700', marginTop: '0.2rem' }}>
+                  Sig: {signature}
+                </div>
+              </div>
+            </div>
+
+            {/* Statutory Dates & Cryptographic Ledger Card */}
+            <div style={{
+              background: '#FFFFFF',
+              border: '1px solid #CBD5E1',
+              borderRadius: '4px',
+              padding: '0.45rem 0.65rem',
+              fontSize: '0.66rem',
+              WebkitPrintColorAdjust: 'exact',
+              printColorAdjust: 'exact'
+            }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.45rem', marginBottom: '0.35rem' }}>
+                <div>
+                  <span style={{ fontSize: '0.54rem', color: '#64748B', display: 'block', textTransform: 'uppercase', fontWeight: '700' }}>
+                    Issue Date
+                  </span>
+                  <strong style={{ color: '#1A202C', fontSize: '0.74rem' }}>{issueDate}</strong>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.54rem', color: '#64748B', display: 'block', textTransform: 'uppercase', fontWeight: '700' }}>
+                    Refresher Expiry
+                  </span>
+                  <strong style={{ color: '#B45309', fontSize: '0.74rem' }}>{expiryDate}</strong>
+                </div>
+              </div>
+
+              <div style={{
+                background: '#F8FAFC',
+                border: '1px solid #E2E8F0',
+                borderRadius: '3px',
+                padding: '0.3rem 0.45rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.52rem', fontWeight: '700', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                    <Lock size={9} color="#073556" />
+                    SHA-256 HMAC Hash
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyHash}
+                    className="no-print"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      fontSize: '0.52rem',
+                      color: copiedHash ? '#1E7B34' : '#073556',
+                      cursor: 'pointer',
+                      fontWeight: '700'
+                    }}
+                  >
+                    {copiedHash ? '✓ Copied' : 'Copy'}
+                  </button>
+                </div>
+                <div className="font-mono" style={{ fontSize: '0.56rem', color: '#073556', wordBreak: 'break-all', lineHeight: 1.2 }}>
+                  {qrHash.slice(0, 32)}...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* ================================================================
-            SIGNATURES & OFFICIAL STAMP FOOTER (Unified & Compact)
+            SIGNATURES & OFFICIAL STAMP FOOTER
             ================================================================ */}
         <div style={{
           position: 'relative',
@@ -1122,7 +851,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
           <div style={{ textAlign: 'center' }}>
             <div style={{
               fontFamily: "'Dancing Script', 'Brush Script MT', 'Segoe Script', cursive",
-              fontSize: isLandscape ? '1.35rem' : '1.45rem',
+              fontSize: '1.35rem',
               color: '#1A365D',
               fontWeight: '700',
               lineHeight: 1,
@@ -1146,8 +875,8 @@ export default function DigitalCertificate({ certificate, onDone }) {
           {/* Official Center Stamp: DGMS Physical Circular Rubber Stamp */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{
-              width: isLandscape ? '68px' : '74px',
-              height: isLandscape ? '68px' : '74px',
+              width: '68px',
+              height: '68px',
               borderRadius: '50%',
               border: '2px dashed #2A4365',
               display: 'flex',
@@ -1188,7 +917,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
           <div style={{ textAlign: 'center' }}>
             <div style={{
               fontFamily: "'Dancing Script', 'Brush Script MT', 'Segoe Script', cursive",
-              fontSize: isLandscape ? '1.35rem' : '1.45rem',
+              fontSize: '1.35rem',
               color: '#1A365D',
               fontWeight: '700',
               lineHeight: 1,
