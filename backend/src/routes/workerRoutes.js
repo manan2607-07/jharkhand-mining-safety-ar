@@ -1,70 +1,81 @@
 import express from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcryptjs';
 import db from '../db/database.js';
+import { authenticateToken, authorizeRoles, enforceSiteIsolation } from '../middleware/authMiddleware.js';
+import { sanitizeText } from '../middleware/securityMiddleware.js';
 
 const router = express.Router();
 
-// GET /api/workers - List workers with site and cohort joins
-router.get('/', (req, res) => {
-  try {
-    const { siteId, cohortId, district, sector, search } = req.query;
+// GET /api/workers - List workers with site and cohort joins (Requires Admin Auth + Site Isolation)
+router.get(
+  '/',
+  authenticateToken,
+  authorizeRoles('SAFETY_OFFICER', 'DGMS_INSPECTOR', 'STATE_NODAL_OFFICER'),
+  enforceSiteIsolation,
+  (req, res, next) => {
+    try {
+      const { siteId, cohortId, district, sector, search } = req.query;
 
-    let query = `
-      SELECT 
-        w.id, w.worker_code, w.full_name, w.tribal_language, w.literacy_level,
-        w.designation, w.phone, w.joined_date,
-        s.id AS site_id, s.name AS site_name, s.sector, s.district,
-        c.id AS cohort_id, c.name AS cohort_name,
-        (SELECT COUNT(*) FROM certificates cert WHERE cert.worker_id = w.id AND cert.is_revoked = 0) AS active_certs_count,
-        (SELECT COUNT(*) FROM training_sessions sess WHERE sess.worker_id = w.id) AS training_sessions_count,
-        (SELECT MAX(score) FROM training_sessions sess WHERE sess.worker_id = w.id) AS latest_score,
-        (SELECT MAX(created_at) FROM training_sessions sess WHERE sess.worker_id = w.id) AS last_drill_date
-      FROM workers w
-      JOIN sites s ON w.site_id = s.id
-      LEFT JOIN cohorts c ON w.cohort_id = c.id
-      WHERE 1=1
-    `;
-    const params = [];
+      let query = `
+        SELECT 
+          w.id, w.worker_code, w.full_name, w.tribal_language, w.literacy_level,
+          w.designation, w.phone, w.joined_date,
+          s.id AS site_id, s.name AS site_name, s.sector, s.district,
+          c.id AS cohort_id, c.name AS cohort_name,
+          (SELECT COUNT(*) FROM certificates cert WHERE cert.worker_id = w.id AND cert.is_revoked = 0) AS active_certs_count,
+          (SELECT COUNT(*) FROM training_sessions sess WHERE sess.worker_id = w.id) AS training_sessions_count,
+          (SELECT MAX(score) FROM training_sessions sess WHERE sess.worker_id = w.id) AS latest_score,
+          (SELECT MAX(created_at) FROM training_sessions sess WHERE sess.worker_id = w.id) AS last_drill_date
+        FROM workers w
+        JOIN sites s ON w.site_id = s.id
+        LEFT JOIN cohorts c ON w.cohort_id = c.id
+        WHERE 1=1
+      `;
+      const params = [];
 
-    if (siteId) {
-      query += ' AND w.site_id = ?';
-      params.push(siteId);
-    }
-    if (cohortId) {
-      query += ' AND w.cohort_id = ?';
-      params.push(cohortId);
-    }
-    if (district) {
-      query += ' AND s.district = ?';
-      params.push(district);
-    }
-    if (sector) {
-      query += ' AND s.sector = ?';
-      params.push(sector);
-    }
-    if (search) {
-      query += ' AND (w.full_name LIKE ? OR w.worker_code LIKE ?)';
-      params.push(`%${search}%`, `%${search}%`);
-    }
+      if (siteId) {
+        query += ' AND w.site_id = ?';
+        params.push(sanitizeText(siteId, 50));
+      }
+      if (cohortId) {
+        query += ' AND w.cohort_id = ?';
+        params.push(sanitizeText(cohortId, 50));
+      }
+      if (district) {
+        query += ' AND s.district = ?';
+        params.push(sanitizeText(district, 50));
+      }
+      if (sector) {
+        query += ' AND s.sector = ?';
+        params.push(sanitizeText(sector, 50));
+      }
+      if (search) {
+        const cleanSearch = sanitizeText(search, 50);
+        query += ' AND (w.full_name LIKE ? OR w.worker_code LIKE ?)';
+        params.push(`%${cleanSearch}%`, `%${cleanSearch}%`);
+      }
 
-    query += ' ORDER BY w.created_at DESC';
+      query += ' ORDER BY w.created_at DESC';
 
-    const stmt = db.prepare(query);
-    const workers = stmt.all(...params);
-    res.json(workers);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+      const stmt = db.prepare(query);
+      const workers = stmt.all(...params);
+      res.json(workers);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
-// GET /api/workers/:id - Worker profile with full training history & certificates
-router.get('/:id', (req, res) => {
+// GET /api/workers/:id - Worker profile with full training history & certificates (IDOR Protected)
+router.get('/:id', authenticateToken, (req, res, next) => {
   try {
-    const { id } = req.params;
+    const rawId = req.params.id;
+    const cleanId = sanitizeText(rawId, 50);
 
     const workerStmt = db.prepare(`
       SELECT 
-        w.*, 
+        w.id, w.worker_code, w.full_name, w.tribal_language, w.literacy_level,
+        w.designation, w.phone, w.joined_date, w.site_id, w.cohort_id,
         s.name AS site_name, s.sector, s.district, s.operator,
         c.name AS cohort_name
       FROM workers w
@@ -72,10 +83,22 @@ router.get('/:id', (req, res) => {
       LEFT JOIN cohorts c ON w.cohort_id = c.id
       WHERE w.id = ? OR w.worker_code = ?
     `);
-    const worker = workerStmt.get(id, id);
+    const worker = workerStmt.get(cleanId, cleanId);
 
     if (!worker) {
       return res.status(404).json({ error: 'Worker not found' });
+    }
+
+    // Access Control: Workers can only view their own profile
+    if (req.user.role === 'WORKER') {
+      if (req.user.id !== worker.id && req.user.workerCode !== worker.worker_code) {
+        return res.status(403).json({ error: 'Access denied: You can only view your own worker profile' });
+      }
+    }
+
+    // Access Control: Safety officers can only view workers in their site
+    if (req.user.role === 'SAFETY_OFFICER' && req.user.siteId && req.user.siteId !== worker.site_id) {
+      return res.status(403).json({ error: 'Access denied: Worker belongs to a different mine site' });
     }
 
     const certsStmt = db.prepare(`
@@ -106,105 +129,153 @@ router.get('/:id', (req, res) => {
       sessions
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
-// POST /api/workers/enroll - Register / bulk-enroll workers
-router.post('/enroll', (req, res) => {
-  try {
-    const { workers } = req.body; // Array of worker objects or single worker
-    const list = Array.isArray(workers) ? workers : [req.body];
+// POST /api/workers/enroll - Register / bulk-enroll workers (Restricted + Batch Capped)
+router.post(
+  '/enroll',
+  authenticateToken,
+  authorizeRoles('SAFETY_OFFICER', 'STATE_NODAL_OFFICER'),
+  enforceSiteIsolation,
+  (req, res, next) => {
+    try {
+      const { workers } = req.body;
+      const list = Array.isArray(workers) ? workers : [req.body];
 
-    if (!list.length) {
-      return res.status(400).json({ error: 'No worker data provided' });
+      if (!list.length || !list[0]) {
+        return res.status(400).json({ error: 'No worker enrollment data provided' });
+      }
+
+      // DoS Prevention: Maximum 50 workers per batch request
+      if (list.length > 50) {
+        return res.status(400).json({ error: 'Batch enrollment exceeds limit of 50 records per submission' });
+      }
+
+      const insert = db.prepare(`
+        INSERT INTO workers (id, worker_code, full_name, tribal_language, literacy_level, site_id, cohort_id, designation, phone, joined_date, pin_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      const defaultPinHash = bcrypt.hashSync('1234', 8);
+      const enrolled = [];
+
+      for (const w of list) {
+        if (!w.full_name) continue;
+
+        const id = `WRK-${Date.now().toString().slice(-4)}${Math.floor(Math.random() * 900 + 100)}`;
+        const workerCode = w.worker_code 
+          ? sanitizeText(w.worker_code, 20) 
+          : `JH-WRK-${Math.floor(Math.random() * 8999 + 1000)}`;
+
+        const siteId = (req.user.role === 'SAFETY_OFFICER' && req.user.siteId) 
+          ? req.user.siteId 
+          : (sanitizeText(w.site_id, 50) || 'SITE-DHN-01');
+
+        insert.run(
+          id,
+          workerCode,
+          sanitizeText(w.full_name, 100) || 'Tribal Recruit',
+          ['SANTALI', 'HINDI', 'MUNDARI', 'HO', 'ENGLISH'].includes(w.tribal_language) ? w.tribal_language : 'SANTALI',
+          ['LOW', 'MEDIUM', 'HIGH'].includes(w.literacy_level) ? w.literacy_level : 'LOW',
+          siteId,
+          w.cohort_id ? sanitizeText(w.cohort_id, 50) : null,
+          sanitizeText(w.designation, 100) || 'Trainee Miner',
+          sanitizeText(w.phone, 20) || '+91 94311 00000',
+          w.joined_date || new Date().toISOString().split('T')[0],
+          defaultPinHash
+        );
+        enrolled.push({ id, worker_code: workerCode, full_name: w.full_name });
+      }
+
+      res.status(201).json({
+        message: `Successfully enrolled ${enrolled.length} worker(s)`,
+        enrolled
+      });
+    } catch (err) {
+      next(err);
     }
+  }
+);
 
-    const insert = db.prepare(`
-      INSERT INTO workers (id, worker_code, full_name, tribal_language, literacy_level, site_id, cohort_id, designation, phone, joined_date)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+// GET /api/workers/cohorts/list - List cohorts with completion metrics (Protected)
+router.get(
+  '/cohorts/list',
+  authenticateToken,
+  authorizeRoles('SAFETY_OFFICER', 'DGMS_INSPECTOR', 'STATE_NODAL_OFFICER'),
+  enforceSiteIsolation,
+  (req, res, next) => {
+    try {
+      const { siteId } = req.query;
+      let query = `
+        SELECT 
+          c.*, 
+          s.name AS site_name, s.district, s.sector,
+          COUNT(w.id) AS total_enrolled,
+          COUNT(DISTINCT cert.worker_id) AS certified_count
+        FROM cohorts c
+        JOIN sites s ON c.site_id = s.id
+        LEFT JOIN workers w ON w.cohort_id = c.id
+        LEFT JOIN certificates cert ON cert.worker_id = w.id AND cert.is_revoked = 0
+        WHERE 1=1
+      `;
+      const params = [];
 
-    const enrolled = [];
-    for (const w of list) {
-      const id = `WRK-${Date.now().toString().slice(-4)}${Math.floor(Math.random() * 900 + 100)}`;
-      const workerCode = w.worker_code || `JH-WRK-${Math.floor(Math.random() * 8999 + 1000)}`;
+      if (siteId) {
+        query += ' AND c.site_id = ?';
+        params.push(sanitizeText(siteId, 50));
+      }
+
+      query += ' GROUP BY c.id ORDER BY c.start_date DESC';
+
+      const stmt = db.prepare(query);
+      const cohorts = stmt.all(...params);
+      res.json(cohorts);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// POST /api/workers/cohorts/create - Create new training cohort (Protected)
+router.post(
+  '/cohorts/create',
+  authenticateToken,
+  authorizeRoles('SAFETY_OFFICER', 'STATE_NODAL_OFFICER'),
+  enforceSiteIsolation,
+  (req, res, next) => {
+    try {
+      const { name, site_id, supervisor_id, start_date, target_completion_date } = req.body;
+      if (!name || !start_date) {
+        return res.status(400).json({ error: 'Cohort name and start_date required' });
+      }
+
+      const cleanSiteId = (req.user.role === 'SAFETY_OFFICER' && req.user.siteId) 
+        ? req.user.siteId 
+        : (sanitizeText(site_id, 50) || 'SITE-DHN-01');
+
+      const prefix = cleanSiteId.includes('-') ? cleanSiteId.split('-')[1] : 'COH';
+      const id = `COH-${prefix}-${Date.now().toString().slice(-4)}`;
+      
+      const insert = db.prepare(`
+        INSERT INTO cohorts (id, name, site_id, supervisor_id, start_date, target_completion_date, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE')
+      `);
+
       insert.run(
         id,
-        workerCode,
-        w.full_name || 'Tribal Recruit',
-        w.tribal_language || 'SANTALI',
-        w.literacy_level || 'LOW',
-        w.site_id || 'SITE-DHN-01',
-        w.cohort_id || null,
-        w.designation || 'Trainee Miner',
-        w.phone || '+91 94311 00000',
-        w.joined_date || new Date().toISOString().split('T')[0]
+        sanitizeText(name, 100),
+        cleanSiteId,
+        supervisor_id ? sanitizeText(supervisor_id, 50) : (req.user.id || null),
+        sanitizeText(start_date, 20),
+        target_completion_date ? sanitizeText(target_completion_date, 20) : null
       );
-      enrolled.push({ id, worker_code: workerCode, full_name: w.full_name });
+      res.status(201).json({ id, name, site_id: cleanSiteId, status: 'ACTIVE' });
+    } catch (err) {
+      next(err);
     }
-
-    res.status(201).json({
-      message: `Successfully enrolled ${enrolled.length} worker(s)`,
-      enrolled
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
   }
-});
-
-// GET /api/workers/cohorts/list - List cohorts with completion metrics
-router.get('/cohorts/list', (req, res) => {
-  try {
-    const { siteId } = req.query;
-    let query = `
-      SELECT 
-        c.*, 
-        s.name AS site_name, s.district, s.sector,
-        COUNT(w.id) AS total_enrolled,
-        COUNT(DISTINCT cert.worker_id) AS certified_count
-      FROM cohorts c
-      JOIN sites s ON c.site_id = s.id
-      LEFT JOIN workers w ON w.cohort_id = c.id
-      LEFT JOIN certificates cert ON cert.worker_id = w.id AND cert.is_revoked = 0
-      WHERE 1=1
-    `;
-    const params = [];
-
-    if (siteId) {
-      query += ' AND c.site_id = ?';
-      params.push(siteId);
-    }
-
-    query += ' GROUP BY c.id ORDER BY c.start_date DESC';
-
-    const stmt = db.prepare(query);
-    const cohorts = stmt.all(...params);
-    res.json(cohorts);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/workers/cohorts/create - Create new training cohort
-router.post('/cohorts/create', (req, res) => {
-  try {
-    const { name, site_id, supervisor_id, start_date, target_completion_date } = req.body;
-    if (!name || !site_id || !start_date) {
-      return res.status(400).json({ error: 'Name, site_id, and start_date required' });
-    }
-
-    const id = `COH-${site_id.split('-')[1]}-${Date.now().toString().slice(-4)}`;
-    const insert = db.prepare(`
-      INSERT INTO cohorts (id, name, site_id, supervisor_id, start_date, target_completion_date, status)
-      VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE')
-    `);
-
-    insert.run(id, name, site_id, supervisor_id || null, start_date, target_completion_date || null);
-    res.status(201).json({ id, name, site_id, status: 'ACTIVE' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+);
 
 export default router;

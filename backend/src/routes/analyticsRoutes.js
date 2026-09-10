@@ -1,10 +1,14 @@
 import express from 'express';
 import db from '../db/database.js';
+import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+// Enforce authentication & regulatory access roles across all analytics endpoints
+router.use(authenticateToken, authorizeRoles('SAFETY_OFFICER', 'DGMS_INSPECTOR', 'STATE_NODAL_OFFICER'));
+
 // GET /api/analytics/compliance-summary
-router.get('/compliance-summary', (req, res) => {
+router.get('/compliance-summary', (req, res, next) => {
   try {
     const today = new Date().toISOString().split('T')[0];
 
@@ -30,7 +34,7 @@ router.get('/compliance-summary', (req, res) => {
       ? Math.round((mod1Sessions.passed / mod1Sessions.total) * 100)
       : 86;
 
-    // Aggregate simulated base totals to match state-wide scale from PRD slide 10
+    // Aggregate simulated base totals to match state-wide scale from PRD
     const totalSessionsRow = db.prepare('SELECT COUNT(*) AS count FROM training_sessions WHERE pass_status = 1').get();
     const allSessionsRow = db.prepare('SELECT COUNT(*) AS count FROM training_sessions').get();
 
@@ -48,14 +52,13 @@ router.get('/compliance-summary', (req, res) => {
 
     res.json(stateWideStats);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
 // GET /api/analytics/district-volumes
-router.get('/district-volumes', (req, res) => {
+router.get('/district-volumes', (req, res, next) => {
   try {
-    // Return district-wise volumes for Chart.js
     const districts = [
       { district: 'Dhanbad', coal: 3200, steel: 450, mica: 0, total: 3650, passRate: 88 },
       { district: 'Bokaro', coal: 1400, steel: 2800, mica: 0, total: 4200, passRate: 91 },
@@ -90,12 +93,12 @@ router.get('/district-volumes', (req, res) => {
 
     res.json(districts);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
 // GET /api/analytics/weekly-trend
-router.get('/weekly-trend', (req, res) => {
+router.get('/weekly-trend', (req, res, next) => {
   try {
     const weeklyData = {
       labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7 (Current)'],
@@ -108,12 +111,12 @@ router.get('/weekly-trend', (req, res) => {
     };
     res.json(weeklyData);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
 // GET /api/analytics/language-distribution
-router.get('/language-distribution', (req, res) => {
+router.get('/language-distribution', (req, res, next) => {
   try {
     const langStats = [
       { language: 'Santali (Ol Chiki ᱚᱞ ᱪᱤᱠᱤ)', count: 6840, percentage: 55 },
@@ -123,14 +126,13 @@ router.get('/language-distribution', (req, res) => {
     ];
     res.json(langStats);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
 // GET /api/analytics/expiring-list
-router.get('/expiring-list', (req, res) => {
+router.get('/expiring-list', (req, res, next) => {
   try {
-    const today = new Date().toISOString().split('T')[0];
     const stmt = db.prepare(`
       SELECT 
         c.certificate_id, c.score, c.issue_date, c.expiry_date,
@@ -148,7 +150,7 @@ router.get('/expiring-list', (req, res) => {
     const expiring = stmt.all();
     res.json(expiring);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 

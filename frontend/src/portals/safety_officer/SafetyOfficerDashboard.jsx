@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { apiFetch } from '../../services/api';
 import { 
   Building2, 
   Users, 
@@ -59,8 +60,8 @@ export default function SafetyOfficerDashboard() {
     try {
       setLoading(true);
       const [workersRes, cohortsRes] = await Promise.all([
-        fetch('/api/workers'),
-        fetch('/api/workers/cohorts/list')
+        apiFetch('/api/workers'),
+        apiFetch('/api/workers/cohorts/list')
       ]);
 
       if (workersRes.ok) {
@@ -86,7 +87,7 @@ export default function SafetyOfficerDashboard() {
     if (!newWorkerName) return;
 
     try {
-      const res = await fetch('/api/workers/enroll', {
+      const res = await apiFetch('/api/workers/enroll', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

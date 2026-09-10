@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../services/api';
 import { AshokaLionCapital } from '../../components/Emblem';
 import { 
   BarChart3, 
@@ -55,11 +56,11 @@ export default function StateNodalDashboard() {
       try {
         setLoading(true);
         const [sumRes, distRes, weekRes, langRes, expRes] = await Promise.all([
-          fetch('/api/analytics/compliance-summary'),
-          fetch('/api/analytics/district-volumes'),
-          fetch('/api/analytics/weekly-trend'),
-          fetch('/api/analytics/language-distribution'),
-          fetch('/api/analytics/expiring-list')
+          apiFetch('/api/analytics/compliance-summary'),
+          apiFetch('/api/analytics/district-volumes'),
+          apiFetch('/api/analytics/weekly-trend'),
+          apiFetch('/api/analytics/language-distribution'),
+          apiFetch('/api/analytics/expiring-list')
         ]);
 
         if (sumRes.ok) setSummary(await sumRes.json());

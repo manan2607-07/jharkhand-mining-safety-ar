@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiFetch } from '../services/api';
 
 const OfflineSyncContext = createContext();
 
@@ -131,7 +132,7 @@ export const OfflineSyncProvider = ({ children }) => {
         return;
       }
 
-      const res = await fetch('/api/sync', {
+      const res = await apiFetch('/api/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

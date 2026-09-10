@@ -1,23 +1,30 @@
 import crypto from 'crypto';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jharkhand-sih-2026-secret-key-dgms-verified';
+const CERT_SECRET = process.env.CERT_SECRET || process.env.JWT_SECRET || 'jharkhand-sih-2026-secret-key-dgms-verified';
 
 /**
  * Generate a tamper-evident cryptographic hash for a certificate.
  */
 export function generateCertificateHash({ certificateId, workerId, moduleId, siteId, score, issueDate, expiryDate }) {
   const payload = `${certificateId}|${workerId}|${moduleId}|${siteId}|${score}|${issueDate}|${expiryDate}`;
-  const hash = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('hex');
+  const hash = crypto.createHmac('sha256', CERT_SECRET).update(payload).digest('hex');
   const signature = `DGMS-SIG-${hash.substring(0, 16).toUpperCase()}`;
   return { hash, signature };
 }
 
 /**
- * Verify a certificate hash against expected payload
+ * Verify a certificate hash against expected payload using timing-safe comparison
  */
 export function verifyCertificateHash({ certificateId, workerId, moduleId, siteId, score, issueDate, expiryDate, expectedHash }) {
+  if (!expectedHash || typeof expectedHash !== 'string') return false;
   const { hash } = generateCertificateHash({ certificateId, workerId, moduleId, siteId, score, issueDate, expiryDate });
-  return hash === expectedHash;
+  
+  const expectedBuf = Buffer.from(expectedHash, 'utf8');
+  const calcBuf = Buffer.from(hash, 'utf8');
+  if (expectedBuf.length !== calcBuf.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(calcBuf, expectedBuf);
 }
 
 /**

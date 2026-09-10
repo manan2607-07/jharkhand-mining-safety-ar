@@ -69,6 +69,7 @@ export function initDatabase() {
       designation TEXT NOT NULL,
       phone TEXT,
       joined_date TEXT,
+      pin_hash TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -131,6 +132,12 @@ export function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_certs_hash ON certificates(qr_hash);
     CREATE INDEX IF NOT EXISTS idx_certs_expiry ON certificates(expiry_date);
   `);
+
+  try {
+    db.exec(`ALTER TABLE workers ADD COLUMN pin_hash TEXT;`);
+  } catch {
+    // Column already exists
+  }
 }
 
 export default db;

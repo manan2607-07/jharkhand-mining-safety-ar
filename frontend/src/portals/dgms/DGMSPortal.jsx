@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../services/api';
 import { AshokaLionCapital } from '../../components/Emblem';
 import { 
   Scale, 
@@ -50,7 +51,7 @@ export default function DGMSPortal({ initialHash = '' }) {
 
   const fetchAuditCertificates = async () => {
     try {
-      const res = await fetch('/api/certificates');
+      const res = await apiFetch('/api/certificates');
       if (res.ok) {
         const data = await res.json();
         setAuditCertificates(data);
@@ -76,7 +77,7 @@ export default function DGMSPortal({ initialHash = '' }) {
 
     try {
       setLoading(true);
-      const res = await fetch(`/api/certificates/verify/${encodeURIComponent(target)}`);
+      const res = await apiFetch(`/api/certificates/verify/${encodeURIComponent(target)}`);
       const data = await res.json();
       setVerificationResult(data);
     } catch (err) {

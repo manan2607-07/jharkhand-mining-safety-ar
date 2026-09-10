@@ -34,13 +34,23 @@ export const rootResolver = {
     return db.prepare(query).all(...params);
   },
 
-  workers: ({ siteId, search }) => {
+  workers: ({ siteId, search }, context) => {
+    if (!context?.user) {
+      throw new Error('Access denied: Authentication required to inspect workforce registry');
+    }
+
     let query = 'SELECT * FROM workers WHERE 1=1';
     const params = [];
-    if (siteId) {
+
+    // Site isolation for safety officer
+    if (context.user.role === 'SAFETY_OFFICER' && context.user.siteId) {
+      query += ' AND site_id = ?';
+      params.push(context.user.siteId);
+    } else if (siteId) {
       query += ' AND site_id = ?';
       params.push(siteId);
     }
+
     if (search) {
       query += ' AND (full_name LIKE ? OR worker_code LIKE ?)';
       params.push(`%${search}%`, `%${search}%`);
@@ -48,9 +58,23 @@ export const rootResolver = {
     return db.prepare(query).all(...params);
   },
 
-  worker: ({ id }) => {
+  worker: ({ id }, context) => {
+    if (!context?.user) {
+      throw new Error('Access denied: Authentication required to view worker details');
+    }
+
     const worker = db.prepare('SELECT * FROM workers WHERE id = ? OR worker_code = ?').get(id, id);
     if (!worker) return null;
+
+    // Check worker authorization
+    if (context.user.role === 'WORKER' && context.user.id !== worker.id && context.user.workerCode !== worker.worker_code) {
+      throw new Error('Access denied: You can only query your own worker profile');
+    }
+
+    // Safety officer site isolation
+    if (context.user.role === 'SAFETY_OFFICER' && context.user.siteId && context.user.siteId !== worker.site_id) {
+      throw new Error('Access denied: Worker is in a different mine site');
+    }
 
     const site = db.prepare('SELECT * FROM sites WHERE id = ?').get(worker.site_id);
     const certs = db.prepare(`

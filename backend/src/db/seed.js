@@ -164,9 +164,11 @@ export function seed() {
     insertCohort.run(c.id, c.name, c.site_id, c.supervisor, c.start, c.end, c.status);
   }
 
+  const workerPinHash = bcrypt.hashSync('1234', 8);
+
   const insertWorker = db.prepare(`
-    INSERT INTO workers (id, worker_code, full_name, tribal_language, literacy_level, site_id, cohort_id, designation, phone, joined_date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO workers (id, worker_code, full_name, tribal_language, literacy_level, site_id, cohort_id, designation, phone, joined_date, pin_hash)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const workerNames = [
@@ -187,7 +189,7 @@ export function seed() {
   for (let i = 0; i < workerNames.length; i++) {
     const w = workerNames[i];
     const id = `WRK-${1000 + i}`;
-    insertWorker.run(id, w.code, w.name, w.lang, w.lit, w.site, w.cohort, w.desig, w.phone, '2026-06-01');
+    insertWorker.run(id, w.code, w.name, w.lang, w.lit, w.site, w.cohort, w.desig, w.phone, '2026-06-01', workerPinHash);
   }
 
   console.log('🌱 Seeding Initial Training Sessions & QR Certificates...');

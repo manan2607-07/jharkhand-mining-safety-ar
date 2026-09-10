@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { useOfflineSync } from '../../context/OfflineSyncContext';
+import { apiFetch } from '../../services/api';
 import FireModuleAR from './FireModuleAR';
 import GasModuleAR from './GasModuleAR';
 import ScenarioQuiz from './ScenarioQuiz';
@@ -58,7 +59,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     async function loadCerts() {
       try {
         setLoadingCerts(true);
-        const res = await fetch(`/api/workers/${currentUser.id}`);
+        const res = await apiFetch(`/api/workers/${currentUser.id}`);
         if (res.ok) {
           const data = await res.json();
           if (data.certificates) {
@@ -146,7 +147,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
   const handleQuizPassed = async (score) => {
     try {
       // Issue certificate via API
-      const res = await fetch('/api/certificates/issue', {
+      const res = await apiFetch('/api/certificates/issue', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

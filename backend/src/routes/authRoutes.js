@@ -2,20 +2,22 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '../db/database.js';
+import { authRateLimiter, sanitizeText } from '../middleware/securityMiddleware.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'jharkhand-sih-2026-secret-key-dgms-verified';
 
-// POST /api/auth/login - Generic login endpoint
-router.post('/login', (req, res) => {
+// POST /api/auth/login - Generic login endpoint (Rate-limited, sanitized)
+router.post('/login', authRateLimiter, (req, res, next) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password required' });
     }
 
-    const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
-    const user = stmt.get(username);
+    const cleanUsername = sanitizeText(username, 100);
+    const stmt = db.prepare('SELECT * FROM users WHERE LOWER(username) = LOWER(?)');
+    const user = stmt.get(cleanUsername);
 
     if (!user || !bcrypt.compareSync(password, user.password_hash)) {
       return res.status(401).json({ error: 'Invalid username or password' });
@@ -46,29 +48,29 @@ router.post('/login', (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
-// POST /api/auth/worker-login - Dedicated Frontline Worker Login (Zero Admin Leakage)
-router.post('/worker-login', (req, res) => {
+// POST /api/auth/worker-login - Dedicated Frontline Worker Login (Rate-limited, bcrypt PIN verified)
+router.post('/worker-login', authRateLimiter, (req, res, next) => {
   try {
     const { workerCode, phone, pin } = req.body;
-    const identifier = (workerCode || phone || '').trim();
+    const rawIdentifier = (workerCode || phone || '').trim();
+    const identifier = sanitizeText(rawIdentifier, 100);
 
     if (!identifier) {
       return res.status(400).json({ error: 'Worker Code (e.g. JH-WRK-001) or Registered Mobile Number required' });
     }
 
-    // Optional PIN verification (default SIH prototype PIN: 1234 or miner123)
-    if (pin && pin !== '1234' && pin !== 'miner123' && pin !== 'password123') {
-      return res.status(401).json({ error: 'Invalid Security PIN. Use default prototype PIN: 1234' });
+    if (!pin) {
+      return res.status(400).json({ error: 'Worker Security PIN required (Default prototype PIN: 1234)' });
     }
 
     const stmt = db.prepare(`
       SELECT 
         w.id, w.worker_code, w.full_name, w.tribal_language, w.literacy_level,
-        w.designation, w.phone, w.joined_date,
+        w.designation, w.phone, w.joined_date, w.pin_hash,
         s.id AS site_id, s.name AS site_name, s.sector, s.district,
         c.id AS cohort_id, c.name AS cohort_name
       FROM workers w
@@ -87,6 +89,15 @@ router.post('/worker-login', (req, res) => {
       return res.status(404).json({
         error: `No miner record found for '${identifier}'. Try sample worker code 'JH-WRK-001' (Birsa Hansda).`
       });
+    }
+
+    // Verify PIN against stored bcrypt hash (fallback to '1234' hash for unmigrated entries)
+    const isPinValid = worker.pin_hash
+      ? bcrypt.compareSync(String(pin), worker.pin_hash)
+      : (String(pin) === '1234');
+
+    if (!isPinValid) {
+      return res.status(401).json({ error: 'Invalid Security PIN. Please verify your 4-digit PIN.' });
     }
 
     const token = jwt.sign(
@@ -122,18 +133,20 @@ router.post('/worker-login', (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
 // POST /api/auth/admin-login - Dedicated Administrative & Regulatory Official Sign-In
-router.post('/admin-login', (req, res) => {
+router.post('/admin-login', authRateLimiter, (req, res, next) => {
   try {
-    const { username, password, captchaCode } = req.body;
+    const { username, password } = req.body;
 
     if (!username || !password) {
       return res.status(400).json({ error: 'Official Username and Password required' });
     }
+
+    const cleanUsername = sanitizeText(username, 100);
 
     const stmt = db.prepare(`
       SELECT 
@@ -145,7 +158,7 @@ router.post('/admin-login', (req, res) => {
         AND u.role IN ('SAFETY_OFFICER', 'DGMS_INSPECTOR', 'STATE_NODAL_OFFICER')
     `);
 
-    const admin = stmt.get(username.trim());
+    const admin = stmt.get(cleanUsername);
 
     if (!admin) {
       return res.status(401).json({
@@ -153,10 +166,10 @@ router.post('/admin-login', (req, res) => {
       });
     }
 
-    // Verify bcrypt password
+    // Verify bcrypt password securely without hardcoded backdoors
     const isPwValid = bcrypt.compareSync(password, admin.password_hash);
-    if (!isPwValid && password !== 'password123') {
-      return res.status(401).json({ error: 'Incorrect statutory password. (Default prototype password: password123)' });
+    if (!isPwValid) {
+      return res.status(401).json({ error: 'Incorrect statutory password.' });
     }
 
     const token = jwt.sign(
@@ -192,12 +205,17 @@ router.post('/admin-login', (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 });
 
 // GET /api/auth/credentials-info - Detailed credentials directory for evaluation
-router.get('/credentials-info', (req, res) => {
+router.get('/credentials-info', authRateLimiter, (req, res) => {
+  // Disable in production unless explicitly enabled via environment variable
+  if (process.env.NODE_ENV === 'production' && process.env.ENABLE_EVALUATION_CREDENTIALS !== 'true') {
+    return res.status(404).json({ error: 'Credential directory unavailable in production mode' });
+  }
+
   res.json({
     workerPortal: {
       portalName: 'Frontline Worker AR Safety Training Portal',
@@ -261,7 +279,6 @@ router.get('/credentials-info', (req, res) => {
         {
           roleName: 'Site Safety Officer',
           username: 'officer1',
-          password: 'password123',
           officialName: 'Rajesh Mahato',
           jurisdiction: 'BCCL Jharia Underground Coal Mine Colliery #4',
           portalTab: '#admin/officer'
@@ -269,7 +286,6 @@ router.get('/credentials-info', (req, res) => {
         {
           roleName: 'DGMS Statutory Inspector',
           username: 'dgms_inspector',
-          password: 'password123',
           officialName: 'Dr. A.K. Sengupta',
           jurisdiction: 'Directorate General of Mines Safety (DGMS) Dhanbad HQ',
           portalTab: '#admin/dgms'
@@ -277,7 +293,6 @@ router.get('/credentials-info', (req, res) => {
         {
           roleName: 'State Nodal Officer',
           username: 'state_nodal',
-          password: 'password123',
           officialName: 'Priya Soren',
           jurisdiction: 'Dept. of Mines & Geology, Govt. of Jharkhand (Ranchi)',
           portalTab: '#admin/state'
