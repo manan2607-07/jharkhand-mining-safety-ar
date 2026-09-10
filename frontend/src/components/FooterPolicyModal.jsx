@@ -255,93 +255,49 @@ export default function FooterPolicyModal({ activeModal, onClose, t, language, s
       case 'evaluation':
         return (
           <div>
-            <div className="gov-card" style={{ padding: '1.25rem', marginBottom: '1.25rem', borderLeft: '4px solid #0c4e7e', background: '#F0F9FF' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
-                <div>
-                  <span className="gov-badge-navy" style={{ marginBottom: '0.35rem', display: 'inline-block' }}>
-                    SMART INDIA HACKATHON 2026
-                  </span>
-                  <h4 style={{ margin: '0.2rem 0', color: '#0c4e7e', fontSize: '1.05rem', fontWeight: '800' }}>
-                    Problem Statement ID: 26041
-                  </h4>
-                  <p style={{ fontSize: '0.82rem', color: '#0369A1', margin: 0, fontWeight: '600' }}>
-                    AR-Based Vocational Safety Simulator & Digital Passports for Mining & Industrial Workforce
-                  </p>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <span className="gov-badge-green">
-                    Academic Prototype
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Prototype Capabilities Walkthrough */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ fontWeight: '700', fontSize: '0.85rem', color: '#1A202C', marginBottom: '0.5rem' }}>
-                {language === 'hi' ? 'मूल्यांकन हेतु 4-आयामी प्रणाली वास्तुकला:' : 'Four Pillars for Evaluation Demonstration:'}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
-                <div style={{ border: '1px solid #E2E8F0', borderRadius: '4px', padding: '0.75rem', background: '#FFFFFF' }}>
-                  <div style={{ fontWeight: '700', fontSize: '0.8rem', color: '#0c4e7e' }}>1. Frontline Worker AR</div>
-                  <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '0.2rem' }}>
-                    PASS fire extinguisher drill + toxic gas detection simulation + Santali audio voiceover.
-                  </div>
-                </div>
-                <div style={{ border: '1px solid #E2E8F0', borderRadius: '4px', padding: '0.75rem', background: '#FFFFFF' }}>
-                  <div style={{ fontWeight: '700', fontSize: '0.8rem', color: '#0c4e7e' }}>2. Safety Officer Console</div>
-                  <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '0.2rem' }}>
-                    Colliery workforce roster, multilingual search, literacy indicators, recruit onboarding.
-                  </div>
-                </div>
-                <div style={{ border: '1px solid #E2E8F0', borderRadius: '4px', padding: '0.75rem', background: '#FFFFFF' }}>
-                  <div style={{ fontWeight: '700', fontSize: '0.8rem', color: '#0c4e7e' }}>3. DGMS Verifier</div>
-                  <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '0.2rem' }}>
-                    SHA-256 HMAC cryptographic certificate validation & instant offline QR code scanner.
-                  </div>
-                </div>
-                <div style={{ border: '1px solid #E2E8F0', borderRadius: '4px', padding: '0.75rem', background: '#FFFFFF' }}>
-                  <div style={{ fontWeight: '700', fontSize: '0.8rem', color: '#0c4e7e' }}>4. State Nodal Analytics</div>
-                  <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '0.2rem' }}>
-                    Statewide compliance heatmap across 24 districts, predictive risk, training velocity KPIs.
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Test Credentials for Evaluators */}
-            <div style={{ border: '1px solid #CBD5E1', borderRadius: '4px', padding: '1rem', background: '#F8FAFC', marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <Terminal size={16} color="#0c4e7e" />
-                <strong style={{ fontSize: '0.85rem', color: '#0c4e7e' }}>
-                  {language === 'hi' ? 'मूल्यांकन दल हेतु परीक्षण साख (Test Credentials)' : 'Evaluation Demonstration Credentials:'}
+            <div style={{ border: '1px solid #CBD5E1', borderRadius: '6px', padding: '1rem 1.25rem', background: '#F8FAFC', marginBottom: '1.25rem', borderLeft: '4px solid #0c4e7e' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem' }}>
+                <Terminal size={17} color="#0c4e7e" />
+                <strong style={{ fontSize: '0.88rem', color: '#0c4e7e', letterSpacing: '0.3px' }}>
+                  {language === 'hi' ? 'मूल्यांकन दल हेतु परीक्षण साख (Demonstration Credentials):' : 'Evaluation Demonstration Credentials:'}
                 </strong>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.8rem' }}>
-                <div style={{ background: '#FFFFFF', padding: '0.65rem', borderRadius: '3px', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontWeight: '700', color: '#1A202C' }}>Worker Login:</div>
-                  <div style={{ color: '#64748B' }}>Code: <code style={{ color: '#0c4e7e' }}>JH-WRK-001</code> | PIN: <code style={{ color: '#0c4e7e' }}>1234</code></div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem', fontSize: '0.82rem' }}>
+                <div style={{ background: '#FFFFFF', padding: '0.75rem 1rem', borderRadius: '4px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                  <div style={{ fontWeight: '700', color: '#1A202C', marginBottom: '0.2rem' }}>Worker Login:</div>
+                  <div style={{ color: '#475569' }}>Code: <code style={{ color: '#0c4e7e', fontWeight: '700', fontSize: '0.85rem' }}>JH-WRK-001</code> | PIN: <code style={{ color: '#0c4e7e', fontWeight: '700', fontSize: '0.85rem' }}>1234</code></div>
                 </div>
-                <div style={{ background: '#FFFFFF', padding: '0.65rem', borderRadius: '3px', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontWeight: '700', color: '#1A202C' }}>Regulatory Roles:</div>
-                  <div style={{ color: '#64748B' }}>User: <code style={{ color: '#0c4e7e' }}>officer / dgms / statenodal</code></div>
-                  <div style={{ color: '#64748B' }}>Password: <code style={{ color: '#0c4e7e' }}>password123</code></div>
+                <div style={{ background: '#FFFFFF', padding: '0.75rem 1rem', borderRadius: '4px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                  <div style={{ fontWeight: '700', color: '#1A202C', marginBottom: '0.2rem' }}>Regulatory Roles:</div>
+                  <div style={{ color: '#475569' }}>User: <code style={{ color: '#0c4e7e', fontWeight: '700' }}>officer / dgms / statenodal</code></div>
+                  <div style={{ color: '#475569', marginTop: '0.15rem' }}>Password: <code style={{ color: '#0c4e7e', fontWeight: '700' }}>password123</code></div>
                 </div>
               </div>
             </div>
 
-            {/* Official Team Roster Card (Team ECLIPSE • Parul University) */}
+            {/* Official Team Roster & Faculty Mentor Spotlight */}
             {(() => {
               const isHi = language === 'hi';
               const isSat = language === 'sat';
               const roster = {
                 teamName: isHi ? 'टीम ECLIPSE' : isSat ? 'ᱴᱤᱢ ECLIPSE' : 'TEAM ECLIPSE',
-                prototypeBadge: isHi ? 'SIH 2026 प्रोटोटाइप' : isSat ? 'SIH ᱒᱐᱒᱖ ᱯᱨᱳᱴᱳᱴᱟᱭᱤᱯ' : 'SIH 2026 Prototype',
+                prototypeBadge: isHi ? 'SIH 2026 प्रोटोटाइप' : isSat ? 'SIH ᱒᱐᱒᱖ ᱯᱨᱳᱴᱳᱴᱟᱭᱤᱯ' : 'SIH 2026 PROTOTYPE',
                 college: isHi ? 'पारुल विश्वविद्यालय (Parul University)' : isSat ? 'ᱯᱟᱨᱩᱞ ᱡᱮᱜᱮᱛ ᱵᱤᱨᱫᱟᱹᱜᱟᱲ (Parul University)' : 'Parul University',
-                mentorLabel: isHi ? 'संकाय सलाहकार (मेंटर):' : isSat ? 'ᱯᱷᱮᱠᱟᱞᱴᱤ ᱢᱮᱱᱴᱚᱨ:' : 'Faculty Mentor:',
+                collegeSub: isHi ? 'अभियांत्रिकी एवं प्रौद्योगिकी संकाय, वडोदरा, गुजरात' : isSat ? 'ᱤᱧᱡᱤᱱᱤᱭᱟᱹᱨᱤᱝ ᱟᱨ ᱴᱮᱠᱱᱳᱞᱳᱡᱤ ᱯᱷᱮᱠᱟᱞᱴᱤ, ᱵᱚᱰᱳᱫᱚᱨᱟ, ᱜᱩᱡᱽᱨᱟᱴ' : 'Faculty of Engineering & Technology, Vadodara, Gujarat',
+                mentorTitleBadge: isHi ? 'प्रमुख संकाय मार्गदर्शक एवं मुख्य अकादमिक सलाहकार' : isSat ? 'ᱢᱩᱬᱩᱛ ᱯᱷᱮᱠᱟᱞᱴᱤ ᱢᱮᱱᱴᱚᱨ ᱟᱨ ᱫᱤᱥᱟᱹ-ᱩᱫᱩᱜᱤᱡ' : 'CHIEF FACULTY MENTOR & ACADEMIC ADVISOR',
                 mentorName: 'Prof. DINESH SWAMI',
-                psLabel: isHi ? 'समस्या विवरण' : isSat ? 'ᱥᱚᱢᱚᱥᱭᱟ ᱵᱤᱵᱚᱨᱚᱬ' : 'Problem Statement',
-                sectionTitle: isHi ? 'परियोजना दल सदस्य एवं दायित्व:' : isSat ? 'ᱯᱨᱳᱡᱮᱠᱴ ᱴᱤᱢ ᱨᱟᱹᱥᱤᱭᱟᱹ ᱟᱨ ᱠᱟᱹᱢᱤ:' : 'Project Team Members & Roles:',
+                mentorDept: isHi ? 'कंप्यूटर विज्ञान एवं अभियांत्रिकी विभाग' : isSat ? 'ᱠᱚᱢᱯᱭᱩᱴᱟᱨ ᱥᱟᱬᱮᱥ ᱟᱨ ᱤᱧᱡᱤᱱᱤᱭᱟᱹᱨᱤᱝ ᱵᱤᱵᱷᱟᱜᱽ' : 'Department of Computer Science & Engineering',
+                mentorRole: isHi ? 'प्रमुख परियोजना मार्गदर्शक • तकनीकी वास्तुकला, WebXR 3D एवं DGMS विनियामक अनुपालन सलाहकार' : isSat ? 'ᱢᱩᱬᱩᱛ ᱯᱨᱳᱡᱮᱠᱴ ᱫᱤᱥᱟᱹ-ᱩᱫᱩᱜᱤᱡ • ᱴᱮᱠᱱᱤᱠᱟᱞ ᱟᱨᱠᱤᱴᱮᱠᱪᱟᱨ, WebXR ᱟᱨ DGMS ᱟᱹᱱ ᱩᱫᱩᱜᱤᱡ' : 'Lead Project Guide • Technical Architecture, WebXR 3D & DGMS Regulatory Compliance Advisor',
+                mentorPillar1Title: isHi ? '⚖️ वैधानिक DGMS एवं खनन सुरक्षा मानक' : isSat ? '⚖️ DGMS ᱟᱨ ᱠᱷᱟᱫᱟᱱ ᱟᱹᱱ ᱢᱟᱱᱚᱠ' : '⚖️ Statutory DGMS & Mining Standards',
+                mentorPillar1Desc: isHi ? 'खान अधिनियम 1952 (धारा 22A), कारखाना अधिनियम 1948 एवं DGMS परिपत्रों के अनुसार तकनीकी अनुपालन पर विशेष मार्गदर्शन।' : isSat ? 'ᱠᱷᱟᱫᱟᱱ ᱟᱹᱱ ᱑᱙᱕᱒ ᱟᱨ DGMS ᱢᱟᱱᱚᱠ ᱞᱮᱠᱟᱛᱮ ᱴᱮᱠᱱᱤᱠᱟᱞ ᱫᱤᱥᱟᱹ-ᱩᱫᱩᱜ᱾' : 'Guided student developers on rigorous alignment with DGMS circulars, Mines Act 1952 (Sec 22A), & Factories Act 1948 mandates.',
+                mentorPillar2Title: isHi ? '🏗️ फुल-स्टैक WebXR एवं 3D इंजन वास्तुकला' : isSat ? '🏗️ WebXR ᱟᱨ 3D ᱤᱧᱡᱤᱱ ᱟᱨᱠᱤᱴᱮᱠᱪᱟᱨ' : '🏗️ Full-Stack WebXR & 3D AR Supervision',
+                mentorPillar2Desc: isHi ? 'रीयल-टाइम Three.js कैमरा ओवरले, वेबसॉकेट्स समन्वय एवं भूमिगत खदानों हेतु ऑफलाइन IndexedDB लचीलापन की समीक्षा।' : isSat ? 'Three.js 3D ᱠᱮᱢᱨᱟ ᱥᱤᱢᱩᱞᱮᱥᱚᱱ ᱟᱨ ᱚᱯᱷᱞᱟᱭᱤᱱ IndexedDB ᱥᱟᱧᱪᱟᱣ ᱨᱮ ᱜᱚᱲᱚ᱾' : 'Supervised real-time Three.js WebGL rendering, WebSockets multi-device sync, and offline-first IndexedDB resilience for underground mine shafts.',
+                mentorPillar3Title: isHi ? '🌐 बहुभाषी आदिवासी कामगार शिक्षाशास्त्र' : isSat ? '🌐 ᱥᱟᱱᱛᱟᱲᱤ ᱟᱨ ᱵᱟᱹᱲᱛᱤ ᱯᱟᱹᱨᱥᱤ ᱥᱮᱪᱮᱫ' : '🌐 Multilingual Tribal Workforce Pedagogy',
+                mentorPillar3Desc: isHi ? 'झारखंड के आदिवासी श्रमिकों हेतु संथाली (Ol Chiki ᱚᱞ ᱪᱤᱠᱤ) एवं ध्वनि-आधारित सुलभ शिक्षाशास्त्र का रणनीतिक संकल्पन।' : isSat ? 'ᱡᱷᱟᱨᱠᱷᱚᱸᱰ ᱨᱤᱱ ᱟᱹᱫᱤᱵᱟᱹᱥᱤ ᱠᱟᱹᱢᱤᱭᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱥᱟᱱᱛᱟᱲᱤ (Ol Chiki) ᱟᱨ ᱟᱲᱟᱝ ᱥᱮᱪᱮᱫ ᱰᱤᱡᱟᱭᱤᱱ᱾' : 'Spearheaded inclusive pedagogy with native Santali (Ol Chiki) script and speech synthesis for low-literacy miners in coal and mica belts.',
+                mentorQuote: isHi ? '“टीम ECLIPSE को अत्याधुनिक ऑगमेंटेड रियलिटी द्वारा खदान सुरक्षा और जीवन रक्षण में सक्षम बनाने हेतु समर्पित अकादमिक एवं तकनीकी मार्गदर्शन।”' : isSat ? '“ᱴᱤᱢ ECLIPSE ᱞᱟᱹᱜᱤᱫ ᱠᱷᱟᱫᱟᱱ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱟᱨ AR ᱥᱮᱪᱮᱫ ᱵᱮᱱᱟᱣ ᱨᱮ ᱢᱩᱬᱩᱛ ᱫᱤᱥᱟᱹ-ᱩᱫᱩᱜ ᱟᱨ ᱜᱚᱲᱚ᱾”' : '“Dedicated academic and technical mentorship empowering Team ECLIPSE to transform industrial mine safety through intuitive, life-saving augmented reality.”',
+                psLabel: isHi ? 'समस्या विवरण' : isSat ? 'ᱥᱚᱢᱚᱥᱭᱟ ᱵᱤᱵᱚᱨᱚᱬ' : 'PROBLEM STATEMENT',
+                sectionTitle: isHi ? 'परियोजना दल सदस्य एवं जिम्मेदारियां (दल प्रमुख एवं डेवलपर्स):' : isSat ? 'ᱯᱨᱳᱡᱮᱠᱴ ᱴᱤᱢ ᱨᱟᱹᱥᱤᱭᱟᱹ ᱟᱨ ᱠᱟᱹᱢᱤ (ᱴᱤᱢ ᱞᱤᱰᱟᱨ ᱟᱨ ᱰᱮᱵᱷᱞᱚᱯᱟᱨ):' : 'PROJECT TEAM MEMBERS & ROLES (TEAM LEADER & DEVELOPERS):',
                 members: [
                   {
                     name: 'Patel Manan Dharmendra',
@@ -384,6 +340,7 @@ export default function FooterPolicyModal({ activeModal, onClose, t, language, s
 
               return (
                 <div style={{ border: '2px solid #0c4e7e', borderRadius: '6px', padding: '1.25rem', background: '#FFFFFF', boxShadow: '0 4px 12px rgba(12, 78, 126, 0.08)' }}>
+                  {/* Top Bar: Team & College */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
@@ -394,20 +351,199 @@ export default function FooterPolicyModal({ activeModal, onClose, t, language, s
                           {roster.prototypeBadge}
                         </span>
                       </div>
-                      <div style={{ fontWeight: '800', fontSize: '1.05rem', color: '#1A202C' }}>
+                      <div style={{ fontWeight: '800', fontSize: '1.15rem', color: '#0F172A' }}>
                         {roster.college}
                       </div>
-                      <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '0.15rem' }}>
-                        <strong>{roster.mentorLabel}</strong> <span style={{ color: '#0c4e7e', fontWeight: '700' }}>{roster.mentorName}</span>
+                      <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                        {roster.collegeSub}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: '0.72rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
                         {roster.psLabel}
                       </div>
-                      <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'monospace' }}>
+                      <div style={{ fontSize: '1.05rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'monospace' }}>
                         PS ID: 26041
                       </div>
+                    </div>
+                  </div>
+
+                  {/* ======================================================== */}
+                  {/* ★★★ GRAND DISTINGUISHED FACULTY MENTOR SPOTLIGHT CARD ★★★ */}
+                  {/* ======================================================== */}
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #06263e 0%, #0c4e7e 45%, #1e3a8a 100%)',
+                      borderRadius: '8px',
+                      border: '2px solid #F59E0B',
+                      boxShadow: '0 8px 24px rgba(245, 158, 11, 0.28), 0 2px 8px rgba(0,0,0,0.18)',
+                      padding: '1.25rem 1.4rem',
+                      color: '#FFFFFF',
+                      marginBottom: '1.5rem',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {/* Watermark Academic Icon */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        right: '-10px',
+                        top: '-15px',
+                        fontSize: '6rem',
+                        opacity: 0.08,
+                        userSelect: 'none',
+                        pointerEvents: 'none',
+                        lineHeight: 1,
+                      }}
+                    >
+                      🎓
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.85rem', position: 'relative', zIndex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+                        {/* Golden Academic Avatar Badge */}
+                        <div
+                          style={{
+                            width: '58px',
+                            height: '58px',
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 14px rgba(245, 158, 11, 0.55)',
+                            border: '3px solid #FEF3C7',
+                            flexShrink: 0,
+                            fontSize: '1.85rem'
+                          }}
+                        >
+                          🎓
+                        </div>
+
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+                            <span
+                              style={{
+                                background: 'linear-gradient(90deg, #F59E0B 0%, #D97706 100%)',
+                                color: '#0F172A',
+                                fontWeight: '900',
+                                fontSize: '0.75rem',
+                                padding: '0.22rem 0.65rem',
+                                borderRadius: '12px',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.6px',
+                                boxShadow: '0 2px 5px rgba(0,0,0,0.25)'
+                              }}
+                            >
+                              ★ {roster.mentorTitleBadge}
+                            </span>
+                            <span
+                              style={{
+                                background: 'rgba(255,255,255,0.18)',
+                                backdropFilter: 'blur(4px)',
+                                color: '#FEF3C7',
+                                fontWeight: '700',
+                                fontSize: '0.72rem',
+                                padding: '0.18rem 0.55rem',
+                                borderRadius: '12px',
+                                border: '1px solid rgba(254, 243, 199, 0.35)'
+                              }}
+                            >
+                              Parul University
+                            </span>
+                          </div>
+
+                          <div style={{ fontSize: '1.45rem', fontWeight: '900', letterSpacing: '0.5px', color: '#FFFFFF', lineHeight: 1.2 }}>
+                            {roster.mentorName}
+                          </div>
+
+                          <div style={{ fontSize: '0.88rem', color: '#93C5FD', fontWeight: '700', marginTop: '0.25rem' }}>
+                            {roster.mentorRole}
+                          </div>
+
+                          <div style={{ fontSize: '0.76rem', color: '#CBD5E1', marginTop: '0.15rem' }}>
+                            {roster.mentorDept} • {roster.college}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Honors Pill */}
+                      <div
+                        style={{
+                          background: 'rgba(0, 0, 0, 0.35)',
+                          borderRadius: '6px',
+                          padding: '0.5rem 0.85rem',
+                          border: '1px solid rgba(245, 158, 11, 0.5)',
+                          textAlign: 'right'
+                        }}
+                      >
+                        <div style={{ fontSize: '0.68rem', color: '#FCD34D', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '0.6px' }}>
+                          SIH 2026 Academic Leadership
+                        </div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: '800', color: '#FFFFFF', marginTop: '0.15rem' }}>
+                          Senior Faculty Project Guide
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Advisory Focus Badges Grid */}
+                    <div
+                      style={{
+                        marginTop: '1rem',
+                        paddingTop: '0.85rem',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.18)',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '0.75rem'
+                      }}
+                    >
+                      <div style={{ background: 'rgba(255, 255, 255, 0.09)', borderRadius: '6px', padding: '0.6rem 0.75rem', borderLeft: '3px solid #F59E0B' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#FCD34D' }}>
+                          {roster.mentorPillar1Title}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#E2E8F0', marginTop: '0.2rem', lineHeight: 1.45 }}>
+                          {roster.mentorPillar1Desc}
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'rgba(255, 255, 255, 0.09)', borderRadius: '6px', padding: '0.6rem 0.75rem', borderLeft: '3px solid #60A5FA' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#93C5FD' }}>
+                          {roster.mentorPillar2Title}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#E2E8F0', marginTop: '0.2rem', lineHeight: 1.45 }}>
+                          {roster.mentorPillar2Desc}
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'rgba(255, 255, 255, 0.09)', borderRadius: '6px', padding: '0.6rem 0.75rem', borderLeft: '3px solid #34D399' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#6EE7B7' }}>
+                          {roster.mentorPillar3Title}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#E2E8F0', marginTop: '0.2rem', lineHeight: 1.45 }}>
+                          {roster.mentorPillar3Desc}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mentorship Dedication Citation */}
+                    <div
+                      style={{
+                        marginTop: '0.85rem',
+                        background: 'rgba(0, 0, 0, 0.28)',
+                        borderRadius: '6px',
+                        padding: '0.6rem 0.85rem',
+                        fontSize: '0.78rem',
+                        color: '#FEF3C7',
+                        fontStyle: 'italic',
+                        border: '1px dashed rgba(254, 243, 199, 0.4)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem'
+                      }}
+                    >
+                      <span style={{ fontSize: '1.1rem', fontStyle: 'normal' }}>📜</span>
+                      <span>{roster.mentorQuote}</span>
                     </div>
                   </div>
 
