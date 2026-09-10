@@ -20,7 +20,13 @@ import {
 
 export default function SafetyOfficerDashboard() {
   const { currentUser } = useAuth();
-  const { t } = useLanguage();
+  const { 
+    t, 
+    language, 
+    getLocalizedLiteracy, 
+    getLocalizedDesignation, 
+    getLocalizedTribalLang 
+  } = useLanguage();
 
   const [workers, setWorkers] = useState([]);
   const [cohorts, setCohorts] = useState([]);
@@ -32,6 +38,7 @@ export default function SafetyOfficerDashboard() {
   // New Worker Form State
   const [newWorkerName, setNewWorkerName] = useState('');
   const [newWorkerLang, setNewWorkerLang] = useState('SANTALI');
+  const [newWorkerLiteracy, setNewWorkerLiteracy] = useState('LOW');
   const [newWorkerDesig, setNewWorkerDesig] = useState('Trainee Miner');
   const [newWorkerPhone, setNewWorkerPhone] = useState('+91 94311 ');
   const [newWorkerCohort, setNewWorkerCohort] = useState('COH-DHN-2026-A');
@@ -93,6 +100,7 @@ export default function SafetyOfficerDashboard() {
         body: JSON.stringify({
           full_name: newWorkerName,
           tribal_language: newWorkerLang,
+          literacy_level: newWorkerLiteracy,
           designation: newWorkerDesig,
           phone: newWorkerPhone,
           site_id: currentUser.siteId || 'SITE-DHN-01',
@@ -111,9 +119,23 @@ export default function SafetyOfficerDashboard() {
   };
 
   const filteredWorkers = workers.filter((w) => {
-    const matchesSearch = w.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          w.worker_code.toLowerCase().includes(searchTerm.toLowerCase());
+    const term = searchTerm.toLowerCase().trim();
     const matchesCohort = selectedCohort === 'ALL' || w.cohort_id === selectedCohort;
+    if (!term) return matchesCohort;
+
+    const locDesig = getLocalizedDesignation ? getLocalizedDesignation(w.designation).toLowerCase() : '';
+    const locLit = getLocalizedLiteracy ? getLocalizedLiteracy(w.literacy_level).toLowerCase() : '';
+    const locLang = getLocalizedTribalLang ? getLocalizedTribalLang(w.tribal_language).toLowerCase() : '';
+
+    const matchesSearch = (w.full_name && w.full_name.toLowerCase().includes(term)) ||
+                          (w.worker_code && w.worker_code.toLowerCase().includes(term)) ||
+                          (w.designation && w.designation.toLowerCase().includes(term)) ||
+                          (w.literacy_level && w.literacy_level.toLowerCase().includes(term)) ||
+                          (w.tribal_language && w.tribal_language.toLowerCase().includes(term)) ||
+                          locDesig.includes(term) ||
+                          locLit.includes(term) ||
+                          locLang.includes(term);
+
     return matchesSearch && matchesCohort;
   });
 
@@ -293,17 +315,28 @@ export default function SafetyOfficerDashboard() {
                   </td>
                   <td>
                     <span className={w.tribal_language === 'SANTALI' ? 'gov-badge-amber' : 'gov-badge-grey'}>
-                      {w.tribal_language} {w.tribal_language === 'SANTALI' ? '(Ol Chiki ᱚᱞ ᱪᱤᱠᱤ)' : ''}
+                      {getLocalizedTribalLang(w.tribal_language)}
                     </span>
                   </td>
-                  <td style={{ color: '#4A5568' }}>
-                    {w.literacy_level}
+                  <td>
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '0.18rem 0.55rem',
+                      borderRadius: '4px',
+                      fontSize: '0.8rem',
+                      fontWeight: '700',
+                      background: w.literacy_level === 'LOW' ? '#FEF3C7' : w.literacy_level === 'MEDIUM' ? '#E0F2FE' : '#DCFCE7',
+                      color: w.literacy_level === 'LOW' ? '#92400E' : w.literacy_level === 'MEDIUM' ? '#0369A1' : '#166534',
+                      border: `1px solid ${w.literacy_level === 'LOW' ? '#FCD34D' : w.literacy_level === 'MEDIUM' ? '#BAE6FD' : '#86EFAC'}`
+                    }}>
+                      {getLocalizedLiteracy(w.literacy_level)}
+                    </span>
                   </td>
-                  <td style={{ color: '#4A5568' }}>
-                    {w.designation}
+                  <td style={{ color: '#1A202C', fontWeight: '600' }}>
+                    {getLocalizedDesignation(w.designation)}
                   </td>
                   <td style={{ fontWeight: '700', color: w.active_certs_count > 0 ? '#1E7B34' : '#B8860B' }}>
-                    <div>{w.active_certs_count} / 2 {t.officerModulesUnit || 'Modules'}</div>
+                    <div>{w.active_certs_count} / 2 {t.officerModulesUnit || (language === 'hi' ? 'मॉड्यूल' : language === 'sat' ? 'ᱢᱚᱰᱩᱞ' : 'Modules')}</div>
                     {w.training_sessions_count > 0 && (
                       <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: '500' }}>
                         {w.training_sessions_count} {t.officerDrillsCount} • {t.officerBestScore}: {w.latest_score}%
@@ -387,14 +420,31 @@ export default function SafetyOfficerDashboard() {
                     onChange={(e) => setNewWorkerLang(e.target.value)}
                     className="gov-select"
                   >
-                    <option value="SANTALI">Santali (Ol Chiki ᱚᱞ ᱪᱤᱠᱤ)</option>
-                    <option value="HINDI">Hindi (हिन्दी)</option>
-                    <option value="MUNDARI">Mundari</option>
-                    <option value="HO">Ho</option>
-                    <option value="ENGLISH">English</option>
+                    <option value="SANTALI">{t.langSantaliBadge || 'Santali (Ol Chiki ᱚᱞ ᱪᱤᱠᱤ)'}</option>
+                    <option value="HINDI">{t.langHindiBadge || 'Hindi (Devanagari)'}</option>
+                    <option value="MUNDARI">{t.langMundariBadge || 'Mundari'}</option>
+                    <option value="HO">{t.langHoBadge || 'Ho (Warang Chiti)'}</option>
+                    <option value="ENGLISH">{t.langEnglishBadge || 'English'}</option>
                   </select>
                 </div>
 
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
+                    {t.officerFieldLiteracy || t.officerThLiteracy || 'Literacy Level'}
+                  </label>
+                  <select
+                    value={newWorkerLiteracy}
+                    onChange={(e) => setNewWorkerLiteracy(e.target.value)}
+                    className="gov-select"
+                  >
+                    <option value="LOW">{getLocalizedLiteracy('LOW')}</option>
+                    <option value="MEDIUM">{getLocalizedLiteracy('MEDIUM')}</option>
+                    <option value="HIGH">{getLocalizedLiteracy('HIGH')}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
                     {t.officerFieldDesignation}
@@ -406,18 +456,18 @@ export default function SafetyOfficerDashboard() {
                     className="gov-input"
                   />
                 </div>
-              </div>
 
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
-                  {t.officerFieldContact}
-                </label>
-                <input
-                  type="text"
-                  value={newWorkerPhone}
-                  onChange={(e) => setNewWorkerPhone(e.target.value)}
-                  className="gov-input"
-                />
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', color: '#2D3748', marginBottom: '0.35rem' }}>
+                    {t.officerFieldContact}
+                  </label>
+                  <input
+                    type="text"
+                    value={newWorkerPhone}
+                    onChange={(e) => setNewWorkerPhone(e.target.value)}
+                    className="gov-input"
+                  />
+                </div>
               </div>
 
               <div style={{ marginBottom: '1.5rem' }}>

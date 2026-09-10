@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function WorkerPortal({ onActivityOccurred, workerSection = 'modules' }) {
-  const { t, language, speak, getLocalizedModuleTitle } = useLanguage();
+  const { t, language, speak, getLocalizedModuleTitle, getLocalizedDesignation } = useLanguage();
   const { currentUser } = useAuth();
   const { saveOfflineSession, saveOfflineCertificate } = useOfflineSync();
 
@@ -305,7 +305,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                 </div>
 
                 <p style={{ fontSize: '0.88rem', color: '#4A5568', margin: '0.2rem 0' }}>
-                  <strong>{currentUser.designation}</strong> • {currentUser.siteName}
+                  <strong>{getLocalizedDesignation ? getLocalizedDesignation(currentUser.designation) : currentUser.designation}</strong> • {currentUser.siteName}
                 </p>
 
                 <div style={{ fontSize: '0.8rem', color: '#718096' }}>

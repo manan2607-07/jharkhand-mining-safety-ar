@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function DigitalCertificate({ certificate, onDone }) {
-  const { t } = useLanguage();
+  const { t, getLocalizedDesignation } = useLanguage();
   const { currentUser } = useAuth();
   const { saveOfflineCertificate } = useOfflineSync();
   const [qrCodeUrl, setQrCodeUrl] = useState('');
@@ -592,7 +592,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
           }}>
             <div>
               <span style={{ display: 'block', fontSize: '0.64rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                Workforce ID
+                {t.workforceCode || 'Workforce ID'}
               </span>
               <span className="font-mono" style={{ fontSize: '0.82rem', fontWeight: '800', color: '#073556' }}>
                 {workerCode}
@@ -601,16 +601,16 @@ export default function DigitalCertificate({ certificate, onDone }) {
 
             <div>
               <span style={{ display: 'block', fontSize: '0.64rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                Designation
+                {t.officerThDesignation || 'Designation'}
               </span>
               <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1A202C' }}>
-                {certData.designation || currentUser?.designation || 'Underground Miner'}
+                {getLocalizedDesignation ? getLocalizedDesignation(certData.designation || currentUser?.designation || 'Underground Miner') : (certData.designation || currentUser?.designation || 'Underground Miner')}
               </span>
             </div>
 
             <div>
               <span style={{ display: 'block', fontSize: '0.64rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                Mine / Facility
+                {t.thFacility || 'Mine / Facility'}
               </span>
               <span style={{ fontSize: '0.78rem', fontWeight: '700', color: '#1A202C' }}>
                 {siteName}
@@ -619,7 +619,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
 
             <div>
               <span style={{ display: 'block', fontSize: '0.64rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
-                District & Sector
+                {t.districtLabel || 'District'} & {t.sectorLabel || 'Sector'}
               </span>
               <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1E7B34' }}>
                 {district} ({sector})

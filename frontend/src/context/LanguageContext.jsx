@@ -502,7 +502,35 @@ export const translations = {
     footerDevSubText: "Educational & Research Prototype for Mining & Steel Safety Training",
     footerDrillCountText: "Simulated Workforce Drill Count:",
     footerLegalDisclaimerText: "Legal Disclaimer & Fair Dealing Notice: This platform is an independent educational and technical simulation prototype created for the Smart India Hackathon 2026 (Problem Statement ID: 26041). It is NOT an official government portal and is not operated by or formally affiliated with the Government of Jharkhand, Directorate General of Mines Safety (DGMS), or National Informatics Centre (NIC).",
-    footerCopyrightNoticeText: "All statutory names, insignia representations, and regulatory benchmarks are referenced solely for competition evaluation and academic demonstration under the Fair Dealing provisions of Section 52 of the Indian Copyright Act, 1957."
+    footerCopyrightNoticeText: "All statutory names, insignia representations, and regulatory benchmarks are referenced solely for competition evaluation and academic demonstration under the Fair Dealing provisions of Section 52 of the Indian Copyright Act, 1957.",
+    // Workforce Roster Localization
+    literacyLow: "Low",
+    literacyMedium: "Medium",
+    literacyHigh: "High",
+    officerFieldLiteracy: "Literacy Level:",
+    desigUndergroundDriller: "Underground Driller",
+    desigLoaderOperator: "Loader Operator",
+    desigVentilationHelper: "Ventilation Helper",
+    desigCoalCutter: "Coal Cutter",
+    desigConveyorAttendant: "Conveyor Attendant",
+    desigMicaSorter: "Mica Sorter",
+    desigMicaSplitter: "Mica Splitter",
+    desigMicaQualityInspector: "Mica Quality Inspector",
+    desigBlastFurnaceAssistant: "Blast Furnace Assistant",
+    desigDumperDriver: "Dumper Driver",
+    desigCraneOperator: "Crane Operator",
+    desigSlagHandler: "Slag Handler",
+    desigTraineeMiner: "Trainee Miner",
+    desigUndergroundMiner: "Underground Miner",
+    desigUndergroundCoalDriller: "Underground Coal Driller",
+    desigSiteSafetySupervisor: "Site Safety Supervisor",
+    desigDirectorMineSafety: "Director of Mine Safety (Statutory Inspector)",
+    desigStateNodalOfficer: "State Nodal Officer - Mines & Geology",
+    langSantaliBadge: "Santali (Ol Chiki ᱚᱞ ᱪᱤᱠᱤ)",
+    langHindiBadge: "Hindi (Devanagari)",
+    langMundariBadge: "Mundari",
+    langHoBadge: "Ho (Warang Chiti)",
+    langEnglishBadge: "English",
   },
 
   hi: {
@@ -1004,7 +1032,35 @@ export const translations = {
     footerDevSubText: "खनन एवं इस्पात सुरक्षा प्रशिक्षण हेतु शैक्षणिक एवं अनुसंधान प्रोटोटाइप",
     footerDrillCountText: "सिम्युलेटेड कामगार ड्रिल गणना:",
     footerLegalDisclaimerText: "कानूनी अस्वीकरण एवं उचित व्यवहार सूचना: यह मंच स्मार्ट इंडिया हैकाथॉन 2026 (समस्या विवरण आईडी: 26041) के लिए बनाया गया एक स्वतंत्र शैक्षणिक और तकनीकी सिमुलेशन प्रोटोटाइप है। यह आधिकारिक सरकारी पोर्टल नहीं है और झारखंड सरकार, डीजीएमएस या एनआईसी से औपचारिक रूप से संबद्ध नहीं है।",
-    footerCopyrightNoticeText: "सभी वैधानिक नाम, प्रतीक और नियामक मानक भारतीय कॉपीराइट अधिनियम, 1957 की धारा 52 के तहत केवल प्रतियोगिता मूल्यांकन और शैक्षणिक प्रदर्शन के लिए संदर्भित हैं।"
+    footerCopyrightNoticeText: "सभी वैधानिक नाम, प्रतीक और नियामक मानक भारतीय कॉपीराइट अधिनियम, 1957 की धारा 52 के तहत केवल प्रतियोगिता मूल्यांकन और शैक्षणिक प्रदर्शन के लिए संदर्भित हैं।",
+    // Workforce Roster Localization
+    literacyLow: "निम्न",
+    literacyMedium: "मध्यम",
+    literacyHigh: "उच्च",
+    officerFieldLiteracy: "साक्षरता स्तर:",
+    desigUndergroundDriller: "भूमिगत ड्रिलर",
+    desigLoaderOperator: "लोडर ऑपरेटर",
+    desigVentilationHelper: "वेंटिलेशन सहायक",
+    desigCoalCutter: "कोल कटर",
+    desigConveyorAttendant: "कन्वेयर अटेंडेंट",
+    desigMicaSorter: "अभ्रक सॉर्टर",
+    desigMicaSplitter: "अभ्रक स्प्लिटर",
+    desigMicaQualityInspector: "अभ्रक गुणवत्ता निरीक्षक",
+    desigBlastFurnaceAssistant: "ब्लास्ट फर्नेस सहायक",
+    desigDumperDriver: "डंपर चालक",
+    desigCraneOperator: "क्रेन ऑपरेटर",
+    desigSlagHandler: "स्लैग हैंडलर",
+    desigTraineeMiner: "प्रशिक्षु खनिक",
+    desigUndergroundMiner: "भूमिगत खनिक",
+    desigUndergroundCoalDriller: "भूमिगत कोयला ड्रिलर",
+    desigSiteSafetySupervisor: "कार्यस्थल सुरक्षा पर्यवेक्षक",
+    desigDirectorMineSafety: "खान सुरक्षा निदेशक (वैधानिक निरीक्षक)",
+    desigStateNodalOfficer: "राज्य नोडल अधिकारी - खान एवं भूतत्व",
+    langSantaliBadge: "संथाली (ओल चिकी ᱚᱞ ᱪᱤᱠᱤ)",
+    langHindiBadge: "हिन्दी (देवनागरी)",
+    langMundariBadge: "मुंडारी",
+    langHoBadge: "हो (वारंग क्षिति)",
+    langEnglishBadge: "अंग्रेज़ी",
   },
 
   sat: {
@@ -1506,7 +1562,35 @@ export const translations = {
     footerDevSubText: "ᱠᱷᱟᱫᱟᱱ ᱟᱨ ᱢᱮᱬᱦᱮᱫ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱪᱮᱫᱚᱜ ᱞᱟᱹᱜᱤᱫ ᱥᱮᱪᱮᱫ ᱯᱨᱳᱴᱳᱴᱟᱭᱤᱯ",
     footerDrillCountText: "ᱠᱟᱹᱢᱤᱭᱟᱹ ᱵᱤᱰᱟᱹᱣ ᱞᱮᱠᱷᱟ:",
     footerLegalDisclaimerText: "ᱟᱹᱱ ᱦᱩᱥᱤᱭᱟᱹᱨ: ᱱᱚᱶᱟ ᱫᱚ ᱥᱢᱟᱨᱴ ᱤᱱᱰᱤᱭᱟ ᱦᱮᱠᱟᱛᱷᱚᱱ ᱒᱐᱒᱖ (PS ID: ᱒᱖᱐᱔᱑) ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱥᱮᱪᱮᱫ ᱴᱮᱠᱱᱤᱠᱟᱞ ᱯᱨᱳᱴᱳᱴᱟᱭᱤᱯ ᱠᱟᱱᱟ᱾ ᱱᱚᱶᱟ ᱫᱚ ᱡᱷᱟᱨᱠᱷᱚᱸᱰ ᱥᱚᱨᱠᱟᱨ ᱥᱮ DGMS ᱥᱮ NIC ᱨᱮᱭᱟᱜ ᱚᱯᱷᱤᱥᱤᱭᱟᱞ ᱯᱳᱨᱴᱟᱞ ᱫᱚ ᱵᱟᱝ ᱠᱟᱱᱟ᱾",
-    footerCopyrightNoticeText: "ᱥᱟᱱᱟᱢ ᱟᱹᱱ ᱧᱩᱛᱩᱢ ᱟᱨ ᱢᱟᱱᱚᱠ ᱫᱚ ᱵᱷᱟᱨᱚᱛ ᱠᱚᱯᱤᱨᱟᱭᱤᱴ ᱟᱹᱱ ᱑᱙᱕᱗ ᱨᱮᱭᱟᱜ ᱫᱷᱟᱨᱟ ᱕᱒ ᱞᱮᱠᱟᱛᱮ ᱦᱮᱯᱨᱟᱣ ᱟᱨ ᱥᱮᱪᱮᱫ ᱩᱫᱩᱜ ᱞᱟᱹᱜᱤᱫ ᱜᱮ ᱵᱮᱵᱷᱟᱨ ᱟᱠᱟᱱᱟ᱾"
+    footerCopyrightNoticeText: "ᱥᱟᱱᱟᱢ ᱟᱹᱱ ᱧᱩᱛᱩᱢ ᱟᱨ ᱢᱟᱱᱚᱠ ᱫᱚ ᱵᱷᱟᱨᱚᱛ ᱠᱚᱯᱤᱨᱟᱭᱤᱴ ᱟᱹᱱ ᱑᱙᱕᱗ ᱨᱮᱭᱟᱜ ᱫᱷᱟᱨᱟ ᱕᱒ ᱞᱮᱠᱟᱛᱮ ᱦᱮᱯᱨᱟᱣ ᱟᱨ ᱥᱮᱪᱮᱫ ᱩᱫᱩᱜ ᱞᱟᱹᱜᱤᱫ ᱜᱮ ᱵᱮᱵᱷᱟᱨ ᱟᱠᱟᱱᱟ᱾",
+    // Workforce Roster Localization
+    literacyLow: "ᱞᱟᱛᱟᱨ",
+    literacyMedium: "ᱛᱟᱞᱟ",
+    literacyHigh: "ᱪᱮᱛᱟᱱ",
+    officerFieldLiteracy: "ᱚᱞ-ᱯᱟᱲᱦᱟᱣ ᱛᱷᱟᱨ:",
+    desigUndergroundDriller: "ᱠᱷᱟᱫᱟᱱ ᱰᱨᱤᱞᱟᱨ",
+    desigLoaderOperator: "ᱞᱳᱰᱟᱨ ᱪᱟᱞᱟᱣᱤᱡ",
+    desigVentilationHelper: "ᱦᱚᱭ ᱜᱚᱲᱚᱣᱤᱡ",
+    desigCoalCutter: "ᱠᱚᱭᱞᱟ ᱜᱮᱫᱤᱡ",
+    desigConveyorAttendant: "ᱠᱚᱱᱵᱷᱮᱭᱟᱨ ᱧᱮᱞᱤᱡ",
+    desigMicaSorter: "ᱢᱟᱭᱠᱟ ᱵᱟᱪᱷᱟᱣᱤᱡ",
+    desigMicaSplitter: "ᱢᱟᱭᱠᱟ ᱯᱷᱟᱴᱟᱣᱤᱡ",
+    desigMicaQualityInspector: "ᱢᱟᱭᱠᱟ ᱜᱩᱱ ᱧᱮᱞᱤᱡ",
+    desigBlastFurnaceAssistant: "ᱵᱞᱟᱥᱴ ᱯᱷᱟᱨᱱᱮᱥ ᱜᱚᱲᱚᱣᱤᱡ",
+    desigDumperDriver: "ᱰᱟᱢᱯᱟᱨ ᱪᱟᱞᱟᱣᱤᱡ",
+    desigCraneOperator: "ᱠᱨᱮᱱ ᱪᱟᱞᱟᱣᱤᱡ",
+    desigSlagHandler: "ᱥᱞᱟᱜᱽ ᱥᱟᱢᱵᱽᱲᱟᱣᱤᱡ",
+    desigTraineeMiner: "ᱪᱮᱫᱚᱜ ᱠᱟᱹᱢᱤᱭᱟᱹ",
+    desigUndergroundMiner: "ᱠᱷᱟᱫᱟᱱ ᱠᱟᱹᱢᱤᱭᱟᱹ",
+    desigUndergroundCoalDriller: "ᱠᱷᱟᱫᱟᱱ ᱠᱚᱭᱞᱟ ᱰᱨᱤᱞᱟᱨ",
+    desigSiteSafetySupervisor: "ᱠᱟᱹᱢᱤ ᱴᱷᱟᱶ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱧᱮᱞᱤᱡ",
+    desigDirectorMineSafety: "ᱠᱷᱟᱫᱟᱱ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱰᱟᱭᱨᱮᱠᱴᱚᱨ (ᱥᱚᱝᱵᱤᱫᱷᱟᱱ ᱧᱮᱞᱤᱡ)",
+    desigStateNodalOfficer: "ᱯᱚᱱᱚᱛ ᱱᱳᱰᱟᱞ ᱚᱯᱷᱤᱥᱟᱨ - ᱠᱷᱟᱫᱟᱱ ᱟᱨ ᱚᱛᱱᱚᱜ",
+    langSantaliBadge: "ᱥᱟᱱᱛᱟᱲᱤ (ᱚᱞ ᱪᱤᱠᱤ)",
+    langHindiBadge: "ᱦᱤᱱᱫᱤ (ᱫᱮᱵᱽᱱᱟᱜᱽᱨᱤ)",
+    langMundariBadge: "ᱢᱩᱱᱰᱟᱨᱤ",
+    langHoBadge: "ᱦᱳ (ᱣᱟᱨᱟᱝ ᱪᱤᱛᱤ)",
+    langEnglishBadge: "ᱤᱝᱞᱤᱥ",
   }
 };
 
@@ -1596,6 +1680,102 @@ export const LanguageProvider = ({ children }) => {
     }
     return titleOrId;
   };
+  const getLocalizedLiteracy = (level) => {
+    if (!level) return '';
+    const norm = String(level).trim().toUpperCase();
+    if (norm === 'LOW' || norm === 'निम्न' || norm === 'लारार') {
+      return t.literacyLow || (language === 'hi' ? 'निम्न' : language === 'sat' ? 'ᱞᱟᱛᱟᱨ' : 'Low');
+    }
+    if (norm === 'MEDIUM' || norm === 'मध्यम' || norm === 'ताला') {
+      return t.literacyMedium || (language === 'hi' ? 'मध्यम' : language === 'sat' ? 'ᱛᱟᱞᱟ' : 'Medium');
+    }
+    if (norm === 'HIGH' || norm === 'उच्च' || norm === 'चेतान') {
+      return t.literacyHigh || (language === 'hi' ? 'उच्च' : language === 'sat' ? 'ᱪᱮᱛᱟᱱ' : 'High');
+    }
+    return level;
+  };
+
+  const getLocalizedDesignation = (desig) => {
+    if (!desig) return '';
+    const norm = String(desig).trim().toLowerCase();
+    if (norm.includes('underground coal driller') || (norm.includes('underground') && norm.includes('coal'))) {
+      return t.desigUndergroundCoalDriller || (language === 'hi' ? 'भूमिगत कोयला ड्रिलर' : language === 'sat' ? 'ᱠᱷᱟᱫᱟᱱ ᱠᱚᱭᱞᱟ ᱰᱨᱤᱞᱟᱨ' : 'Underground Coal Driller');
+    }
+    if (norm.includes('driller')) {
+      return t.desigUndergroundDriller || (language === 'hi' ? 'भूमिगत ड्रिलर' : language === 'sat' ? 'ᱠᱷᱟᱫᱟᱱ ᱰᱨᱤᱞᱟᱨ' : 'Underground Driller');
+    }
+    if (norm.includes('loader')) {
+      return t.desigLoaderOperator || (language === 'hi' ? 'लोडर ऑपरेटर' : language === 'sat' ? 'ᱞᱳᱰᱟᱨ ᱪᱟᱞᱟᱣᱤᱡ' : 'Loader Operator');
+    }
+    if (norm.includes('ventilation')) {
+      return t.desigVentilationHelper || (language === 'hi' ? 'वेंटिलेशन सहायक' : language === 'sat' ? 'ᱦᱚᱭ ᱜᱚᱲᱚᱣᱤᱡ' : 'Ventilation Helper');
+    }
+    if (norm.includes('coal cutter') || (norm.includes('coal') && norm.includes('cut')) || norm.includes('cutter')) {
+      return t.desigCoalCutter || (language === 'hi' ? 'कोल कटर' : language === 'sat' ? 'ᱠᱚᱭᱞᱟ ᱜᱮᱫᱤᱡ' : 'Coal Cutter');
+    }
+    if (norm.includes('conveyor')) {
+      return t.desigConveyorAttendant || (language === 'hi' ? 'कन्वेयर अटेंडेंट' : language === 'sat' ? 'ᱠᱚᱱᱵᱷᱮᱭᱟᱨ ᱧᱮᱞᱤᱡ' : 'Conveyor Attendant');
+    }
+    if (norm.includes('mica') && norm.includes('inspector')) {
+      return t.desigMicaQualityInspector || (language === 'hi' ? 'अभ्रक गुणवत्ता निरीक्षक' : language === 'sat' ? 'ᱢᱟᱭᱠᱟ ᱜᱩᱱ ᱧᱮᱞᱤᱡ' : 'Mica Quality Inspector');
+    }
+    if (norm.includes('mica') && norm.includes('splitter')) {
+      return t.desigMicaSplitter || (language === 'hi' ? 'अभ्रक स्प्लिटर' : language === 'sat' ? 'ᱢᱟᱭᱠᱟ ᱯᱷᱟᱴᱟᱣᱤᱡ' : 'Mica Splitter');
+    }
+    if (norm.includes('mica') && (norm.includes('sorter') || norm.includes('sort'))) {
+      return t.desigMicaSorter || (language === 'hi' ? 'अभ्रक सॉर्टर' : language === 'sat' ? 'ᱢᱟᱭᱠᱟ ᱵᱟᱪᱷᱟᱣᱤᱡ' : 'Mica Sorter');
+    }
+    if (norm.includes('blast furnace') || norm.includes('furnace')) {
+      return t.desigBlastFurnaceAssistant || (language === 'hi' ? 'ब्लास्ट फर्नेस सहायक' : language === 'sat' ? 'ᱵᱞᱟᱥᱴ ᱯᱷᱟᱨᱱᱮᱥ ᱜᱚᱲᱚᱣᱤᱡ' : 'Blast Furnace Assistant');
+    }
+    if (norm.includes('dumper')) {
+      return t.desigDumperDriver || (language === 'hi' ? 'डंपर चालक' : language === 'sat' ? 'ᱰᱟᱢᱯᱟᱨ ᱪᱟᱞᱟᱣᱤᱡ' : 'Dumper Driver');
+    }
+    if (norm.includes('crane')) {
+      return t.desigCraneOperator || (language === 'hi' ? 'क्रेन ऑपरेटर' : language === 'sat' ? 'ᱠᱨᱮᱱ ᱪᱟᱞᱟᱣᱤᱡ' : 'Crane Operator');
+    }
+    if (norm.includes('slag')) {
+      return t.desigSlagHandler || (language === 'hi' ? 'स्लैग हैंडलर' : language === 'sat' ? 'ᱥᱞᱟᱜᱽ ᱥᱟᱢᱵᱽᱲᱟᱣᱤᱡ' : 'Slag Handler');
+    }
+    if (norm.includes('trainee')) {
+      return t.desigTraineeMiner || (language === 'hi' ? 'प्रशिक्षु खनिक' : language === 'sat' ? 'ᱪᱮᱫᱚᱜ ᱠᱟᱹᱢᱤᱭᱟᱹ' : 'Trainee Miner');
+    }
+    if (norm.includes('site safety supervisor') || norm.includes('supervisor')) {
+      return t.desigSiteSafetySupervisor || (language === 'hi' ? 'कार्यस्थल सुरक्षा पर्यवेक्षक' : language === 'sat' ? 'ᱠᱟᱹᱢᱤ ᱴᱷᱟᱶ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱧᱮᱞᱤᱡ' : 'Site Safety Supervisor');
+    }
+    if (norm.includes('director') || norm.includes('inspector')) {
+      return t.desigDirectorMineSafety || (language === 'hi' ? 'खान सुरक्षा निदेशक (वैधानिक निरीक्षक)' : language === 'sat' ? 'ᱠᱷᱟᱫᱟᱱ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱰᱟᱭᱨᱮᱠᱴᱚᱨ (ᱥᱚᱝᱵᱤᱫᱷᱟᱱ ᱧᱮᱞᱤᱡ)' : 'Director of Mine Safety (Statutory Inspector)');
+    }
+    if (norm.includes('nodal')) {
+      return t.desigStateNodalOfficer || (language === 'hi' ? 'राज्य नोडल अधिकारी - खान एवं भूतत्व' : language === 'sat' ? 'ᱯᱚᱱᱚᱛ ᱱᱳᱰᱟᱞ ᱚᱯᱷᱤᱥᱟᱨ - ᱠᱷᱟᱫᱟᱱ ᱟᱨ ᱚᱛᱱᱚᱜ' : 'State Nodal Officer - Mines & Geology');
+    }
+    if (norm.includes('miner')) {
+      return t.desigUndergroundMiner || (language === 'hi' ? 'भूमिगत खनिक' : language === 'sat' ? 'ᱠᱷᱟᱫᱟᱱ ᱠᱟᱹᱢᱤᱭᱟᱹ' : 'Underground Miner');
+    }
+    return desig;
+  };
+
+  const getLocalizedTribalLang = (lang) => {
+    if (!lang) return '';
+    const norm = String(lang).trim().toUpperCase();
+    if (norm.includes('SANTALI') || norm.includes('ᱥᱟᱱᱛᱟᱲᱤ') || norm.includes('संथाली')) {
+      return t.langSantaliBadge || (language === 'hi' ? 'संथाली (ओल चिकी ᱚᱞ ᱪᱤᱠᱤ)' : language === 'sat' ? 'ᱥᱟᱱᱛᱟᱲᱤ (ᱚᱞ ᱪᱤᱠᱤ)' : 'Santali (Ol Chiki ᱚᱞ ᱪᱤᱠᱤ)');
+    }
+    if (norm.includes('HINDI') || norm.includes('हिन्दी') || norm.includes('ᱦᱤᱱᱫᱤ')) {
+      return t.langHindiBadge || (language === 'hi' ? 'हिन्दी (देवनागरी)' : language === 'sat' ? 'ᱦᱤᱱᱫᱤ (ᱫᱮᱵᱽᱱᱟᱜᱽᱨᱤ)' : 'Hindi (Devanagari)');
+    }
+    if (norm.includes('MUNDARI') || norm.includes('मुंडारी') || norm.includes('ᱢᱩᱱᱰᱟᱨᱤ')) {
+      return t.langMundariBadge || (language === 'hi' ? 'मुंडारी' : language === 'sat' ? 'ᱢᱩᱱᱰᱟᱨᱤ' : 'Mundari');
+    }
+    if (norm.includes('HO') || norm.includes('हो') || norm.includes('ᱦᱳ')) {
+      return t.langHoBadge || (language === 'hi' ? 'हो (वारंग क्षिति)' : language === 'sat' ? 'ᱦᱳ (ᱣᱟᱨᱟᱝ ᱪᱤᱛᱤ)' : 'Ho (Warang Chiti)');
+    }
+    if (norm.includes('ENGLISH') || norm.includes('अंग्रेज़ी') || norm.includes('ᱤᱝᱞᱤᱥ')) {
+      return t.langEnglishBadge || (language === 'hi' ? 'अंग्रेज़ी' : language === 'sat' ? 'ᱤᱝᱞᱤᱥ' : 'English');
+    }
+    return lang;
+  };
+
 
   return (
     <LanguageContext.Provider value={{
@@ -1607,7 +1787,10 @@ export const LanguageProvider = ({ children }) => {
       isSpeaking,
       speak,
       stopSpeaking,
-      getLocalizedModuleTitle
+      getLocalizedModuleTitle,
+      getLocalizedLiteracy,
+      getLocalizedDesignation,
+      getLocalizedTribalLang
     }}>
       {children}
     </LanguageContext.Provider>
