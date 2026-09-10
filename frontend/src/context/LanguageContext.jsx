@@ -117,6 +117,7 @@ export const translations = {
     certifiedBadge: "Certified",
     statutoryDrillBadge: "Statutory Drill",
     phase2Badge: "Phase 2 Pipeline",
+    minutesUnit: "mins",
     underDgmsSpec: "Under DGMS Specification",
     passThresholdLabel: "Benchmark:",
     
@@ -134,7 +135,7 @@ export const translations = {
     module4Subtitle: "Flameproof enclosure inspection, explosive magazine handling, and shot-firing cordon",
     module4Desc: "Hazard inspection simulation covering FLP electrical switchgear gap gauges, detonator transport statutory protocol, and 300-metre blasting shelter clearance verification.",
     module5Title: "PPE Compliance & Induction",
-    module5Subtitle: "Mandatory hard hat, steel-toe boots, metatarsal guards, and dust respirator donning",
+    module5Subtitle: "Mandatory DGMS 11-point gear protocol, cap lamp inspection, and dust respirator fitting",
     module5Desc: "Computer vision and AR alignment check ensuring mining helmet with cap lamp, high-visibility reflective harness, ear defenders, and safety footwear meet DGMS induction standards.",
     
     // Passports / Certificates Section
@@ -596,7 +597,8 @@ export const translations = {
     modulesSectionSubtitle: "खान सुरक्षा महानिदेशालय (DGMS) द्वारा निर्धारित व्यावहारिक कैमरा-आधारित सुरक्षा ड्रिल",
     certifiedBadge: "प्रमाणित",
     statutoryDrillBadge: "वैधानिक ड्रिल",
-    phase2Badge: "द्वितीय चरण",
+    phase2Badge: "चरण 2 पाइपलाइन",
+    minutesUnit: "मिनट",
     underDgmsSpec: "डीजीएमएस विनिर्देश के तहत",
     passThresholdLabel: "उत्तीर्ण मानक:",
     
@@ -614,7 +616,7 @@ export const translations = {
     module4Subtitle: "फ्लेमप्रूफ एनक्लोजर निरीक्षण, विस्फोटक मैगजीन हैंडलिंग और ब्लास्टिंग घेरा",
     module4Desc: "खतरा निरीक्षण सिमुलेशन: एफएलपी इलेक्ट्रिकल स्विचगियर गैप गेज, डिटोनेटर परिवहन नियम और 300-मीटर ब्लास्टिंग शेल्टर निकासी का अनुपालन।",
     module5Title: "पीपीई अनुपालन एवं खदान प्रवेश",
-    module5Subtitle: "अनिवार्य हेलमेट, स्टील-टो जूते, मेटाटार्सल गार्ड और धूल मास्क पहनना",
+    module5Subtitle: "अनिवार्य डीजीएमएस 11-बिंदु गियर प्रोटोकॉल, कैप लैंप निरीक्षण और डस्ट रेस्पिरेटर फिटिंग",
     module5Desc: "कंप्यूटर विज़न एवं एआर संरेखण जांच: कैप लैंप युक्त हेलमेट, परावर्तक सुरक्षा जैकेट, कान रक्षक और सुरक्षा जूते डीजीएमएस मानकों के अनुरूप सुनिश्चित करना।",
     
     // Passports / Certificates Section
@@ -1076,7 +1078,8 @@ export const translations = {
     modulesSectionSubtitle: "DGMS ᱟᱹᱱ ᱞᱮᱠᱟᱛᱮ ᱠᱮᱢᱮᱨᱟ ᱥᱟᱢᱟᱝ ᱨᱮ ᱠᱟᱹᱢᱤ ᱯᱚᱨᱠᱷᱟᱣ ᱥᱮᱪᱮᱫ",
     certifiedBadge: "ᱯᱟᱥ ᱟᱠᱟᱱ",
     statutoryDrillBadge: "ᱞᱟᱹᱠᱛᱤᱭᱟᱱ ᱥᱮᱪᱮᱫ",
-    phase2Badge: "ᱫᱚᱥᱟᱨ ᱛᱷᱟᱠ",
+    phase2Badge: "ᱫᱚᱥᱟᱨ ᱛᱷᱟᱠ ᱯᱟᱭᱤᱯᱞᱟᱭᱤᱱ",
+    minutesUnit: "ᱴᱤᱲᱤᱡ",
     underDgmsSpec: "DGMS ᱛᱮᱭᱟᱨ ᱨᱮ ᱢᱮᱱᱟᱜ-ᱟ",
     passThresholdLabel: "ᱯᱟᱥ ᱢᱟᱨᱠ:",
     
@@ -1094,7 +1097,7 @@ export const translations = {
     module4Subtitle: "FLP ᱵᱤᱡᱽᱞᱤ ᱵᱟᱠᱥᱟ ᱯᱚᱨᱠᱷᱟᱣ, ᱵᱚᱢ ᱥᱟᱯᱲᱟᱣ ᱟᱨ ᱓᱐᱐ ᱢᱤᱴᱚᱨ ᱥᱟᱺᱜᱤᱧ ᱨᱩᱠᱷᱤᱭᱟᱹ",
     module4Desc: "ᱠᱷᱟᱫᱟᱱ ᱵᱤᱡᱽᱞᱤ ᱥᱩᱭᱤᱪ ᱵᱟᱠᱥᱟ ᱜᱮᱯ ᱢᱤᱴᱟᱨ ᱧᱮᱞ ᱟᱨ ᱵᱞᱟᱥᱴᱤᱝ ᱚᱠᱛᱚ ᱓᱐᱐ ᱢᱤᱴᱚᱨ ᱥᱟᱺᱜᱤᱧ ᱨᱮ ᱛᱟᱦᱮᱸᱱ ᱨᱮᱱᱟᱜ ᱟᱹᱱ᱾",
     module5Title: "ᱯᱤᱯᱤᱤ (PPE) ᱦᱚᱨᱚᱜ ᱟᱨ ᱠᱷᱟᱫᱟᱱ ᱵᱚᱞᱚᱱ",
-    module5Subtitle: "ᱦᱮᱞᱢᱮᱴ, ᱢᱮᱬᱦᱮᱫ ᱡᱩᱛᱟᱹ, ᱢᱮᱴᱟᱴᱟᱨᱥᱟᱞ ᱜᱟᱨᱰ ᱟᱨ ᱫᱷᱩᱲᱤ ᱢᱟᱥᱠ",
+    module5Subtitle: "DGMS ᱑᱑-ᱯᱚᱭᱮᱱᱴ ᱜᱤᱭᱟᱨ ᱱᱤᱭᱚᱢ, ᱠᱮᱯ ᱞᱮᱢᱯ ᱟᱨ ᱫᱷᱩᱲᱤ ᱢᱟᱥᱠ ᱦᱚᱨᱚᱜ",
     module5Desc: "ᱠᱮᱢᱮᱨᱟ ᱛᱮ ᱧᱮᱞ ᱠᱟᱛᱮ ᱦᱮᱞᱢᱮᱴ, ᱵᱟᱹᱛᱤ, ᱯᱟᱹᱴᱩᱣᱟᱹ ᱡᱩᱛᱟᱹ ᱟᱨ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱦᱚᱨᱚᱜ-ᱵᱟᱸᱫᱮ ᱴᱷᱤᱠ ᱢᱮᱱᱟᱜ-ᱟ ᱥᱮ ᱵᱟᱝ ᱯᱚᱨᱠᱷᱟᱣ᱾",
     
     // Passports / Certificates Section
@@ -1510,6 +1513,27 @@ export const LanguageProvider = ({ children }) => {
     setIsSpeaking(false);
   };
 
+  const getLocalizedModuleTitle = (titleOrId) => {
+    if (!titleOrId) return t.module1Title;
+    const str = String(titleOrId).toLowerCase();
+    if (str.includes('fire') || str.includes('mod-001') || str.includes('आग') || str.includes('ᱥᱮᱸᱜᱮᱞ')) {
+      return t.module1Title;
+    }
+    if (str.includes('gas') || str.includes('mod-002') || str.includes('गैस') || str.includes('ᱜᱮᱥ')) {
+      return t.module2Title;
+    }
+    if (str.includes('machinery') || str.includes('conveyor') || str.includes('mod-003') || str.includes('मशीनरी') || str.includes('ᱠᱚᱞ')) {
+      return t.module3Title;
+    }
+    if (str.includes('electrical') || str.includes('blasting') || str.includes('mod-004') || str.includes('विद्युत') || str.includes('ᱵᱤᱡᱽᱞᱤ')) {
+      return t.module4Title;
+    }
+    if (str.includes('ppe') || str.includes('entry') || str.includes('mod-005') || str.includes('पीपीई') || str.includes('ᱯᱤᱯᱤᱤ')) {
+      return t.module5Title;
+    }
+    return titleOrId;
+  };
+
   return (
     <LanguageContext.Provider value={{
       language,
@@ -1519,7 +1543,8 @@ export const LanguageProvider = ({ children }) => {
       setAudioEnabled,
       isSpeaking,
       speak,
-      stopSpeaking
+      stopSpeaking,
+      getLocalizedModuleTitle
     }}>
       {children}
     </LanguageContext.Provider>

@@ -24,7 +24,7 @@ import {
 
 export default function DGMSPortal({ initialHash = '' }) {
   const { currentUser } = useAuth();
-  const { t } = useLanguage();
+  const { t, getLocalizedModuleTitle } = useLanguage();
   const [hashInput, setHashInput] = useState(initialHash);
   const [verificationResult, setVerificationResult] = useState(null);
   const [viewingCertificate, setViewingCertificate] = useState(null);
@@ -305,7 +305,7 @@ export default function DGMSPortal({ initialHash = '' }) {
 
                   <div>
                     <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>{t.dgmsModuleCompetency}</span>
-                    <div style={{ fontWeight: '700', color: '#1A202C' }}>{verificationResult.certificate.module_title}</div>
+                    <div style={{ fontWeight: '700', color: '#1A202C' }}>{getLocalizedModuleTitle(verificationResult.certificate.module_title)}</div>
                     <div style={{ fontSize: '0.78rem', color: '#1E7B34', fontWeight: '700' }}>{(t.dgmsPassedTag || 'Score: {score}% (PASSED)').replace('{score}', verificationResult.certificate.score)}</div>
                   </div>
 
@@ -470,7 +470,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                           siteName: cert.site_name,
                           district: cert.district,
                           sector: cert.sector,
-                          moduleTitle: cert.module_title,
+                          moduleTitle: getLocalizedModuleTitle(cert.module_title),
                           score: cert.score,
                           issueDate: cert.issue_date,
                           expiryDate: cert.expiry_date,

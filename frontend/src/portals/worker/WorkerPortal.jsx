@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function WorkerPortal({ onActivityOccurred, workerSection = 'modules' }) {
-  const { t, language, speak } = useLanguage();
+  const { t, language, speak, getLocalizedModuleTitle } = useLanguage();
   const { currentUser } = useAuth();
   const { saveOfflineSession, saveOfflineCertificate } = useOfflineSync();
 
@@ -84,7 +84,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       color: '#0c4e7e',
       isMvp: true,
       phase: 1,
-      duration: '12 mins',
+      duration: `12 ${t.minutesUnit || 'mins'}`,
       threshold: '80%'
     },
     {
@@ -95,7 +95,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       color: '#B8860B',
       isMvp: true,
       phase: 1,
-      duration: '15 mins',
+      duration: `15 ${t.minutesUnit || 'mins'}`,
       threshold: '75%'
     },
     {
@@ -106,7 +106,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       color: '#4B5563',
       isMvp: false,
       phase: 2,
-      duration: '10 mins',
+      duration: `10 ${t.minutesUnit || 'mins'}`,
       threshold: '80%'
     },
     {
@@ -117,7 +117,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       color: '#4B5563',
       isMvp: false,
       phase: 2,
-      duration: '14 mins',
+      duration: `14 ${t.minutesUnit || 'mins'}`,
       threshold: '85%'
     },
     {
@@ -128,7 +128,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       color: '#4B5563',
       isMvp: false,
       phase: 2,
-      duration: '8 mins',
+      duration: `8 ${t.minutesUnit || 'mins'}`,
       threshold: '90%'
     }
   ];
@@ -526,7 +526,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                         {cert.certificate_id || cert.certificateId}
                       </div>
                       <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#1A202C', marginTop: '0.25rem' }}>
-                        {cert.module_title || cert.moduleTitle || 'Fire Safety Certification'}
+                        {getLocalizedModuleTitle(cert.module_title || cert.moduleTitle)}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#8B6508', marginTop: '0.2rem' }}>
                         {t.statutoryValidityLabel} <strong>{cert.expiry_date || cert.expiryDate}</strong>
@@ -540,7 +540,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                           workerId: cert.worker_id || cert.workerId,
                           workerName: currentUser.name,
                           workerCode: currentUser.workerCode,
-                          moduleTitle: cert.module_title || cert.moduleTitle,
+                          moduleTitle: getLocalizedModuleTitle(cert.module_title || cert.moduleTitle),
                           score: cert.score,
                           issueDate: cert.issue_date || cert.issueDate,
                           expiryDate: cert.expiry_date || cert.expiryDate,
