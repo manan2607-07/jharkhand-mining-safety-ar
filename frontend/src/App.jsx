@@ -10,6 +10,7 @@ import DGMSPortal from './portals/dgms/DGMSPortal';
 import StateNodalDashboard from './portals/state_nodal/StateNodalDashboard';
 import WorkerLoginPage from './portals/auth/WorkerLoginPage';
 import AdminLoginPage from './portals/auth/AdminLoginPage';
+import FooterPolicyModal from './components/FooterPolicyModal';
 import { AshokaLionCapital } from './components/Emblem';
 
 const isCurrentDomainAdmin = () => {
@@ -25,8 +26,9 @@ const isCurrentDomainAdmin = () => {
 
 function MainApp() {
   const { adminUser, isWorkerAuthenticated, isAdminAuthenticated } = useAuth();
-  const { t } = useLanguage();
+  const { t, language, speak } = useLanguage();
   
+  const [activeFooterModal, setActiveFooterModal] = useState(null);
   const isAdminDomain = isCurrentDomainAdmin();
 
   // Determine authorized admin tab based strictly on authenticated role (immutable per session)
@@ -217,21 +219,85 @@ function MainApp() {
             fontSize: '0.8rem',
             fontFamily: "'Roboto Slab', serif"
           }}>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkHome}</a>
+            <button 
+              type="button" 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkHome}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkSimulator}</a>
+            <button 
+              type="button" 
+              onClick={() => setActiveFooterModal('simulator')} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkSimulator}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkCurriculum}</a>
+            <button 
+              type="button" 
+              onClick={() => setActiveFooterModal('curriculum')} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkCurriculum}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkRti}</a>
+            <button 
+              type="button" 
+              onClick={() => setActiveFooterModal('rti')} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkRti}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkEvaluation}</a>
+            <button 
+              type="button" 
+              onClick={() => setActiveFooterModal('evaluation')} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkEvaluation}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkActs}</a>
+            <button 
+              type="button" 
+              onClick={() => setActiveFooterModal('acts')} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkActs}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkSafety}</a>
+            <button 
+              type="button" 
+              onClick={() => setActiveFooterModal('safety')} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkSafety}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
-            <a href="#main-content" style={{ color: '#FFFFFF', textDecoration: 'none' }}>{t.footerLinkScreenReader}</a>
+            <button 
+              type="button" 
+              onClick={() => setActiveFooterModal('screen_reader')} 
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2EE59D'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+            >
+              {t.footerLinkScreenReader}
+            </button>
             {isAdminDomain && !isAdminAuthenticated && (
               <>
                 <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
@@ -328,6 +394,14 @@ function MainApp() {
           </div>
         </div>
       </footer>
+
+      <FooterPolicyModal 
+        activeModal={activeFooterModal} 
+        onClose={() => setActiveFooterModal(null)} 
+        t={t} 
+        language={language} 
+        speak={speak} 
+      />
     </div>
   );
 }
