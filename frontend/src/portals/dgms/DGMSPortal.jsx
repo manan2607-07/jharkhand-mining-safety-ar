@@ -352,7 +352,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                     }}
                   >
                     <Printer size={16} />
-                    <span>View &amp; Print Full Colored Certificate</span>
+                    <span>View &amp; Print Certificate</span>
                   </button>
                 </div>
               </>
@@ -475,7 +475,7 @@ export default function DGMSPortal({ initialHash = '' }) {
                           qrHash: cert.qr_hash,
                           signature: cert.signature
                         })}
-                        title="Print Colored Certificate"
+                        title="Print Certificate"
                         style={{
                           padding: '0.25rem 0.55rem',
                           fontSize: '0.74rem',

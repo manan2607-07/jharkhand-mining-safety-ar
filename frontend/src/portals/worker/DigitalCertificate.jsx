@@ -129,9 +129,9 @@ export default function DigitalCertificate({ certificate, onDone }) {
               Statutory Vocational Safety Credential Ready
             </div>
             <div style={{ fontSize: '0.73rem', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span>High-resolution A4 color printable</span>
+              <span>High-resolution A4 format</span>
               <span>•</span>
-              <span style={{ color: '#2EE59D', fontWeight: '600' }}>Background Graphics: Enabled</span>
+              <span style={{ color: '#2EE59D', fontWeight: '600' }}>Official Mines Safety Record</span>
             </div>
           </div>
         </div>
@@ -155,12 +155,12 @@ export default function DigitalCertificate({ certificate, onDone }) {
             }}
           >
             <Printer size={16} />
-            <span>Print Colored Certificate</span>
+            <span>Print Certificate</span>
           </button>
 
           <button
             onClick={handlePrint}
-            title="Open browser print dialog to save as color PDF"
+            title="Open browser print dialog to save as PDF"
             style={{
               padding: '0.55rem 1rem',
               fontSize: '0.85rem',
@@ -177,7 +177,7 @@ export default function DigitalCertificate({ certificate, onDone }) {
             }}
           >
             <Download size={15} />
-            <span>Save Color PDF</span>
+            <span>Save as PDF</span>
           </button>
 
           {onDone && (
