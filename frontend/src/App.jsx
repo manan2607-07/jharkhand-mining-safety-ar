@@ -135,15 +135,19 @@ function MainApp() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-primary)' }}>
       {/* Show full Navbar when authenticated in respective portal */}
       {!showAdminLogin && !showWorkerLogin && (
-        <Navbar
-          portalMode={isAdminDomain || routeHash.startsWith('#admin') ? 'admin' : 'worker'}
-          adminTab={adminTab}
-          setAdminTab={setAdminTab}
-          workerSection={workerSection}
-          setWorkerSection={setWorkerSection}
-        />
+        <div className="no-print">
+          <Navbar
+            portalMode={isAdminDomain || routeHash.startsWith('#admin') ? 'admin' : 'worker'}
+            adminTab={adminTab}
+            setAdminTab={setAdminTab}
+            workerSection={workerSection}
+            setWorkerSection={setWorkerSection}
+          />
+        </div>
       )}
-      <OfflineBanner />
+      <div className="no-print">
+        <OfflineBanner />
+      </div>
 
       <main id="main-content" tabIndex="-1" style={{ flex: 1, outline: 'none' }}>
         {showAdminLogin ? (

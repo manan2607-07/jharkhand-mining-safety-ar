@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { apiFetch } from '../../services/api';
 import { AshokaLionCapital } from '../../components/Emblem';
+import DigitalCertificate from '../worker/DigitalCertificate';
 import { 
   Scale, 
   QrCode, 
@@ -16,13 +17,15 @@ import {
   Building2,
   Calendar,
   ExternalLink,
-  ShieldAlert
+  ShieldAlert,
+  Printer
 } from 'lucide-react';
 
 export default function DGMSPortal({ initialHash = '' }) {
   const { currentUser } = useAuth();
   const [hashInput, setHashInput] = useState(initialHash);
   const [verificationResult, setVerificationResult] = useState(null);
+  const [viewingCertificate, setViewingCertificate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [auditCertificates, setAuditCertificates] = useState([]);
   const [filterSector, setFilterSector] = useState('ALL');
@@ -275,44 +278,84 @@ export default function DGMSPortal({ initialHash = '' }) {
             </div>
 
             {verificationResult.certificate && (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                gap: '1rem',
-                background: '#FFFFFF',
-                padding: '1rem',
-                borderRadius: '4px',
-                border: '1px solid #CBD5E1',
-                fontSize: '0.85rem'
-              }}>
-                <div>
-                  <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Worker Details</span>
-                  <div style={{ fontWeight: '700', color: '#0c4e7e' }}>{verificationResult.certificate.worker_name}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#4A5568' }} className="font-mono">{verificationResult.certificate.worker_code}</div>
-                </div>
-
-                <div>
-                  <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Mine Facility Site</span>
-                  <div style={{ fontWeight: '700', color: '#1A202C' }}>{verificationResult.certificate.site_name}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#4A5568' }}>{verificationResult.certificate.district} ({verificationResult.certificate.sector})</div>
-                </div>
-
-                <div>
-                  <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Module Competency</span>
-                  <div style={{ fontWeight: '700', color: '#1A202C' }}>{verificationResult.certificate.module_title}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#1E7B34', fontWeight: '700' }}>Score: {verificationResult.certificate.score}% (PASSED)</div>
-                </div>
-
-                <div>
-                  <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Statutory Validity Window</span>
-                  <div style={{ fontWeight: '700', color: '#8B6508' }}>
-                    Expires: {verificationResult.certificate.expiry_date}
+              <>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '1rem',
+                  background: '#FFFFFF',
+                  padding: '1rem',
+                  borderRadius: '4px',
+                  border: '1px solid #CBD5E1',
+                  fontSize: '0.85rem'
+                }}>
+                  <div>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Worker Details</span>
+                    <div style={{ fontWeight: '700', color: '#0c4e7e' }}>{verificationResult.certificate.worker_name}</div>
+                    <div style={{ fontSize: '0.78rem', color: '#4A5568' }} className="font-mono">{verificationResult.certificate.worker_code}</div>
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: verificationResult.daysRemaining < 30 ? '#9B1C1C' : '#1E7B34', fontWeight: '600' }}>
-                    {verificationResult.daysRemaining} day(s) until mandatory refresher
+
+                  <div>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Mine Facility Site</span>
+                    <div style={{ fontWeight: '700', color: '#1A202C' }}>{verificationResult.certificate.site_name}</div>
+                    <div style={{ fontSize: '0.78rem', color: '#4A5568' }}>{verificationResult.certificate.district} ({verificationResult.certificate.sector})</div>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Module Competency</span>
+                    <div style={{ fontWeight: '700', color: '#1A202C' }}>{verificationResult.certificate.module_title}</div>
+                    <div style={{ fontSize: '0.78rem', color: '#1E7B34', fontWeight: '700' }}>Score: {verificationResult.certificate.score}% (PASSED)</div>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: '600' }}>Statutory Validity Window</span>
+                    <div style={{ fontWeight: '700', color: '#8B6508' }}>
+                      Expires: {verificationResult.certificate.expiry_date}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: verificationResult.daysRemaining < 30 ? '#9B1C1C' : '#1E7B34', fontWeight: '600' }}>
+                      {verificationResult.daysRemaining} day(s) until mandatory refresher
+                    </div>
                   </div>
                 </div>
-              </div>
+
+                <div style={{ marginTop: '0.85rem', display: 'flex', gap: '0.75rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setViewingCertificate({
+                      certificateId: verificationResult.certificate.certificate_id,
+                      workerName: verificationResult.certificate.worker_name,
+                      workerCode: verificationResult.certificate.worker_code,
+                      siteName: verificationResult.certificate.site_name,
+                      district: verificationResult.certificate.district,
+                      sector: verificationResult.certificate.sector,
+                      moduleTitle: verificationResult.certificate.module_title,
+                      score: verificationResult.certificate.score,
+                      issueDate: verificationResult.certificate.issue_date,
+                      expiryDate: verificationResult.certificate.expiry_date,
+                      qrHash: verificationResult.certificate.qr_hash,
+                      signature: verificationResult.certificate.signature
+                    })}
+                    className="gov-btn-primary"
+                    style={{
+                      padding: '0.55rem 1.15rem',
+                      fontSize: '0.85rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      background: '#2EE59D',
+                      color: '#073556',
+                      fontWeight: '800',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: '4px',
+                      boxShadow: '0 2px 8px rgba(46, 229, 157, 0.4)'
+                    }}
+                  >
+                    <Printer size={16} />
+                    <span>View &amp; Print Full Colored Certificate</span>
+                  </button>
+                </div>
+              </>
             )}
           </div>
         )}
@@ -404,17 +447,53 @@ export default function DGMSPortal({ initialHash = '' }) {
                     </span>
                   </td>
                   <td>
-                    <button
-                      onClick={() => {
-                        setHashInput(cert.qr_hash);
-                        handleVerify(cert.qr_hash);
-                        window.scrollTo({ top: 120, behavior: 'smooth' });
-                      }}
-                      className="gov-btn-secondary"
-                      style={{ padding: '0.25rem 0.55rem', fontSize: '0.74rem' }}
-                    >
-                      Audit
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.35rem' }}>
+                      <button
+                        onClick={() => {
+                          setHashInput(cert.qr_hash);
+                          handleVerify(cert.qr_hash);
+                          window.scrollTo({ top: 120, behavior: 'smooth' });
+                        }}
+                        className="gov-btn-secondary"
+                        style={{ padding: '0.25rem 0.55rem', fontSize: '0.74rem' }}
+                      >
+                        Audit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setViewingCertificate({
+                          certificateId: cert.certificate_id,
+                          workerName: cert.worker_name,
+                          workerCode: cert.worker_code,
+                          siteName: cert.site_name,
+                          district: cert.district,
+                          sector: cert.sector,
+                          moduleTitle: cert.module_title,
+                          score: cert.score,
+                          issueDate: cert.issue_date,
+                          expiryDate: cert.expiry_date,
+                          qrHash: cert.qr_hash,
+                          signature: cert.signature
+                        })}
+                        title="Print Colored Certificate"
+                        style={{
+                          padding: '0.25rem 0.55rem',
+                          fontSize: '0.74rem',
+                          background: '#EBF3FC',
+                          color: '#0c4e7e',
+                          border: '1px solid #B4D3F7',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          fontWeight: '700'
+                        }}
+                      >
+                        <Printer size={12} />
+                        <span>Print</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -422,6 +501,48 @@ export default function DGMSPortal({ initialHash = '' }) {
           </table>
         </div>
       </div>
+
+      {/* Modal Inspector Certificate Preview for Direct A4 Color Printing */}
+      {viewingCertificate && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(7, 53, 86, 0.88)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 9999,
+          overflowY: 'auto',
+          padding: '1.5rem 1rem'
+        }}>
+          <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+            <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.65rem' }}>
+              <button
+                type="button"
+                onClick={() => setViewingCertificate(null)}
+                style={{
+                  background: '#FFFFFF',
+                  color: '#073556',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '0.45rem 1.1rem',
+                  fontWeight: '800',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                }}
+              >
+                ✕ Close Inspector Preview
+              </button>
+            </div>
+            <DigitalCertificate
+              certificate={viewingCertificate}
+              onDone={() => setViewingCertificate(null)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
