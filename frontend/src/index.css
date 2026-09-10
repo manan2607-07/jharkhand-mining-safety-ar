@@ -647,10 +647,11 @@ h4 { font-size: 1.05rem; }
 
 /* ==========================================================================
    PRINT MEDIA STYLES (Statutory Certificates & Audit Reports)
+   Strictly formatted for single-page output without multi-page overflow
    ========================================================================== */
 @page {
-  size: A4 portrait;
-  margin: 5mm 6mm;
+  size: A4 landscape;
+  margin: 4mm 6mm;
 }
 
 @media print {
@@ -659,8 +660,9 @@ h4 { font-size: 1.05rem; }
     color: #1A202C !important;
     margin: 0 !important;
     padding: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
@@ -682,12 +684,17 @@ h4 { font-size: 1.05rem; }
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
+    height: 100% !important;
   }
 
   .print-certificate-container {
     max-width: 100% !important;
-    margin: 0 !important;
+    width: 100% !important;
+    margin: 0 auto !important;
     padding: 0 !important;
+    height: 100% !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .print-page {
@@ -701,6 +708,9 @@ h4 { font-size: 1.05rem; }
     break-inside: avoid !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    overflow: hidden !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
