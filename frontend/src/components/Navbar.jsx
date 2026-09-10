@@ -42,7 +42,6 @@ export default function Navbar({
 
   // Accessibility States (GIGW Mandated)
   const [fontSize, setFontSize] = useState('normal'); // 'small' | 'normal' | 'large'
-  const [highContrast, setHighContrast] = useState(false);
 
   // Apply Font Size Scaling
   const handleFontSizeChange = (size) => {
@@ -51,29 +50,14 @@ export default function Navbar({
     localStorage.setItem('jh_gov_font_size', size);
   };
 
-  // Apply High Contrast Mode
-  const handleHighContrastToggle = () => {
-    const next = !highContrast;
-    setHighContrast(next);
-    if (next) {
-      document.body.classList.add('high-contrast');
-      localStorage.setItem('jh_gov_high_contrast', 'true');
-    } else {
-      document.body.classList.remove('high-contrast');
-      localStorage.setItem('jh_gov_high_contrast', 'false');
-    }
-  };
-
   useEffect(() => {
     const savedSize = localStorage.getItem('jh_gov_font_size') || 'normal';
     setFontSize(savedSize);
     document.documentElement.setAttribute('data-font-size', savedSize);
 
-    const savedContrast = localStorage.getItem('jh_gov_high_contrast') === 'true';
-    setHighContrast(savedContrast);
-    if (savedContrast) {
-      document.body.classList.add('high-contrast');
-    }
+    // Maintain standard clean government portal theme
+    document.body.classList.remove('high-contrast');
+    localStorage.removeItem('jh_gov_high_contrast');
   }, []);
 
   // Statutory Authority Role is strictly fixed to authenticated official (No role switching permitted)
@@ -274,50 +258,6 @@ export default function Navbar({
                 }}
               >
                 -A
-              </button>
-            </div>
-
-            {/* High Contrast Color Toggles (Exact [A] [A] from jharkhand.gov.in/mines) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', borderRight: '1px solid #374151', paddingRight: '0.65rem' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  if (highContrast) handleHighContrastToggle();
-                }}
-                title="Standard White Theme"
-                aria-label="Standard White Theme"
-                style={{
-                  background: '#FFFFFF',
-                  color: '#000000',
-                  border: '1px solid #2EE59D',
-                  padding: '0 6px',
-                  fontSize: '0.72rem',
-                  fontWeight: 'bold',
-                  borderRadius: '2px',
-                  cursor: 'pointer'
-                }}
-              >
-                A
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (!highContrast) handleHighContrastToggle();
-                }}
-                title="High Contrast Black Theme"
-                aria-label="High Contrast Black Theme"
-                style={{
-                  background: '#000000',
-                  color: '#FFFF00',
-                  border: '1px solid #FFFF00',
-                  padding: '0 6px',
-                  fontSize: '0.72rem',
-                  fontWeight: 'bold',
-                  borderRadius: '2px',
-                  cursor: 'pointer'
-                }}
-              >
-                A
               </button>
             </div>
 
