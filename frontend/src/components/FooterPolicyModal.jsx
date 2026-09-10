@@ -330,25 +330,131 @@ export default function FooterPolicyModal({ activeModal, onClose, t, language, s
               </div>
             </div>
 
-            {/* Team Roster Card */}
-            <div style={{ border: '1px dashed #94A3B8', borderRadius: '4px', padding: '0.85rem 1rem', background: '#FFFFFF' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: '700', textTransform: 'uppercase' }}>
-                    Development & Research Team
+            {/* Official Team Roster Card (Team ECLIPSE • Parul University) */}
+            {(() => {
+              const isHi = language === 'hi';
+              const isSat = language === 'sat';
+              const roster = {
+                teamName: isHi ? 'टीम ECLIPSE' : isSat ? 'ᱴᱤᱢ ECLIPSE' : 'TEAM ECLIPSE',
+                prototypeBadge: isHi ? 'SIH 2026 प्रोटोटाइप' : isSat ? 'SIH ᱒᱐᱒᱖ ᱯᱨᱳᱴᱳᱴᱟᱭᱤᱯ' : 'SIH 2026 Prototype',
+                college: isHi ? 'पारुल विश्वविद्यालय (Parul University)' : isSat ? 'ᱯᱟᱨᱩᱞ ᱡᱮᱜᱮᱛ ᱵᱤᱨᱫᱟᱹᱜᱟᱲ (Parul University)' : 'Parul University',
+                mentorLabel: isHi ? 'संकाय सलाहकार (मेंटर):' : isSat ? 'ᱯᱷᱮᱠᱟᱞᱴᱤ ᱢᱮᱱᱴᱚᱨ:' : 'Faculty Mentor:',
+                mentorName: 'Prof. DINESH SWAMI',
+                psLabel: isHi ? 'समस्या विवरण' : isSat ? 'ᱥᱚᱢᱚᱥᱭᱟ ᱵᱤᱵᱚᱨᱚᱬ' : 'Problem Statement',
+                sectionTitle: isHi ? 'परियोजना दल सदस्य एवं दायित्व:' : isSat ? 'ᱯᱨᱳᱡᱮᱠᱴ ᱴᱤᱢ ᱨᱟᱹᱥᱤᱭᱟᱹ ᱟᱨ ᱠᱟᱹᱢᱤ:' : 'Project Team Members & Roles:',
+                members: [
+                  {
+                    name: 'Patel Manan Dharmendra',
+                    role: isHi ? 'लीड एवं बैकएंड डेवलपर' : isSat ? 'ᱞᱤᱰ ᱟᱨ ᱵᱮᱠᱮᱱᱰ ᱰᱮᱵᱷᱞᱚᱯᱟᱨ' : 'Lead & Backend Developer',
+                    category: isHi ? 'दल प्रमुख (Team Leader)' : isSat ? 'ᱴᱤᱢ ᱞᱤᱰᱟᱨ (Team Leader)' : 'Team Leader',
+                    isLeader: true,
+                  },
+                  {
+                    name: 'Shubh Singh',
+                    role: isHi ? 'फ्रंटएंड डेवलपर' : isSat ? 'ᱯᱷᱨᱚᱱᱴᱮᱱᱰ ᱰᱮᱵᱷᱞᱚᱯᱟᱨ' : 'Frontend Developer',
+                    category: isHi ? 'फ्रंटएंड इंजीनियरिंग' : isSat ? 'ᱯᱷᱨᱚᱱᱴᱮᱱᱰ ᱤᱧᱡᱤᱱᱤᱭᱟᱹᱨᱤᱝ' : 'Frontend Engineering',
+                    isLeader: false,
+                  },
+                  {
+                    name: 'Priyam Patel',
+                    role: isHi ? 'डेटाबेस इंजीनियर' : isSat ? 'ᱰᱮᱴᱟᱵᱮᱥ ᱤᱧᱡᱤᱱᱤᱭᱟᱹᱨ' : 'Database Engineer',
+                    category: isHi ? 'डेटाबेस आर्किटेक्चर' : isSat ? 'ᱰᱮᱴᱟᱵᱮᱥ ᱟᱨᱠᱤᱴᱮᱠᱪᱟᱨ' : 'Database Architecture',
+                    isLeader: false,
+                  },
+                  {
+                    name: 'Taha Chasmawala',
+                    role: isHi ? 'UI/UX डिज़ाइनर' : isSat ? 'UI/UX ᱰᱤᱡᱟᱭᱱᱟᱨ' : 'UI/UX Designer',
+                    category: isHi ? 'यूज़र इंटरफेस एवं अनुभव' : isSat ? 'ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱟᱹᱭᱠᱟᱹᱣ' : 'User Experience',
+                    isLeader: false,
+                  },
+                  {
+                    name: 'Vaishnavi Pandey',
+                    role: isHi ? 'डेवऑप्स डेवलपर' : isSat ? 'ᱰᱮᱵᱷᱳᱯᱥ ᱰᱮᱵᱷᱞᱚᱯᱟᱨ' : 'DevOps Developer',
+                    category: isHi ? 'क्लाउड एवं CI/CD पाइपलाइन' : isSat ? 'ᱠᱞᱟᱣᱰ ᱟᱨ CI/CD ᱯᱟᱭᱤᱯᱞᱟᱭᱤᱱ' : 'Cloud & CI/CD Pipeline',
+                    isLeader: false,
+                  },
+                  {
+                    name: 'Hrutvi Baldaniya',
+                    role: isHi ? 'गुणवत्ता (QA) + सुरक्षा डेवलपर' : isSat ? 'QA ᱟᱨ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱰᱮᱵᱷᱞᱚᱯᱟᱨ' : 'QA + Security Developer',
+                    category: isHi ? 'गुणवत्ता एवं वैधानिक सुरक्षा' : isSat ? 'ᱜᱩᱬ ᱟᱨ ᱟᱹᱱ ᱚᱰᱤᱴ' : 'Quality & Statutory Audits',
+                    isLeader: false,
+                  },
+                ],
+              };
+
+              return (
+                <div style={{ border: '2px solid #0c4e7e', borderRadius: '6px', padding: '1.25rem', background: '#FFFFFF', boxShadow: '0 4px 12px rgba(12, 78, 126, 0.08)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                        <span className="gov-badge-navy" style={{ fontSize: '0.82rem', padding: '0.2rem 0.6rem', fontWeight: '800' }}>
+                          {roster.teamName}
+                        </span>
+                        <span className="gov-badge-green" style={{ fontSize: '0.75rem' }}>
+                          {roster.prototypeBadge}
+                        </span>
+                      </div>
+                      <div style={{ fontWeight: '800', fontSize: '1.05rem', color: '#1A202C' }}>
+                        {roster.college}
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '0.15rem' }}>
+                        <strong>{roster.mentorLabel}</strong> <span style={{ color: '#0c4e7e', fontWeight: '700' }}>{roster.mentorName}</span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748B', textTransform: 'uppercase', fontWeight: '700' }}>
+                        {roster.psLabel}
+                      </div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'monospace' }}>
+                        PS ID: 26041
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ fontWeight: '800', fontSize: '0.92rem', color: '#1A202C', marginTop: '0.2rem' }}>
-                    SIH 2026 Project Innovation Team (PS-26041)
+
+                  {/* Members Roster Grid */}
+                  <div style={{ fontWeight: '700', fontSize: '0.82rem', color: '#4A5568', marginBottom: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {roster.sectionTitle}
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: '0.15rem' }}>
-                    Jharkhand Mining Safety & Vocational AR Research Group
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+                    {roster.members.map((m, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          border: m.isLeader ? '1px solid #93C5FD' : '1px solid #E2E8F0',
+                          borderRadius: '4px',
+                          padding: '0.75rem',
+                          background: m.isLeader ? '#EFF6FF' : '#F8FAFC',
+                          boxShadow: m.isLeader ? '0 2px 4px rgba(37, 99, 235, 0.08)' : 'none',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                          <span
+                            style={{
+                              fontSize: '0.68rem',
+                              fontWeight: '800',
+                              color: m.isLeader ? '#1E40AF' : '#64748B',
+                              background: m.isLeader ? '#DBEAFE' : '#EDF2F7',
+                              padding: '0.1rem 0.4rem',
+                              borderRadius: '3px',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {m.category}
+                          </span>
+                        </div>
+                        <div style={{ fontWeight: '800', fontSize: '0.9rem', color: m.isLeader ? '#073556' : '#1A202C' }}>
+                          {m.name}
+                        </div>
+                        <div style={{ fontSize: '0.76rem', color: m.isLeader ? '#2563EB' : '#0c4e7e', fontWeight: '600', marginTop: '0.15rem' }}>
+                          {m.role}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <span className="gov-badge-amber">
-                  Active Sprint
-                </span>
-              </div>
-            </div>
+              );
+            })()}
           </div>
         );
 
