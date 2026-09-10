@@ -51,6 +51,7 @@ export function seed() {
   const users = [
     { id: 'USR-WORKER-01', username: 'worker1', hash: pwHash, name: 'Birsa Hansda', role: 'WORKER', site: 'SITE-DHN-01', dist: 'Dhanbad' },
     { id: 'USR-OFFICER-01', username: 'officer1', hash: pwHash, name: 'Rajesh Mahato (Safety Officer)', role: 'SAFETY_OFFICER', site: 'SITE-DHN-01', dist: 'Dhanbad' },
+    { id: 'USR-OFFICER-01-ALT', username: 'officer_dhanbad', hash: pwHash, name: 'Rajesh Mahato (Safety Officer)', role: 'SAFETY_OFFICER', site: 'SITE-DHN-01', dist: 'Dhanbad' },
     { id: 'USR-OFFICER-02', username: 'officer2', hash: pwHash, name: 'Anand Murmu (Plant Safety Sup.)', role: 'SAFETY_OFFICER', site: 'SITE-BOK-01', dist: 'Bokaro' },
     { id: 'USR-DGMS-01', username: 'dgms_inspector', hash: pwHash, name: 'Dr. A.K. Sengupta (Chief Inspector)', role: 'DGMS_INSPECTOR', site: null, dist: 'Dhanbad' },
     { id: 'USR-STATE-01', username: 'state_nodal', hash: pwHash, name: 'Priya Soren (State Nodal Officer)', role: 'STATE_NODAL_OFFICER', site: null, dist: 'Ranchi' }

@@ -22,6 +22,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// Trust reverse proxy (Vercel, Nginx, cloud load balancers) for accurate client IP detection & rate limiting
+app.set('trust proxy', 1);
+
 // 1. Security Headers via Helmet (Configured for WebXR, Three.js, Canvas & Google Fonts)
 app.use(helmet({
   contentSecurityPolicy: {
@@ -44,7 +47,16 @@ app.use(helmet({
 // 2. Controlled CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
-  : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176', 'http://localhost:3000', 'http://127.0.0.1:5176'];
+  : [
+      'http://localhost:5173', 
+      'http://localhost:5174', 
+      'http://localhost:5175', 
+      'http://localhost:5176', 
+      'http://localhost:5177', 
+      'http://localhost:3000', 
+      'http://127.0.0.1:5176', 
+      'http://127.0.0.1:5177'
+    ];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -55,10 +67,17 @@ app.use(cors({
     if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
       return callback(null, true);
     }
+    // Allow all Vercel deployment preview and production domains
+    try {
+      const url = new URL(origin);
+      if (url.hostname.endsWith('.vercel.app') || url.hostname === 'vercel.app') {
+        return callback(null, true);
+      }
+    } catch {}
     return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   credentials: true
 }));
 

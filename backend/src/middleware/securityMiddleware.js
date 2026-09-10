@@ -9,6 +9,7 @@ export const authRateLimiter = rateLimit({
   max: 30,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     error: 'Too many login attempts from this network. Please wait 15 minutes before trying again.'
   }
@@ -23,6 +24,7 @@ export const apiRateLimiter = rateLimit({
   max: 600,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     error: 'API rate limit exceeded. Please reduce request frequency.'
   }
@@ -37,6 +39,7 @@ export const sensitiveOpLimiter = rateLimit({
   max: 120,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     error: 'Too many sensitive transactions processed. Please wait before retrying.'
   }
@@ -51,6 +54,7 @@ export const publicVerifyLimiter = rateLimit({
   max: 200,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     error: 'Verification query limit reached. Please wait a few minutes before scanning again.'
   }
@@ -74,13 +78,15 @@ export function sanitizeText(input, maxLength = 255) {
  */
 export function errorHandler(err, req, res, next) {
   const isProd = process.env.NODE_ENV === 'production';
-  const statusCode = err.status || err.statusCode || 500;
+  const isCorsError = err.message?.includes('CORS');
+  const statusCode = err.status || err.statusCode || (isCorsError ? 403 : 500);
 
   console.error(`[SECURITY ERROR] ${req.method} ${req.url} - Code: ${statusCode}:`, err);
 
-  res.status(statusCode).json({
-    error: isProd 
-      ? 'An unexpected server error occurred. Please contact the DGMS / Mining Support Desk.'
-      : err.message || 'Internal Server Error'
-  });
+  // Return descriptive message for client/validation/CORS errors; obfuscate only internal 500s
+  const message = statusCode < 500 
+    ? (err.message || 'Request Error')
+    : (isProd ? 'An unexpected server error occurred. Please contact the DGMS / Mining Support Desk.' : (err.message || 'Internal Server Error'));
+
+  res.status(statusCode).json({ error: message });
 }
