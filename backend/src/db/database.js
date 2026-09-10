@@ -44,6 +44,7 @@ export function initDatabase() {
       role TEXT NOT NULL CHECK(role IN ('WORKER', 'SAFETY_OFFICER', 'DGMS_INSPECTOR', 'STATE_NODAL_OFFICER')),
       site_id TEXT,
       district TEXT,
+      is_active INTEGER DEFAULT 1,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -126,17 +127,61 @@ export function initDatabase() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- ═══════════════════════════════════════════════════════════════
+    -- SECURITY TABLES (Added for hardening)
+    -- ═══════════════════════════════════════════════════════════════
+
+    -- Audit trail for government compliance (immutable log)
+    CREATE TABLE IF NOT EXISTS audit_events (
+      id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      actor_id TEXT,
+      actor_role TEXT,
+      resource TEXT,
+      action TEXT NOT NULL,
+      result TEXT NOT NULL DEFAULT 'SUCCESS',
+      ip_address TEXT,
+      metadata TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Token blacklist for session revocation
+    CREATE TABLE IF NOT EXISTS token_blacklist (
+      token_hash TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      reason TEXT DEFAULT 'LOGOUT',
+      expires_at DATETIME NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE INDEX IF NOT EXISTS idx_workers_site ON workers(site_id);
     CREATE INDEX IF NOT EXISTS idx_workers_cohort ON workers(cohort_id);
     CREATE INDEX IF NOT EXISTS idx_certs_worker ON certificates(worker_id);
     CREATE INDEX IF NOT EXISTS idx_certs_hash ON certificates(qr_hash);
     CREATE INDEX IF NOT EXISTS idx_certs_expiry ON certificates(expiry_date);
+    CREATE INDEX IF NOT EXISTS idx_audit_type ON audit_events(event_type);
+    CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_events(actor_id);
+    CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_events(created_at);
+    CREATE INDEX IF NOT EXISTS idx_token_blacklist_expires ON token_blacklist(expires_at);
   `);
 
+  // Safe column additions for schema migrations
   try {
     db.exec(`ALTER TABLE workers ADD COLUMN pin_hash TEXT;`);
   } catch {
     // Column already exists
+  }
+  try {
+    db.exec(`ALTER TABLE users ADD COLUMN is_active INTEGER DEFAULT 1;`);
+  } catch {
+    // Column already exists
+  }
+
+  // Clean expired blacklisted tokens on startup
+  try {
+    db.prepare(`DELETE FROM token_blacklist WHERE expires_at < datetime('now')`).run();
+  } catch {
+    // Table may not exist yet on first run
   }
 }
 

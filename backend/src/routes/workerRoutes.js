@@ -1,12 +1,14 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import db from '../db/database.js';
+import config from '../config.js';
 import { authenticateToken, authorizeRoles, enforceSiteIsolation } from '../middleware/authMiddleware.js';
 import { sanitizeText } from '../middleware/securityMiddleware.js';
+import { logAuditEvent, getClientIp, AuditEventType } from '../services/auditService.js';
 
 const router = express.Router();
 
-// GET /api/workers - List workers with site and cohort joins (Requires Admin Auth + Site Isolation)
+// GET /api/workers - List workers with site and cohort joins (Requires Admin Auth + Site Isolation, Paginated)
 router.get(
   '/',
   authenticateToken,
@@ -55,10 +57,16 @@ router.get(
         params.push(`%${cleanSearch}%`, `%${cleanSearch}%`);
       }
 
-      query += ' ORDER BY w.created_at DESC';
+      // Safe pagination: default 200, max 500 per page to prevent memory exhaustion DoS
+      const limit = Math.min(Math.max(parseInt(req.query.limit) || 200, 1), 500);
+      const offset = Math.max(parseInt(req.query.offset) || 0, 0);
+
+      query += ' ORDER BY w.created_at DESC LIMIT ? OFFSET ?';
+      params.push(limit, offset);
 
       const stmt = db.prepare(query);
       const workers = stmt.all(...params);
+      res.setHeader('X-Total-Count', workers.length);
       res.json(workers);
     } catch (err) {
       next(err);
@@ -92,6 +100,15 @@ router.get('/:id', authenticateToken, (req, res, next) => {
     // Access Control: Workers can only view their own profile
     if (req.user.role === 'WORKER') {
       if (req.user.id !== worker.id && req.user.workerCode !== worker.worker_code) {
+        logAuditEvent({
+          type: AuditEventType.IDOR_ATTEMPT,
+          actorId: req.user.id,
+          actorRole: req.user.role,
+          resource: `worker:${cleanId}`,
+          action: 'Worker attempted unauthorized access to another worker profile',
+          result: 'DENIED',
+          ipAddress: getClientIp(req)
+        });
         return res.status(403).json({ error: 'Access denied: You can only view your own worker profile' });
       }
     }
@@ -158,7 +175,7 @@ router.post(
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
-      const defaultPinHash = bcrypt.hashSync('1234', 8);
+      const defaultPinHash = bcrypt.hashSync('1234', config.bcryptRounds);
       const enrolled = [];
 
       for (const w of list) {
@@ -188,6 +205,16 @@ router.post(
         );
         enrolled.push({ id, worker_code: workerCode, full_name: w.full_name });
       }
+
+      logAuditEvent({
+        type: AuditEventType.WORKER_ENROLLED,
+        actorId: req.user.id,
+        actorRole: req.user.role,
+        action: `Enrolled ${enrolled.length} worker(s)`,
+        result: 'SUCCESS',
+        ipAddress: getClientIp(req),
+        metadata: { count: enrolled.length }
+      });
 
       res.status(201).json({
         message: `Successfully enrolled ${enrolled.length} worker(s)`,
@@ -271,6 +298,17 @@ router.post(
         sanitizeText(start_date, 20),
         target_completion_date ? sanitizeText(target_completion_date, 20) : null
       );
+
+      logAuditEvent({
+        type: AuditEventType.COHORT_CREATED,
+        actorId: req.user.id,
+        actorRole: req.user.role,
+        resource: `cohort:${id}`,
+        action: `Created training cohort: ${name} (${id})`,
+        result: 'SUCCESS',
+        ipAddress: getClientIp(req)
+      });
+
       res.status(201).json({ id, name, site_id: cleanSiteId, status: 'ACTIVE' });
     } catch (err) {
       next(err);

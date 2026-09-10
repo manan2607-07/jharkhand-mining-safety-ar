@@ -1,13 +1,12 @@
 import crypto from 'crypto';
-
-const CERT_SECRET = process.env.CERT_SECRET || process.env.JWT_SECRET || 'jharkhand-sih-2026-secret-key-dgms-verified';
+import config from '../config.js';
 
 /**
  * Generate a tamper-evident cryptographic hash for a certificate.
  */
 export function generateCertificateHash({ certificateId, workerId, moduleId, siteId, score, issueDate, expiryDate }) {
   const payload = `${certificateId}|${workerId}|${moduleId}|${siteId}|${score}|${issueDate}|${expiryDate}`;
-  const hash = crypto.createHmac('sha256', CERT_SECRET).update(payload).digest('hex');
+  const hash = crypto.createHmac('sha256', config.certSecret).update(payload).digest('hex');
   const signature = `DGMS-SIG-${hash.substring(0, 16).toUpperCase()}`;
   return { hash, signature };
 }

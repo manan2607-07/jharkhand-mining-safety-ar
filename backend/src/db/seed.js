@@ -1,8 +1,10 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
 import db, { initDatabase } from './database.js';
+import config from '../config.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jharkhand-sih-2026-secret-key-dgms-verified';
+dotenv.config();
 
 export function seed() {
   console.log('⚡ Initializing Database Schema...');
@@ -46,7 +48,7 @@ export function seed() {
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
 
-  const pwHash = bcrypt.hashSync('password123', 8);
+  const pwHash = bcrypt.hashSync('password123', 12);
 
   const users = [
     { id: 'USR-WORKER-01', username: 'worker1', hash: pwHash, name: 'Birsa Hansda', role: 'WORKER', site: 'SITE-DHN-01', dist: 'Dhanbad' },
@@ -165,7 +167,7 @@ export function seed() {
     insertCohort.run(c.id, c.name, c.site_id, c.supervisor, c.start, c.end, c.status);
   }
 
-  const workerPinHash = bcrypt.hashSync('1234', 8);
+  const workerPinHash = bcrypt.hashSync('1234', 12);
 
   const insertWorker = db.prepare(`
     INSERT INTO workers (id, worker_code, full_name, tribal_language, literacy_level, site_id, cohort_id, designation, phone, joined_date, pin_hash)
@@ -277,7 +279,7 @@ export function seed() {
 
     const certId = `CERT-JH-2026-${10000 + idx}`;
     const rawPayload = `${certId}|${sc.worker_id}|${sc.module_id}|${sc.site_id}|${sc.score}|${sc.issue_date}|${sc.expiry_date}`;
-    const qrHash = crypto.createHmac('sha256', JWT_SECRET).update(rawPayload).digest('hex');
+    const qrHash = crypto.createHmac('sha256', config.certSecret).update(rawPayload).digest('hex');
     const signature = `DGMS-SIG-${qrHash.substring(0, 16).toUpperCase()}`;
 
     insertCert.run(

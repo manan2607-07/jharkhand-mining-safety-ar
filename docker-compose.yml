@@ -10,10 +10,11 @@ services:
       - "5001:5001"
     environment:
       - PORT=5001
-      - JWT_SECRET=${JWT_SECRET:-jharkhand-sih-2026-secret-key-dgms-verified}
-      - CERT_SECRET=${CERT_SECRET:-jharkhand-sih-2026-secret-key-dgms-verified}
+      - JWT_SECRET=${JWT_SECRET}
+      - CERT_SECRET=${CERT_SECRET}
       - NODE_ENV=${NODE_ENV:-production}
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:5176}
+      - ENABLE_EVALUATION_CREDENTIALS=${ENABLE_EVALUATION_CREDENTIALS:-false}
     volumes:
       - ./backend/data:/app/data
     restart: unless-stopped

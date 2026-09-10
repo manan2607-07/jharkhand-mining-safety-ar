@@ -2,12 +2,16 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '../db/database.js';
+import config from '../config.js';
 import { authRateLimiter, sanitizeText } from '../middleware/securityMiddleware.js';
+import { authenticateToken, blacklistToken } from '../middleware/authMiddleware.js';
+import { logAuditEvent, getClientIp, AuditEventType } from '../services/auditService.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'jharkhand-sih-2026-secret-key-dgms-verified';
 
+// ══════════════════════════════════════════════════════════════════
 // POST /api/auth/login - Generic login endpoint (Rate-limited, sanitized)
+// ══════════════════════════════════════════════════════════════════
 router.post('/login', authRateLimiter, (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -20,8 +24,31 @@ router.post('/login', authRateLimiter, (req, res, next) => {
     const user = stmt.get(cleanUsername);
 
     if (!user || !bcrypt.compareSync(password, user.password_hash)) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      // Generic response — do NOT reveal if username exists
+      logAuditEvent({
+        type: AuditEventType.LOGIN_FAILED,
+        actorId: cleanUsername,
+        action: `Login attempt failed for username "${cleanUsername}"`,
+        result: 'FAILURE',
+        ipAddress: getClientIp(req)
+      });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    // Check if account is deactivated
+    if (user.is_active === 0) {
+      logAuditEvent({
+        type: AuditEventType.LOGIN_FAILED,
+        actorId: user.id,
+        actorRole: user.role,
+        action: 'Login attempt on deactivated account',
+        result: 'DENIED',
+        ipAddress: getClientIp(req)
+      });
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const expiresIn = (user.role === 'WORKER') ? config.jwtExpiryWorker : config.jwtExpiryAdmin;
 
     const token = jwt.sign(
       {
@@ -32,9 +59,18 @@ router.post('/login', authRateLimiter, (req, res, next) => {
         siteId: user.site_id,
         district: user.district
       },
-      JWT_SECRET,
-      { expiresIn: '7d' }
+      config.jwtSecret,
+      { expiresIn, algorithm: 'HS256' }
     );
+
+    logAuditEvent({
+      type: AuditEventType.LOGIN_SUCCESS,
+      actorId: user.id,
+      actorRole: user.role,
+      action: `Successful login via generic endpoint`,
+      result: 'SUCCESS',
+      ipAddress: getClientIp(req)
+    });
 
     res.json({
       token,
@@ -52,7 +88,9 @@ router.post('/login', authRateLimiter, (req, res, next) => {
   }
 });
 
-// POST /api/auth/worker-login - Dedicated Frontline Worker Login (Rate-limited, bcrypt PIN verified)
+// ══════════════════════════════════════════════════════════════════
+// POST /api/auth/worker-login - Frontline Worker Login (Rate-limited, bcrypt PIN verified)
+// ══════════════════════════════════════════════════════════════════
 router.post('/worker-login', authRateLimiter, (req, res, next) => {
   try {
     const { workerCode, phone, pin } = req.body;
@@ -60,11 +98,11 @@ router.post('/worker-login', authRateLimiter, (req, res, next) => {
     const identifier = sanitizeText(rawIdentifier, 100);
 
     if (!identifier) {
-      return res.status(400).json({ error: 'Worker Code (e.g. JH-WRK-001) or Registered Mobile Number required' });
+      return res.status(400).json({ error: 'Worker Code or Registered Mobile Number required' });
     }
 
     if (!pin) {
-      return res.status(400).json({ error: 'Worker Security PIN required (Default prototype PIN: 1234)' });
+      return res.status(400).json({ error: 'Worker Security PIN required' });
     }
 
     const stmt = db.prepare(`
@@ -86,18 +124,45 @@ router.post('/worker-login', authRateLimiter, (req, res, next) => {
     const worker = stmt.get(identifier, `%${phoneClean}%`, identifier);
 
     if (!worker) {
-      return res.status(404).json({
-        error: `No miner record found for '${identifier}'. Try sample worker code 'JH-WRK-001' (Birsa Hansda).`
+      // Generic response — do NOT reveal which worker codes exist
+      logAuditEvent({
+        type: AuditEventType.LOGIN_FAILED,
+        actorId: identifier,
+        action: 'Worker login failed — identifier not found',
+        result: 'FAILURE',
+        ipAddress: getClientIp(req)
+      });
+      return res.status(401).json({
+        error: 'Invalid worker credentials. Please verify your Worker Code and PIN.'
       });
     }
 
-    // Verify PIN against stored bcrypt hash (fallback to '1234' hash for unmigrated entries)
-    const isPinValid = worker.pin_hash
-      ? bcrypt.compareSync(String(pin), worker.pin_hash)
-      : (String(pin) === '1234');
+    // Verify PIN against stored bcrypt hash — NO plaintext fallback
+    if (!worker.pin_hash) {
+      logAuditEvent({
+        type: AuditEventType.LOGIN_FAILED,
+        actorId: worker.id,
+        action: 'Worker login failed — no PIN hash set (account needs PIN migration)',
+        result: 'FAILURE',
+        ipAddress: getClientIp(req)
+      });
+      return res.status(401).json({
+        error: 'Invalid worker credentials. Please verify your Worker Code and PIN.'
+      });
+    }
 
+    const isPinValid = bcrypt.compareSync(String(pin), worker.pin_hash);
     if (!isPinValid) {
-      return res.status(401).json({ error: 'Invalid Security PIN. Please verify your 4-digit PIN.' });
+      logAuditEvent({
+        type: AuditEventType.LOGIN_FAILED,
+        actorId: worker.id,
+        action: 'Worker login failed — incorrect PIN',
+        result: 'FAILURE',
+        ipAddress: getClientIp(req)
+      });
+      return res.status(401).json({
+        error: 'Invalid worker credentials. Please verify your Worker Code and PIN.'
+      });
     }
 
     const token = jwt.sign(
@@ -109,9 +174,18 @@ router.post('/worker-login', authRateLimiter, (req, res, next) => {
         siteId: worker.site_id,
         district: worker.district
       },
-      JWT_SECRET,
-      { expiresIn: '7d' }
+      config.jwtSecret,
+      { expiresIn: config.jwtExpiryWorker, algorithm: 'HS256' }
     );
+
+    logAuditEvent({
+      type: AuditEventType.LOGIN_SUCCESS,
+      actorId: worker.id,
+      actorRole: 'WORKER',
+      action: `Worker login success: ${worker.worker_code}`,
+      result: 'SUCCESS',
+      ipAddress: getClientIp(req)
+    });
 
     res.json({
       success: true,
@@ -137,13 +211,15 @@ router.post('/worker-login', authRateLimiter, (req, res, next) => {
   }
 });
 
-// POST /api/auth/admin-login - Dedicated Administrative & Regulatory Official Sign-In
+// ══════════════════════════════════════════════════════════════════
+// POST /api/auth/admin-login - Administrative & Regulatory Official Sign-In
+// ══════════════════════════════════════════════════════════════════
 router.post('/admin-login', authRateLimiter, (req, res, next) => {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ error: 'Official Username and Password required' });
+      return res.status(400).json({ error: 'Username and password required' });
     }
 
     const cleanUsername = sanitizeText(username, 100);
@@ -160,16 +236,31 @@ router.post('/admin-login', authRateLimiter, (req, res, next) => {
 
     const admin = stmt.get(cleanUsername);
 
-    if (!admin) {
+    // Generic error — do NOT differentiate user-not-found vs. wrong-password
+    if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
+      logAuditEvent({
+        type: AuditEventType.LOGIN_FAILED,
+        actorId: cleanUsername,
+        action: 'Admin login failed',
+        result: 'FAILURE',
+        ipAddress: getClientIp(req)
+      });
       return res.status(401).json({
-        error: 'Invalid administrative credentials. Access restricted to authorized statutory officials.'
+        error: 'Invalid credentials'
       });
     }
 
-    // Verify bcrypt password securely without hardcoded backdoors
-    const isPwValid = bcrypt.compareSync(password, admin.password_hash);
-    if (!isPwValid) {
-      return res.status(401).json({ error: 'Incorrect statutory password.' });
+    // Check if account is deactivated
+    if (admin.is_active === 0) {
+      logAuditEvent({
+        type: AuditEventType.LOGIN_FAILED,
+        actorId: admin.id,
+        actorRole: admin.role,
+        action: 'Admin login attempt on deactivated account',
+        result: 'DENIED',
+        ipAddress: getClientIp(req)
+      });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
@@ -181,9 +272,18 @@ router.post('/admin-login', authRateLimiter, (req, res, next) => {
         siteId: admin.site_id,
         district: admin.district
       },
-      JWT_SECRET,
-      { expiresIn: '7d' }
+      config.jwtSecret,
+      { expiresIn: config.jwtExpiryAdmin, algorithm: 'HS256' }
     );
+
+    logAuditEvent({
+      type: AuditEventType.LOGIN_SUCCESS,
+      actorId: admin.id,
+      actorRole: admin.role,
+      action: `Admin login success: ${admin.username} (${admin.role})`,
+      result: 'SUCCESS',
+      ipAddress: getClientIp(req)
+    });
 
     res.json({
       success: true,
@@ -209,11 +309,36 @@ router.post('/admin-login', authRateLimiter, (req, res, next) => {
   }
 });
 
-// GET /api/auth/credentials-info - Detailed credentials directory for evaluation
+// ══════════════════════════════════════════════════════════════════
+// POST /api/auth/logout - Secure Logout with Token Revocation
+// ══════════════════════════════════════════════════════════════════
+router.post('/logout', authenticateToken, (req, res) => {
+  try {
+    blacklistToken(req.token, req.user.id, 'LOGOUT');
+
+    logAuditEvent({
+      type: AuditEventType.LOGOUT,
+      actorId: req.user.id,
+      actorRole: req.user.role,
+      action: 'User logged out and token revoked',
+      result: 'SUCCESS',
+      ipAddress: getClientIp(req)
+    });
+
+    res.json({ success: true, message: 'Logged out successfully' });
+  } catch {
+    // Even if blacklisting fails, confirm logout
+    res.json({ success: true, message: 'Logged out' });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// GET /api/auth/credentials-info - Evaluation credentials (SIH demo only)
+// ══════════════════════════════════════════════════════════════════
 router.get('/credentials-info', authRateLimiter, (req, res) => {
-  // Disable in production unless explicitly enabled via environment variable
-  if (process.env.NODE_ENV === 'production' && process.env.ENABLE_EVALUATION_CREDENTIALS !== 'true') {
-    return res.status(404).json({ error: 'Credential directory unavailable in production mode' });
+  // Strictly disabled unless explicitly enabled via env var
+  if (!config.enableEvaluationCredentials) {
+    return res.status(404).json({ error: 'Not found' });
   }
 
   res.json({
@@ -221,7 +346,7 @@ router.get('/credentials-info', authRateLimiter, (req, res) => {
       portalName: 'Frontline Worker AR Safety Training Portal',
       loginRoute: '#worker-login',
       activePortalRoute: '#worker',
-      instructions: 'Enter Workforce ID or registered phone number with default PIN 1234.',
+      instructions: 'Enter Workforce ID or registered phone number with your PIN.',
       accounts: [
         {
           name: 'Birsa Hansda',
@@ -274,7 +399,7 @@ router.get('/credentials-info', authRateLimiter, (req, res) => {
       portalName: 'Administrative & Regulatory Console (Safety Officer, DGMS, State Nodal)',
       loginRoute: '#admin-login',
       activePortalRoute: '#admin',
-      instructions: 'Enter official username with default statutory password password123.',
+      instructions: 'Enter official username with assigned statutory password.',
       accounts: [
         {
           roleName: 'Site Safety Officer',

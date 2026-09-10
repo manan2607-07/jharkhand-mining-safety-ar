@@ -1,7 +1,7 @@
 import express from 'express';
 import db from '../db/database.js';
 import { verifyCertificateHash } from '../services/cryptoService.js';
-import { authenticateToken } from '../middleware/authMiddleware.js';
+import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware.js';
 import { sensitiveOpLimiter, sanitizeText } from '../middleware/securityMiddleware.js';
 
 const router = express.Router();
@@ -132,7 +132,7 @@ router.post('/', authenticateToken, sensitiveOpLimiter, (req, res, next) => {
 });
 
 // GET /api/sync/audit-history (Restricted to Safety Officers & Inspectors)
-router.get('/audit-history', authenticateToken, (req, res, next) => {
+router.get('/audit-history', authenticateToken, authorizeRoles('SAFETY_OFFICER', 'DGMS_INSPECTOR', 'STATE_NODAL_OFFICER'), (req, res, next) => {
   try {
     const stmt = db.prepare('SELECT * FROM sync_audit_log ORDER BY created_at DESC LIMIT 50');
     const history = stmt.all();

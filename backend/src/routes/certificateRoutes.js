@@ -3,6 +3,7 @@ import { generateCertificateHash, calculateExpiryDate } from '../services/crypto
 import db from '../db/database.js';
 import { authenticateToken, authorizeRoles, enforceSiteIsolation } from '../middleware/authMiddleware.js';
 import { sensitiveOpLimiter, publicVerifyLimiter, sanitizeText } from '../middleware/securityMiddleware.js';
+import { logAuditEvent, getClientIp, AuditEventType } from '../services/auditService.js';
 
 const router = express.Router();
 
@@ -62,10 +63,16 @@ router.get(
         params.push(`%${cleanSearch}%`, `%${cleanSearch}%`, `%${cleanSearch}%`, `%${cleanSearch}%`);
       }
 
-      query += ' ORDER BY c.issue_date DESC';
+      // Safe pagination: default 200, max 500 per page to prevent memory exhaustion DoS
+      const limit = Math.min(Math.max(parseInt(req.query.limit) || 200, 1), 500);
+      const offset = Math.max(parseInt(req.query.offset) || 0, 0);
+
+      query += ' ORDER BY c.issue_date DESC LIMIT ? OFFSET ?';
+      params.push(limit, offset);
 
       const stmt = db.prepare(query);
       const certs = stmt.all(...params);
+      res.setHeader('X-Total-Count', certs.length);
       res.json(certs);
     } catch (err) {
       next(err);
@@ -284,6 +291,16 @@ router.post('/issue', authenticateToken, sensitiveOpLimiter, (req, res, next) =>
         statutoryNotice: 'Certified under Mines Act, 1952 & Factories Act, 1948 norms'
       }
     });
+
+    logAuditEvent({
+      type: AuditEventType.CERT_ISSUED,
+      actorId: req.user.id,
+      actorRole: req.user.role,
+      resource: `certificate:${certificateId}`,
+      action: `Certificate issued for worker ${worker.worker_code} on module ${mod.id} (score: ${numericScore})`,
+      result: 'SUCCESS',
+      ipAddress: getClientIp(req)
+    });
   } catch (err) {
     next(err);
   }
@@ -342,6 +359,17 @@ router.get(
           totalCertificatesAudited: rows.length
         },
         records: rows
+      });
+
+      logAuditEvent({
+        type: AuditEventType.DATA_EXPORT,
+        actorId: req.user.id,
+        actorRole: req.user.role,
+        resource: 'certificates:dgms-report',
+        action: `DGMS audit report exported (${rows.length} records)`,
+        result: 'SUCCESS',
+        ipAddress: getClientIp(req),
+        metadata: { recordCount: rows.length, filters: { district: req.query.district, sector: req.query.sector } }
       });
     } catch (err) {
       next(err);

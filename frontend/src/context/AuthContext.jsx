@@ -56,6 +56,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('jh_worker_token');
       const saved = localStorage.getItem('jh_worker_user');
+      // Reject offline-generated fake tokens
+      if (token && token.startsWith('offline-')) {
+        localStorage.removeItem('jh_worker_token');
+        localStorage.removeItem('jh_worker_user');
+        return null;
+      }
       return token && saved ? JSON.parse(saved) : null;
     } catch {
       return null;
@@ -67,6 +73,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('jh_admin_token');
       const saved = localStorage.getItem('jh_admin_user');
+      // Reject offline-generated fake tokens
+      if (token && token.startsWith('offline-')) {
+        localStorage.removeItem('jh_admin_token');
+        localStorage.removeItem('jh_admin_user');
+        return null;
+      }
       return token && saved ? JSON.parse(saved) : null;
     } catch {
       return null;
@@ -95,115 +107,20 @@ export const AuthProvider = ({ children }) => {
     }
   }, [adminUser, workerUser]);
 
-const OFFLINE_DEMO_WORKERS = [
-  {
-    id: 'WRK-1000',
-    role: 'WORKER',
-    workerCode: 'JH-WRK-001',
-    name: 'Birsa Hansda',
-    designation: 'Underground Driller',
-    tribalLanguage: 'SANTALI',
-    phone: '+91 94311 20401',
-    siteId: 'SITE-DHN-01',
-    siteName: 'BCCL Jharia Underground Coal Mine Colliery #4',
-    sector: 'COAL',
-    district: 'Dhanbad',
-    cohortId: 'COH-DHN-2026-A',
-    cohortName: 'BCCL Dhanbad - 2026 Q1 Underground Batch'
-  },
-  {
-    id: 'WRK-1001',
-    role: 'WORKER',
-    workerCode: 'JH-WRK-002',
-    name: 'Shibu Soren',
-    designation: 'Loader Operator',
-    tribalLanguage: 'SANTALI',
-    phone: '+91 94311 20402',
-    siteId: 'SITE-DHN-01',
-    siteName: 'BCCL Jharia Underground Coal Mine Colliery #4',
-    sector: 'COAL',
-    district: 'Dhanbad',
-    cohortId: 'COH-DHN-2026-A',
-    cohortName: 'BCCL Dhanbad - 2026 Q1 Underground Batch'
-  },
-  {
-    id: 'WRK-1003',
-    role: 'WORKER',
-    workerCode: 'JH-WRK-004',
-    name: 'Champa Marandi',
-    designation: 'Mica Sorter',
-    tribalLanguage: 'SANTALI',
-    phone: '+91 94311 20404',
-    siteId: 'SITE-KOD-01',
-    siteName: 'Koderma Mica Processing Zone',
-    sector: 'MICA',
-    district: 'Koderma',
-    cohortId: 'COH-KOD-2026-C',
-    cohortName: 'Koderma Mica - Tribal Women Processing Group'
-  },
-  {
-    id: 'WRK-1004',
-    role: 'WORKER',
-    workerCode: 'JH-WRK-005',
-    name: 'Raju Mahato',
-    designation: 'Blast Furnace Assistant',
-    tribalLanguage: 'HINDI',
-    phone: '+91 94311 20405',
-    siteId: 'SITE-BOK-01',
-    siteName: 'SAIL Bokaro Steel Plant',
-    sector: 'STEEL',
-    district: 'Bokaro',
-    cohortId: 'COH-BOK-2026-B',
-    cohortName: 'SAIL Bokaro - Furnace Contract Recruits'
-  }
-];
-
-const OFFLINE_DEMO_ADMINS = {
-  officer1: {
-    id: 'USR-OFFICER-01',
-    username: 'officer1',
-    fullName: 'Rajesh Mahato',
-    role: 'SAFETY_OFFICER',
-    designation: 'Site Safety Supervisor',
-    siteId: 'SITE-DHN-01',
-    siteName: 'BCCL Jharia Underground Coal Mine Colliery #4',
-    district: 'Dhanbad',
-    sector: 'COAL'
-  },
-  officer_dhanbad: {
-    id: 'USR-OFFICER-01',
-    username: 'officer_dhanbad',
-    fullName: 'Rajesh Mahato',
-    role: 'SAFETY_OFFICER',
-    designation: 'Site Safety Supervisor',
-    siteId: 'SITE-DHN-01',
-    siteName: 'BCCL Jharia Underground Coal Mine Colliery #4',
-    district: 'Dhanbad',
-    sector: 'COAL'
-  },
-  dgms_inspector: {
-    id: 'USR-DGMS-01',
-    username: 'dgms_inspector',
-    fullName: 'Dr. A.K. Sengupta',
-    role: 'DGMS_INSPECTOR',
-    designation: 'Director of Mine Safety (Statutory Inspector)',
-    siteId: null,
-    siteName: 'DGMS Dhanbad Headquarters',
-    district: 'Dhanbad',
-    sector: 'ALL'
-  },
-  state_nodal: {
-    id: 'USR-STATE-01',
-    username: 'state_nodal',
-    fullName: 'Priya Soren',
-    role: 'STATE_NODAL_OFFICER',
-    designation: 'State Nodal Officer - Mines & Geology',
-    siteId: null,
-    siteName: 'Dept. of Mines & Geology, Ranchi',
-    district: 'Ranchi',
-    sector: 'STATE_WIDE'
-  }
-};
+  // Listen for session expiration events from the API client
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      // Clear all auth state when the server rejects a token
+      const hash = window.location.hash || '';
+      if (hash.startsWith('#admin')) {
+        setAdminUser(null);
+      } else {
+        setWorkerUser(null);
+      }
+    };
+    window.addEventListener('jh-auth-session-expired', handleSessionExpired);
+    return () => window.removeEventListener('jh-auth-session-expired', handleSessionExpired);
+  }, []);
 
   // Worker Login Handler
   const loginWorker = async (credentials) => {
@@ -216,10 +133,7 @@ const OFFLINE_DEMO_ADMINS = {
 
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 400 || res.status === 401 || res.status === 404) {
-          throw new Error(data.error || 'Worker authentication failed');
-        }
-        throw new Error(data.error || 'Server error');
+        throw new Error(data.error || 'Worker authentication failed');
       }
 
       localStorage.setItem('jh_worker_token', data.token);
@@ -228,31 +142,29 @@ const OFFLINE_DEMO_ADMINS = {
       setCurrentRole('WORKER');
       return { success: true, worker: data.worker };
     } catch (err) {
-      // Offline on-device emergency authentication fallback (per Mining Act PWA specifications)
-      const inputCode = (credentials.workerCode || credentials.phone || '').trim().toUpperCase();
-      const inputPin = String(credentials.pin || '').trim();
-
-      const matchedMiner = OFFLINE_DEMO_WORKERS.find(m => 
-        m.workerCode.toUpperCase() === inputCode || 
-        m.phone.replace(/[^0-9]/g, '').includes(inputCode.replace(/[^0-9]/g, '')) ||
-        (inputCode === 'JH-WRK-001' && m.workerCode === 'JH-WRK-001')
-      );
-
-      if (matchedMiner && (inputPin === '1234' || !inputPin)) {
-        const offlineToken = `offline-worker-jwt-${matchedMiner.id}-${Date.now()}`;
-        localStorage.setItem('jh_worker_token', offlineToken);
-        localStorage.setItem('jh_worker_user', JSON.stringify(matchedMiner));
-        setWorkerUser(matchedMiner);
-        setCurrentRole('WORKER');
-        return { success: true, worker: matchedMiner };
-      }
-
-      return { success: false, error: err.message };
+      // No offline fallback — security: offline auth bypass removed
+      // If network is unavailable, login fails gracefully
+      return { success: false, error: err.message || 'Unable to connect to server. Please check your network connection.' };
     }
   };
 
   // Worker Logout Handler
-  const logoutWorker = () => {
+  const logoutWorker = async () => {
+    // Attempt server-side token revocation
+    try {
+      const token = localStorage.getItem('jh_worker_token');
+      if (token && !token.startsWith('offline-')) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+    } catch {
+      // Logout should always succeed client-side even if server is unreachable
+    }
     localStorage.removeItem('jh_worker_token');
     localStorage.removeItem('jh_worker_user');
     setWorkerUser(null);
@@ -270,10 +182,7 @@ const OFFLINE_DEMO_ADMINS = {
 
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 400 || res.status === 401) {
-          throw new Error(data.error || 'Administrative authentication failed');
-        }
-        throw new Error(data.error || 'Server error');
+        throw new Error(data.error || 'Administrative authentication failed');
       }
 
       localStorage.setItem('jh_admin_token', data.token);
@@ -282,26 +191,28 @@ const OFFLINE_DEMO_ADMINS = {
       setCurrentRole(data.admin.role);
       return { success: true, admin: data.admin };
     } catch (err) {
-      // Offline fallback for statutory evaluation if network / server disconnected
-      const uname = (credentials.username || '').trim().toLowerCase();
-      const pwd = String(credentials.password || '').trim();
-      const matchedAdmin = OFFLINE_DEMO_ADMINS[uname];
-
-      if (matchedAdmin && (pwd === 'password123' || pwd === 'SafetyOfficer@2026')) {
-        const offlineToken = `offline-admin-jwt-${matchedAdmin.id}-${Date.now()}`;
-        localStorage.setItem('jh_admin_token', offlineToken);
-        localStorage.setItem('jh_admin_user', JSON.stringify(matchedAdmin));
-        setAdminUser(matchedAdmin);
-        setCurrentRole(matchedAdmin.role);
-        return { success: true, admin: matchedAdmin };
-      }
-
-      return { success: false, error: err.message };
+      // No offline fallback — security: hardcoded admin credentials removed
+      return { success: false, error: err.message || 'Unable to connect to server. Please check your network connection.' };
     }
   };
 
   // Admin Logout Handler
-  const logoutAdmin = () => {
+  const logoutAdmin = async () => {
+    // Attempt server-side token revocation
+    try {
+      const token = localStorage.getItem('jh_admin_token');
+      if (token && !token.startsWith('offline-')) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+    } catch {
+      // Logout should always succeed client-side even if server is unreachable
+    }
     localStorage.removeItem('jh_admin_token');
     localStorage.removeItem('jh_admin_user');
     setAdminUser(null);

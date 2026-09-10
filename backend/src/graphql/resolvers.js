@@ -20,7 +20,11 @@ export const rootResolver = {
   },
   complianceSummary: () => rootResolver.complianceOverview(),
 
-  sites: ({ sector, district }) => {
+  sites: ({ sector, district }, context) => {
+    if (!context?.user) {
+      throw new Error('Access denied: Authentication required to view mine site data');
+    }
+
     let query = 'SELECT * FROM sites WHERE 1=1';
     const params = [];
     if (sector) {

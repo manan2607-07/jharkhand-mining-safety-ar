@@ -19,9 +19,12 @@
     "graphql-http": "^1.23.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.2",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.1"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "overrides": {
+    "qs": "^6.16.0"
   }
 }
