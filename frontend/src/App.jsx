@@ -354,29 +354,8 @@ function MainApp() {
               {t.footerDevTitleText}
             </div>
             <div style={{ fontSize: '0.76rem', color: '#CBD5E1', lineHeight: 1.6 }}>
-              <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                <span style={{
-                  background: 'linear-gradient(90deg, #F59E0B 0%, #D97706 100%)',
-                  color: '#0F172A',
-                  fontWeight: '900',
-                  fontSize: '0.66rem',
-                  padding: '0.12rem 0.45rem',
-                  borderRadius: '10px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.4px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-                }}>
-                  🎓 {t.footerMentorBadge || 'Faculty Mentor'}
-                </span>
-                <strong style={{ color: '#FEF3C7', fontSize: '0.82rem', letterSpacing: '0.3px' }}>
-                  {t.footerMentorName || 'Prof. DINESH SWAMI'}
-                </strong>
-                <span style={{ color: '#93C5FD', fontSize: '0.74rem' }}>
-                  ({t.footerMentorDept || 'Parul University'})
-                </span>
-              </div>
-              <div style={{ color: '#E2E8F0', fontWeight: '600' }}>{t.footerDevByText}</div>
-              <div style={{ color: '#94A3B8', fontSize: '0.72rem', marginTop: '0.15rem' }}>{t.footerDevSubText}</div>
+              <div>{t.footerDevByText}</div>
+              <div>{t.footerDevSubText}</div>
               
               {/* Simulated Visitor Counter */}
               <div style={{ marginTop: '0.6rem' }}>
