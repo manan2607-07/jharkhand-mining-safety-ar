@@ -163,6 +163,22 @@ export function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_events(actor_id);
     CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_events(created_at);
     CREATE INDEX IF NOT EXISTS idx_token_blacklist_expires ON token_blacklist(expires_at);
+
+    -- DGMS Test Authorization & Access Codes
+    CREATE TABLE IF NOT EXISTS dgms_test_authorizations (
+      id TEXT PRIMARY KEY,
+      module_id TEXT UNIQUE NOT NULL REFERENCES modules(id),
+      access_code TEXT NOT NULL,
+      code_length INTEGER DEFAULT 6,
+      is_enabled INTEGER DEFAULT 0,
+      authorized_by TEXT,
+      authorized_by_name TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_dgms_auth_code ON dgms_test_authorizations(access_code);
+    CREATE INDEX IF NOT EXISTS idx_dgms_auth_module ON dgms_test_authorizations(module_id);
   `);
 
   // Safe column additions for schema migrations
@@ -175,6 +191,28 @@ export function initDatabase() {
     db.exec(`ALTER TABLE users ADD COLUMN is_active INTEGER DEFAULT 1;`);
   } catch {
     // Column already exists
+  }
+
+  // Ensure default DGMS test authorizations exist
+  try {
+    const defaultAuthorizations = [
+      { id: 'AUTH-MOD-001', module_id: 'MOD-001', access_code: '184920', code_length: 6, is_enabled: 1 },
+      { id: 'AUTH-MOD-002', module_id: 'MOD-002', access_code: '294715', code_length: 6, is_enabled: 1 },
+      { id: 'AUTH-MOD-003', module_id: 'MOD-003', access_code: '849201', code_length: 6, is_enabled: 0 },
+      { id: 'AUTH-MOD-004', module_id: 'MOD-004', access_code: '632194', code_length: 6, is_enabled: 0 },
+      { id: 'AUTH-MOD-005', module_id: 'MOD-005', access_code: '518742', code_length: 6, is_enabled: 0 }
+    ];
+
+    const insertAuthStmt = db.prepare(`
+      INSERT OR IGNORE INTO dgms_test_authorizations (id, module_id, access_code, code_length, is_enabled, authorized_by, authorized_by_name)
+      VALUES (?, ?, ?, ?, ?, 'USR-DGMS-01', 'Dr. A.K. Sengupta (Chief Inspector)')
+    `);
+
+    for (const auth of defaultAuthorizations) {
+      insertAuthStmt.run(auth.id, auth.module_id, auth.access_code, auth.code_length, auth.is_enabled);
+    }
+  } catch (err) {
+    console.warn('[DB] Warning seeding default DGMS test authorizations:', err.message);
   }
 
   // Clean expired blacklisted tokens on startup

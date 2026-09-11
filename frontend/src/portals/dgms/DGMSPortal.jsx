@@ -19,7 +19,13 @@ import {
   Calendar,
   ExternalLink,
   ShieldAlert,
-  Printer
+  Printer,
+  KeyRound,
+  Lock,
+  Unlock,
+  RefreshCw,
+  Copy,
+  Check
 } from 'lucide-react';
 
 export default function DGMSPortal({ initialHash = '' }) {
@@ -31,28 +37,115 @@ export default function DGMSPortal({ initialHash = '' }) {
   const [loading, setLoading] = useState(false);
   const [auditCertificates, setAuditCertificates] = useState([]);
   const [filterSector, setFilterSector] = useState('ALL');
+  
+  // DGMS Statutory Test Authorization & Access Codes state
+  const [testAuthorizations, setTestAuthorizations] = useState([]);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [codeLengths, setCodeLengths] = useState({});
+  const [copiedModuleId, setCopiedModuleId] = useState(null);
+  const [actionInProgress, setActionInProgress] = useState(null);
 
   useEffect(() => {
     fetchAuditCertificates();
+    fetchTestAuthorizations();
     if (initialHash) {
       handleVerify(initialHash);
     }
 
     const handleUpdate = () => {
       fetchAuditCertificates();
+      fetchTestAuthorizations();
     };
 
     window.addEventListener('jh-safety-drill-completed', handleUpdate);
+    window.addEventListener('jh-dgms-authorization-changed', handleUpdate);
     window.addEventListener('focus', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     document.addEventListener('visibilitychange', handleUpdate);
     return () => {
       window.removeEventListener('jh-safety-drill-completed', handleUpdate);
+      window.removeEventListener('jh-dgms-authorization-changed', handleUpdate);
       window.removeEventListener('focus', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
       document.removeEventListener('visibilitychange', handleUpdate);
     };
   }, [initialHash]);
+
+  const fetchTestAuthorizations = async () => {
+    try {
+      setAuthLoading(true);
+      const res = await apiFetch('/api/dgms/authorizations');
+      if (res.ok) {
+        const data = await res.json();
+        setTestAuthorizations(data);
+        try {
+          localStorage.setItem('jh_dgms_cached_authorizations', JSON.stringify(data));
+        } catch (e) {}
+      }
+    } catch (err) {
+      console.error('Error fetching DGMS test authorizations:', err);
+      try {
+        const cached = localStorage.getItem('jh_dgms_cached_authorizations');
+        if (cached) setTestAuthorizations(JSON.parse(cached));
+      } catch (e) {}
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleToggleTest = async (moduleId, currentStatus) => {
+    try {
+      setActionInProgress(`toggle-${moduleId}`);
+      const res = await apiFetch('/api/dgms/toggle-test', {
+        method: 'POST',
+        body: JSON.stringify({ moduleId, isEnabled: !currentStatus })
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setTestAuthorizations(prev => prev.map(item => 
+          item.module_id === moduleId ? { ...item, ...result.authorization } : item
+        ));
+        window.dispatchEvent(new CustomEvent('jh-dgms-authorization-changed'));
+      }
+    } catch (err) {
+      console.error('Failed to toggle test permission:', err);
+    } finally {
+      setActionInProgress(null);
+    }
+  };
+
+  const handleGenerateCode = async (moduleId, requestedLength) => {
+    try {
+      setActionInProgress(`code-${moduleId}`);
+      const len = requestedLength || codeLengths[moduleId] || 6;
+      const res = await apiFetch('/api/dgms/generate-code', {
+        method: 'POST',
+        body: JSON.stringify({ moduleId, codeLength: len })
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setTestAuthorizations(prev => prev.map(item => 
+          item.module_id === moduleId ? { ...item, ...result.authorization } : item
+        ));
+        window.dispatchEvent(new CustomEvent('jh-dgms-authorization-changed'));
+      }
+    } catch (err) {
+      console.error('Failed to generate code:', err);
+    } finally {
+      setActionInProgress(null);
+    }
+  };
+
+  const handleCopyCode = (code, moduleId) => {
+    if (!code) return;
+    try {
+      navigator.clipboard.writeText(code);
+      setCopiedModuleId(moduleId);
+      setTimeout(() => setCopiedModuleId(null), 2500);
+    } catch (e) {
+      console.warn('Failed to copy to clipboard', e);
+    }
+  };
 
   const fetchAuditCertificates = async () => {
     try {
@@ -169,6 +262,327 @@ export default function DGMSPortal({ initialHash = '' }) {
           <Download size={16} />
           <span>{t.dgmsExportCsv}</span>
         </button>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* Statutory Test Authorization & Access Code Control Panel        */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      <div className="gov-card" style={{ padding: '1.75rem', marginBottom: '1.75rem', borderTop: '4px solid #16A34A' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
+              <span className="gov-badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                <ShieldCheck size={14} />
+                <span>DGMS Regulation 181 Clearance</span>
+              </span>
+              <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
+                On-Site Vocational Drill Permissions
+              </span>
+            </div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)', margin: 0 }}>
+              {t.dgmsAuthSectionTitle || 'DGMS Statutory Test Authorization & Access Code Control'}
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#4A5568', marginTop: '0.35rem', maxWidth: '850px' }}>
+              {t.dgmsAuthSectionDesc || 'Authorize vocational safety examinations on-site. Enable tests individually and issue 4 or 6-digit statutory drill pass codes for frontline workers.'}
+            </p>
+          </div>
+
+          <button
+            onClick={fetchTestAuthorizations}
+            disabled={authLoading}
+            className="gov-btn-secondary"
+            style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+          >
+            <RefreshCw size={14} className={authLoading ? 'animate-spin' : ''} />
+            <span>{authLoading ? 'Syncing...' : 'Refresh Status'}</span>
+          </button>
+        </div>
+
+        {/* Active Test Live Broadcast Banner (when any special test is enabled) */}
+        {testAuthorizations.some(a => a.is_enabled === 1 && !a.is_mvp) && (
+          <div style={{
+            background: 'linear-gradient(135deg, #073556 0%, #0c4e7e 100%)',
+            borderRadius: '6px',
+            padding: '1rem 1.25rem',
+            marginBottom: '1.5rem',
+            color: '#FFFFFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            boxShadow: '0 4px 12px rgba(12, 78, 126, 0.2)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(46, 229, 157, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2EE59D' }}>
+                <KeyRound size={22} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#93C5FD', fontWeight: '700' }}>
+                  Live Examination Session In Progress
+                </div>
+                <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#FFFFFF' }}>
+                  Provide these statutory pass codes to workers for entry:
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {testAuthorizations.filter(a => a.is_enabled === 1).map(a => (
+                <div key={a.module_id} style={{
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                  borderRadius: '4px',
+                  padding: '0.45rem 0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem'
+                }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#BAE6FD' }}>{a.module_id}:</span>
+                  <span className="font-mono" style={{ fontSize: '1.15rem', fontWeight: '900', letterSpacing: '0.12em', color: '#FCD34D' }}>
+                    {a.access_code}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(a.access_code, a.module_id)}
+                    title="Copy code"
+                    style={{ background: 'transparent', border: 'none', color: '#BAE6FD', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                  >
+                    {copiedModuleId === a.module_id ? <Check size={14} color="#34D399" /> : <Copy size={14} />}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Detailed Authorizations Table */}
+        <div className="gov-table-container">
+          <table className="gov-table">
+            <thead>
+              <tr>
+                <th style={{ minWidth: '220px' }}>{t.dgmsColModule || 'Module / Examination'}</th>
+                <th style={{ minWidth: '150px' }}>{t.dgmsColStatus || 'DGMS Clearance Status'}</th>
+                <th style={{ minWidth: '140px' }}>{t.dgmsColToggle || 'Test Permission'}</th>
+                <th style={{ minWidth: '220px' }}>{t.dgmsColAccessCode || 'Statutory Access Code'}</th>
+                <th style={{ minWidth: '200px' }}>{t.dgmsColActions || 'Code Controls'}</th>
+                <th style={{ minWidth: '180px' }}>{t.dgmsColAuthorizedBy || 'Authorized Inspector'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {testAuthorizations.map((auth) => {
+                const isSpecialTest = !auth.is_mvp;
+                const isEnabled = auth.is_enabled === 1;
+                const isToggling = actionInProgress === `toggle-${auth.module_id}`;
+                const isGenerating = actionInProgress === `code-${auth.module_id}`;
+                const currentLen = codeLengths[auth.module_id] || auth.code_length || 6;
+
+                return (
+                  <tr key={auth.module_id} style={{ background: isEnabled ? '#F8FCF9' : '#FFFFFF' }}>
+                    {/* Module Title */}
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                        <span className="font-mono" style={{ fontSize: '0.75rem', fontWeight: '800', color: '#0c4e7e', background: '#E0F2FE', padding: '0.15rem 0.4rem', borderRadius: '3px' }}>
+                          {auth.module_id}
+                        </span>
+                        {isSpecialTest && (
+                          <span style={{ fontSize: '0.7rem', color: '#9B1C1C', background: '#FDE8E8', padding: '0.1rem 0.35rem', borderRadius: '3px', fontWeight: '700' }}>
+                            DGMS Spec
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontWeight: '700', color: '#1E293B', fontSize: '0.9rem' }}>
+                        {auth.module_title}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                        Threshold: {auth.pass_score_threshold}% • Est: {auth.est_minutes} mins
+                      </div>
+                    </td>
+
+                    {/* Status Badge */}
+                    <td>
+                      {isEnabled ? (
+                        <span className="gov-badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#16A34A', display: 'inline-block', boxShadow: '0 0 0 2px rgba(22, 163, 74, 0.3)' }} />
+                          <strong>{t.dgmsTestEnabledBadge || 'DRILL ACTIVE'}</strong>
+                        </span>
+                      ) : (
+                        <span className="gov-badge-grey" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <Lock size={12} color="#6B7280" />
+                          <span>{t.dgmsTestDisabledBadge || 'UNDER DGMS SPEC'}</span>
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Permission Toggle (One by One) */}
+                    <td>
+                      <button
+                        onClick={() => handleToggleTest(auth.module_id, isEnabled)}
+                        disabled={isToggling}
+                        className={isEnabled ? 'gov-btn-secondary' : 'gov-btn-primary'}
+                        style={{
+                          padding: '0.45rem 0.85rem',
+                          fontSize: '0.8rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          background: isEnabled ? '#FEF2F2' : '#0c4e7e',
+                          color: isEnabled ? '#991B1B' : '#FFFFFF',
+                          borderColor: isEnabled ? '#FCA5A5' : '#0c4e7e',
+                          fontWeight: '700',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {isEnabled ? (
+                          <>
+                            <Lock size={13} />
+                            <span>{t.dgmsDisableTest || 'Lock / Disable'}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Unlock size={13} />
+                            <span>{t.dgmsEnableTest || 'Enable Test'}</span>
+                          </>
+                        )}
+                      </button>
+                    </td>
+
+                    {/* Active Statutory Access Code (Column Present on Screen) */}
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          padding: '0.45rem 0.75rem',
+                          background: isEnabled ? '#ECFDF5' : '#F1F5F9',
+                          border: isEnabled ? '2px solid #10B981' : '1px dashed #CBD5E1',
+                          borderRadius: '6px',
+                          color: isEnabled ? '#065F46' : '#94A3B8'
+                        }}>
+                          <span className="font-mono" style={{
+                            fontSize: '1.25rem',
+                            fontWeight: '900',
+                            letterSpacing: '0.18em',
+                            textShadow: isEnabled ? '0 1px 2px rgba(16, 185, 129, 0.2)' : 'none'
+                          }}>
+                            {auth.access_code}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => handleCopyCode(auth.access_code, auth.module_id)}
+                          title="Copy Access Code"
+                          className="gov-btn-secondary"
+                          style={{
+                            padding: '0.45rem 0.65rem',
+                            fontSize: '0.78rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                            borderColor: copiedModuleId === auth.module_id ? '#10B981' : '#CBD5E1',
+                            color: copiedModuleId === auth.module_id ? '#047857' : '#475569'
+                          }}
+                        >
+                          {copiedModuleId === auth.module_id ? (
+                            <>
+                              <Check size={14} color="#10B981" />
+                              <span style={{ fontWeight: '700' }}>Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={14} />
+                              <span>Copy</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div style={{ fontSize: '0.74rem', color: isEnabled ? '#059669' : '#94A3B8', marginTop: '0.25rem' }}>
+                        {isEnabled ? '● Active code for frontline workers' : 'Code ready upon test enablement'}
+                      </div>
+                    </td>
+
+                    {/* Code Controls (4 or 6 digit selector + Regenerate) */}
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>Digits:</span>
+                          <div style={{ display: 'inline-flex', borderRadius: '4px', overflow: 'hidden', border: '1px solid #CBD5E1' }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCodeLengths(prev => ({ ...prev, [auth.module_id]: 6 }));
+                                handleGenerateCode(auth.module_id, 6);
+                              }}
+                              style={{
+                                padding: '0.2rem 0.5rem',
+                                fontSize: '0.72rem',
+                                fontWeight: currentLen === 6 ? '800' : '500',
+                                background: currentLen === 6 ? '#0c4e7e' : '#FFFFFF',
+                                color: currentLen === 6 ? '#FFFFFF' : '#475569',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              6 Digits
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCodeLengths(prev => ({ ...prev, [auth.module_id]: 4 }));
+                                handleGenerateCode(auth.module_id, 4);
+                              }}
+                              style={{
+                                padding: '0.2rem 0.5rem',
+                                fontSize: '0.72rem',
+                                fontWeight: currentLen === 4 ? '800' : '500',
+                                background: currentLen === 4 ? '#0c4e7e' : '#FFFFFF',
+                                color: currentLen === 4 ? '#FFFFFF' : '#475569',
+                                border: 'none',
+                                borderLeft: '1px solid #CBD5E1',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              4 Digits
+                            </button>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleGenerateCode(auth.module_id, currentLen)}
+                          disabled={isGenerating}
+                          className="gov-btn-secondary"
+                          style={{
+                            padding: '0.35rem 0.65rem',
+                            fontSize: '0.76rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            width: 'fit-content'
+                          }}
+                        >
+                          <RefreshCw size={12} className={isGenerating ? 'animate-spin' : ''} />
+                          <span>{isGenerating ? 'Generating...' : (t.dgmsGenerateNewCode || 'Generate New Code')}</span>
+                        </button>
+                      </div>
+                    </td>
+
+                    {/* Authorized By & Timestamp */}
+                    <td>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1E293B' }}>
+                        {auth.authorized_by_name || 'Dr. A.K. Sengupta'}
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.15rem' }}>
+                        <Clock size={11} />
+                        <span>{auth.updated_at ? new Date(auth.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Ready'}</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Live QR / Hash Verification Widget */}

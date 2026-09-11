@@ -11,6 +11,7 @@ import workerRoutes from './routes/workerRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js';
 import syncRoutes from './routes/syncRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
+import dgmsRoutes from './routes/dgmsRoutes.js';
 
 import { schema } from './graphql/schema.js';
 import { rootResolver } from './graphql/resolvers.js';
@@ -122,6 +123,7 @@ app.use('/api/workers', workerRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/sync', syncRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/dgms', dgmsRoutes);
 
 // Modules List Endpoint — now requires authentication
 app.get('/api/modules', authenticateToken, (req, res, next) => {

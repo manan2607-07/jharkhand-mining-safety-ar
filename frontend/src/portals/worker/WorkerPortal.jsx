@@ -24,8 +24,14 @@ import {
   Building2, 
   Info,
   Smartphone,
-  Download
+  Download,
+  KeyRound,
+  Lock,
+  Unlock,
+  ShieldAlert,
+  X
 } from 'lucide-react';
+import { AshokaLionCapital } from '../../components/Emblem';
 
 export default function WorkerPortal({ onActivityOccurred, workerSection = 'modules' }) {
   const { t, language, speak, getLocalizedModuleTitle, getLocalizedDesignation } = useLanguage();
@@ -39,6 +45,21 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
   const [issuedCertificate, setIssuedCertificate] = useState(null);
   const [workerCerts, setWorkerCerts] = useState([]);
   const [loadingCerts, setLoadingCerts] = useState(false);
+
+  // DGMS Statutory Authorization & Passcode state for locked modules
+  const [unlockedModules, setUnlockedModules] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('jh_unlocked_dgms_modules');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [dgmsCodeModalModule, setDgmsCodeModalModule] = useState(null);
+  const [dgmsInputCode, setDgmsInputCode] = useState('');
+  const [dgmsVerifyLoading, setDgmsVerifyLoading] = useState(false);
+  const [dgmsVerifyError, setDgmsVerifyError] = useState('');
+  const [dgmsVerifySuccess, setDgmsVerifySuccess] = useState('');
 
   // Smooth scroll to targeted worker section when navigation tab changes
   useEffect(() => {
@@ -138,6 +159,87 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     setSelectedModule(mod);
     speak(language === 'sat' ? "ᱥᱮᱪᱮᱫ ᱮᱦᱚᱵᱚᱜ ᱠᱟᱱᱟ᱾ ᱠᱮᱢᱮᱨᱟ ᱥᱟᱢᱟᱝ ᱨᱮ ᱫᱚᱦᱚᱭ ᱢᱮ᱾" : "सुरक्षा सिमुलेशन प्रारंभ हो रहा है। कैमरा स्क्रीन पर ध्यान दें।");
     setActiveView('SIMULATION');
+  };
+
+  const handleOpenDgmsCodeModal = (mod) => {
+    setDgmsCodeModalModule(mod);
+    setDgmsInputCode('');
+    setDgmsVerifyError('');
+    setDgmsVerifySuccess('');
+  };
+
+  const handleVerifyDgmsCode = async (e) => {
+    if (e) e.preventDefault();
+    if (!dgmsCodeModalModule || !dgmsInputCode.trim()) return;
+
+    const cleanedCode = dgmsInputCode.trim().replace(/[\s-]/g, '');
+    if (cleanedCode.length !== 4 && cleanedCode.length !== 6) {
+      setDgmsVerifyError(t.dgmsCodeDigitsNotice || 'Please enter a valid 4 or 6-digit statutory code');
+      return;
+    }
+
+    try {
+      setDgmsVerifyLoading(true);
+      setDgmsVerifyError('');
+      setDgmsVerifySuccess('');
+
+      const res = await apiFetch('/api/dgms/verify-code', {
+        method: 'POST',
+        body: JSON.stringify({
+          moduleId: dgmsCodeModalModule.id,
+          accessCode: cleanedCode
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setDgmsVerifySuccess(t.dgmsCodeSuccess || 'DGMS Statutory authorization confirmed. Launching simulator drill...');
+
+        // Mark module unlocked in state & sessionStorage for this worker shift
+        const newUnlocked = { ...unlockedModules, [dgmsCodeModalModule.id]: true };
+        setUnlockedModules(newUnlocked);
+        try {
+          sessionStorage.setItem('jh_unlocked_dgms_modules', JSON.stringify(newUnlocked));
+        } catch (err) {}
+
+        setTimeout(() => {
+          const targetMod = dgmsCodeModalModule;
+          setDgmsCodeModalModule(null);
+          handleStartModule(targetMod);
+        }, 900);
+      } else {
+        setDgmsVerifyError(data.error || (t.dgmsCodeInvalid || 'Invalid code or test is currently locked under DGMS specification.'));
+      }
+    } catch (err) {
+      console.warn('Network error during DGMS code verification, checking offline cached codes:', err);
+      // Offline fallback verification
+      try {
+        const cached = localStorage.getItem('jh_dgms_cached_authorizations');
+        if (cached) {
+          const auths = JSON.parse(cached);
+          const matching = auths.find(a => a.module_id === dgmsCodeModalModule.id);
+          if (matching && matching.is_enabled === 1 && matching.access_code === cleanedCode) {
+            setDgmsVerifySuccess(t.dgmsCodeSuccess || 'DGMS authorization confirmed. Launching simulator drill...');
+            const newUnlocked = { ...unlockedModules, [dgmsCodeModalModule.id]: true };
+            setUnlockedModules(newUnlocked);
+            try {
+              sessionStorage.setItem('jh_unlocked_dgms_modules', JSON.stringify(newUnlocked));
+            } catch (e) {}
+            setTimeout(() => {
+              const targetMod = dgmsCodeModalModule;
+              setDgmsCodeModalModule(null);
+              handleStartModule(targetMod);
+            }, 900);
+            return;
+          }
+        }
+      } catch (e) {}
+
+      setDgmsVerifyError(t.dgmsCodeInvalid || 'Invalid code or test is currently locked under DGMS specification.');
+    } finally {
+      setDgmsVerifyLoading(false);
+    }
   };
 
   const handleSimulatorComplete = ({ results, certificate, isOffline }) => {
@@ -481,6 +583,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
             {modules.map((mod) => {
               const IconComponent = mod.icon;
               const isCertified = workerCerts.some((c) => c.module_id === mod.id || c.moduleTitle === mod.title);
+              const isUnlocked = mod.isMvp || Boolean(unlockedModules[mod.id]);
 
               return (
                 <div
@@ -491,8 +594,8 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    borderTop: mod.isMvp ? '3px solid #0c4e7e' : '3px solid #D1D5DB',
-                    opacity: mod.isMvp ? 1 : 0.75
+                    borderTop: isUnlocked ? '3px solid #0c4e7e' : '3px solid #64748B',
+                    opacity: 1
                   }}
                 >
                   <div>
@@ -502,12 +605,12 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                         width: '44px',
                         height: '44px',
                         borderRadius: '4px',
-                        background: mod.isMvp ? '#EBF3FC' : '#F3F4F6',
-                        border: mod.isMvp ? '1px solid #B4D3F7' : '1px solid #D1D5DB',
+                        background: isUnlocked ? '#EBF3FC' : '#F3F4F6',
+                        border: isUnlocked ? '1px solid #B4D3F7' : '1px solid #D1D5DB',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: mod.isMvp ? '#0c4e7e' : '#6B7280'
+                        color: isUnlocked ? '#0c4e7e' : '#475569'
                       }}>
                         <IconComponent size={22} />
                       </div>
@@ -518,9 +621,20 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                             ✓ {t.certifiedBadge}
                           </span>
                         )}
-                        <span className={mod.isMvp ? 'gov-badge-amber' : 'gov-badge-grey'}>
-                          {mod.isMvp ? t.statutoryDrillBadge : (t.underDgmsSpec || 'Under DGMS Specification')}
-                        </span>
+                        {unlockedModules[mod.id] ? (
+                          <span className="gov-badge-green">
+                            ✓ {t.dgmsSessionAuthorizedBadge || 'DGMS AUTHORIZED'}
+                          </span>
+                        ) : mod.isMvp ? (
+                          <span className="gov-badge-amber">
+                            {t.statutoryDrillBadge}
+                          </span>
+                        ) : (
+                          <span className="gov-badge-grey" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <Lock size={11} />
+                            <span>{t.underDgmsSpec || 'Under DGMS Specification'}</span>
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -553,7 +667,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                     </div>
 
                     {/* Official CTA Button */}
-                    {mod.isMvp ? (
+                    {isUnlocked ? (
                       <button
                         onClick={() => handleStartModule(mod)}
                         className="gov-btn-primary"
@@ -564,11 +678,21 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                       </button>
                     ) : (
                       <button
-                        disabled
-                        className="gov-btn-secondary"
-                        style={{ width: '100%', padding: '0.65rem', opacity: 0.6, cursor: 'not-allowed' }}
+                        onClick={() => handleOpenDgmsCodeModal(mod)}
+                        className="gov-btn-primary"
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem',
+                          background: '#0c4e7e',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.45rem',
+                          cursor: 'pointer'
+                        }}
                       >
-                        {t.underDgmsSpec || 'Under DGMS Specification'}
+                        <KeyRound size={15} />
+                        <span>{t.enterDgmsCodeBtn || 'Enter DGMS Code to Access'}</span>
                       </button>
                     )}
                   </div>
@@ -672,6 +796,194 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* DGMS Statutory Examination Access Code Modal                     */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {dgmsCodeModalModule && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(7, 53, 86, 0.85)',
+          backdropFilter: 'blur(5px)',
+          zIndex: 10000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem'
+        }}>
+          <div className="gov-card" style={{
+            maxWidth: '480px',
+            width: '100%',
+            padding: '2rem',
+            borderRadius: '8px',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.35)',
+            borderTop: '5px solid #0c4e7e',
+            animation: 'fadeIn 0.2s ease-out'
+          }}>
+            {/* Official Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <AshokaLionCapital size={36} color="#0c4e7e" showMotto={false} />
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#B8860B', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    Statutory Examination Access
+                  </div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0c4e7e', fontFamily: 'var(--font-heading)', margin: 0 }}>
+                    {t.dgmsUnlockModalTitle || 'DGMS Statutory Drill Access'}
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDgmsCodeModalModule(null)}
+                style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer', padding: '0.25rem' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Target Module Badge */}
+            <div style={{
+              background: '#F1F5F9',
+              border: '1px solid #CBD5E1',
+              borderRadius: '6px',
+              padding: '0.75rem 1rem',
+              marginBottom: '1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem'
+            }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '4px', background: '#0c4e7e', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <KeyRound size={18} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#0c4e7e' }}>
+                  {dgmsCodeModalModule.id}
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#1E293B' }}>
+                  {dgmsCodeModalModule.title}
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <p style={{ fontSize: '0.86rem', color: '#4A5568', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+              {t.dgmsUnlockModalDesc || 'Testing for this module requires on-site authorization by the Directorate General of Mines Safety (DGMS). Enter the 4 or 6-digit statutory drill pass code provided by your inspecting DGMS Officer to begin.'}
+            </p>
+
+            {/* Error & Success Messages */}
+            {dgmsVerifyError && (
+              <div style={{
+                background: '#FEF2F2',
+                border: '1px solid #FCA5A5',
+                borderRadius: '4px',
+                padding: '0.75rem',
+                color: '#991B1B',
+                fontSize: '0.84rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.5rem'
+              }}>
+                <ShieldAlert size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <span>{dgmsVerifyError}</span>
+              </div>
+            )}
+
+            {dgmsVerifySuccess && (
+              <div style={{
+                background: '#ECFDF5',
+                border: '1px solid #6EE7B7',
+                borderRadius: '4px',
+                padding: '0.75rem',
+                color: '#065F46',
+                fontSize: '0.84rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                <CheckCircle2 size={16} color="#10B981" />
+                <span>{dgmsVerifySuccess}</span>
+              </div>
+            )}
+
+            {/* Code Form */}
+            <form onSubmit={handleVerifyDgmsCode}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '700', color: '#334155', marginBottom: '0.4rem' }}>
+                  {t.dgmsColAccessCode || 'Statutory Access Code'} (4 or 6 Digits)
+                </label>
+                <input
+                  type="text"
+                  autoFocus
+                  maxLength={8}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={dgmsInputCode}
+                  onChange={(e) => setDgmsInputCode(e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder="e.g. 849201"
+                  className="font-mono"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    fontSize: '1.4rem',
+                    fontWeight: '800',
+                    letterSpacing: '0.25em',
+                    textAlign: 'center',
+                    border: '2px solid #0c4e7e',
+                    borderRadius: '6px',
+                    outline: 'none',
+                    color: '#0c4e7e',
+                    background: '#F8FAFC'
+                  }}
+                />
+                <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '0.35rem', textAlign: 'center' }}>
+                  {t.dgmsCodeDigitsNotice || 'Requires 4 or 6-digit statutory code'}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setDgmsCodeModalModule(null)}
+                  className="gov-btn-secondary"
+                  style={{ flex: 1, padding: '0.75rem' }}
+                >
+                  {t.dgmsCancel || 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  disabled={dgmsVerifyLoading || !dgmsInputCode.trim()}
+                  className="gov-btn-primary"
+                  style={{
+                    flex: 2,
+                    padding: '0.75rem',
+                    opacity: dgmsVerifyLoading || !dgmsInputCode.trim() ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.45rem'
+                  }}
+                >
+                  {dgmsVerifyLoading ? (
+                    <span>{t.dgmsVerifyingCode || 'Verifying with DGMS...'}</span>
+                  ) : (
+                    <>
+                      <ShieldCheck size={16} />
+                      <span>{t.dgmsVerifyAndStartBtn || 'Verify & Start Drill'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
