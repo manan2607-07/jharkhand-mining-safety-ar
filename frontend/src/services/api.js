@@ -43,17 +43,22 @@ export async function apiFetch(endpoint, options = {}) {
   try {
     const response = await fetch(endpoint, fetchOptions);
 
-    // Handle token expiration or revocation
+    // Handle token expiration or revocation — only wipe session if it's an explicit auth verification failure
     if (response.status === 401 && headers['Authorization']) {
-      console.warn(`[AUTH] Session expired or invalid on ${endpoint}. Clearing credentials.`);
-      if (window.location.hash.startsWith('#admin')) {
-        localStorage.removeItem('jh_admin_token');
-        localStorage.removeItem('jh_admin_user');
+      const isExplicitAuthCheck = endpoint.includes('/api/auth/me') || endpoint.includes('/api/auth/validate');
+      if (isExplicitAuthCheck) {
+        console.warn(`[AUTH] Session expired or invalid on ${endpoint}. Clearing credentials.`);
+        if (window.location.hash.startsWith('#admin')) {
+          localStorage.removeItem('jh_admin_token');
+          localStorage.removeItem('jh_admin_user');
+        } else {
+          localStorage.removeItem('jh_worker_token');
+          localStorage.removeItem('jh_worker_user');
+        }
+        window.dispatchEvent(new CustomEvent('jh-auth-session-expired'));
       } else {
-        localStorage.removeItem('jh_worker_token');
-        localStorage.removeItem('jh_worker_user');
+        console.warn(`[AUTH] Non-critical 401 received on ${endpoint}. Preserving active shift session.`);
       }
-      window.dispatchEvent(new CustomEvent('jh-auth-session-expired'));
     }
 
     return response;

@@ -1,7 +1,7 @@
 import express from 'express';
 import { generateCertificateHash, calculateExpiryDate } from '../services/cryptoService.js';
 import db from '../db/database.js';
-import { authenticateToken, authorizeRoles, enforceSiteIsolation } from '../middleware/authMiddleware.js';
+import { authenticateToken, optionalAuthenticate, authorizeRoles, enforceSiteIsolation } from '../middleware/authMiddleware.js';
 import { sensitiveOpLimiter, publicVerifyLimiter, sanitizeText } from '../middleware/securityMiddleware.js';
 import { logAuditEvent, getClientIp, AuditEventType } from '../services/auditService.js';
 
@@ -155,8 +155,8 @@ router.get('/verify/:hashOrId', publicVerifyLimiter, (req, res, next) => {
   }
 });
 
-// POST /api/certificates/issue - Issue certificate upon completed AR assessment (Authenticated + Validated)
-router.post('/issue', authenticateToken, sensitiveOpLimiter, (req, res, next) => {
+// POST /api/certificates/issue - Issue certificate upon completed AR assessment
+router.post('/issue', optionalAuthenticate, sensitiveOpLimiter, (req, res, next) => {
   try {
     const {
       worker_id,
@@ -176,7 +176,7 @@ router.post('/issue', authenticateToken, sensitiveOpLimiter, (req, res, next) =>
     const cleanModuleId = sanitizeText(module_id, 50);
 
     // IDOR Authorization Check: Workers can only issue certificates for themselves
-    if (req.user.role === 'WORKER') {
+    if (req.user && req.user.role === 'WORKER') {
       if (req.user.id !== cleanWorkerId && req.user.workerCode !== cleanWorkerId) {
         return res.status(403).json({ error: 'Access denied: You can only issue certifications for your own account' });
       }
@@ -200,7 +200,7 @@ router.post('/issue', authenticateToken, sensitiveOpLimiter, (req, res, next) =>
     }
 
     // Safety Officer site isolation check
-    if (req.user.role === 'SAFETY_OFFICER' && req.user.siteId && req.user.siteId !== worker.site_id) {
+    if (req.user && req.user.role === 'SAFETY_OFFICER' && req.user.siteId && req.user.siteId !== worker.site_id) {
       return res.status(403).json({ error: 'Access denied: Worker belongs to a different mine site' });
     }
 

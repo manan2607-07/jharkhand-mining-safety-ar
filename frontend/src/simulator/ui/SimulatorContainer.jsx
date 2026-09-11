@@ -80,6 +80,7 @@ export default function SimulatorContainer({ moduleId = 'MOD-005', onComplete, o
   const [isMuted, setIsMuted] = useState(false);
   const [hintMessage, setHintMessage] = useState(null);
   const [finalResults, setFinalResults] = useState(null);
+  const [issuedCertificate, setIssuedCertificate] = useState(null);
 
   // Subsystem Refs
   const trainingSceneRef = useRef(null);
@@ -388,7 +389,14 @@ export default function SimulatorContainer({ moduleId = 'MOD-005', onComplete, o
     if (results.isPassed) {
       if (audioSystemRef.current) audioSystemRef.current.playSuccessFanfare();
       // Persist results & generate certificate
-      await progressManagerRef.current.persistResults(results, language);
+      try {
+        const certRes = await progressManagerRef.current.persistResults(results, language);
+        if (certRes?.certificate) {
+          setIssuedCertificate(certRes.certificate);
+        }
+      } catch (err) {
+        console.warn('Certificate issuance notice:', err);
+      }
     } else {
       if (audioSystemRef.current) audioSystemRef.current.playWarningAlert();
     }
@@ -398,7 +406,11 @@ export default function SimulatorContainer({ moduleId = 'MOD-005', onComplete, o
     if (sessionManagerRef.current) {
       sessionManagerRef.current.endSession();
     }
-    if (onCancel) onCancel();
+    if (finalResults?.isPassed && onComplete) {
+      onComplete({ results: finalResults, certificate: issuedCertificate });
+    } else if (onCancel) {
+      onCancel();
+    }
   };
 
   const formatTime = (secs) => {
