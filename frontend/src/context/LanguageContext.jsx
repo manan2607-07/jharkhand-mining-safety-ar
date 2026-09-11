@@ -144,7 +144,7 @@ export const translations = {
 
     // DGMS Test Authorization & Access Codes
     dgmsAuthSectionTitle: "DGMS Statutory Test Authorization & Access Code Control",
-    dgmsAuthSectionDesc: "Authorize vocational safety examinations on-site. Enable tests individually and issue 4 or 6-digit statutory drill pass codes for frontline workers.",
+    dgmsAuthSectionDesc: "Authorize vocational safety examinations on-site. Enable tests individually and issue 6-digit statutory drill pass codes for frontline workers.",
     dgmsColModule: "Module / Examination",
     dgmsColStatus: "DGMS Clearance Status",
     dgmsColToggle: "Test Permission",
@@ -159,13 +159,13 @@ export const translations = {
     dgmsTestDisabledBadge: "UNDER DGMS SPECIFICATION",
     enterDgmsCodeBtn: "Enter DGMS Code to Access",
     dgmsUnlockModalTitle: "DGMS Statutory Examination Access",
-    dgmsUnlockModalDesc: "Testing for this module requires on-site authorization by the Directorate General of Mines Safety (DGMS). Enter the 4 or 6-digit statutory drill pass code provided by your inspecting DGMS Officer to begin.",
-    dgmsCodeInputPlaceholder: "Enter 4 or 6-digit Code (e.g. 849201)",
+    dgmsUnlockModalDesc: "Testing for this module requires on-site authorization by the Directorate General of Mines Safety (DGMS). Enter the 6-digit statutory drill pass code provided by your inspecting DGMS Officer to begin.",
+    dgmsCodeInputPlaceholder: "Enter 6-digit Code (e.g. 849201)",
     dgmsVerifyAndStartBtn: "Verify & Start Drill",
     dgmsVerifyingCode: "Verifying with DGMS...",
     dgmsCodeSuccess: "DGMS Statutory authorization confirmed. Launching simulator drill...",
     dgmsCodeInvalid: "Invalid code or test is currently locked under DGMS specification. Please consult your on-site DGMS Inspector.",
-    dgmsCodeDigitsNotice: "Requires 4 or 6-digit statutory code",
+    dgmsCodeDigitsNotice: "Requires 6-digit statutory code",
     dgmsCopiedToClipboard: "Code copied to clipboard!",
     dgmsSessionAuthorizedBadge: "DGMS AUTHORIZED",
     
@@ -701,7 +701,7 @@ export const translations = {
 
     // DGMS Test Authorization & Access Codes
     dgmsAuthSectionTitle: "डीजीएमएस वैधानिक परीक्षण प्राधिकरण एवं कोड नियंत्रण",
-    dgmsAuthSectionDesc: "कार्यस्थल पर सुरक्षा परीक्षाओं की अनुमति दें। परीक्षणों को अलग-अलग सक्षम करें और श्रमिकों के लिए 4 या 6 अंकों का वैधानिक ड्रिल पास कोड उत्पन्न करें।",
+    dgmsAuthSectionDesc: "कार्यस्थल पर सुरक्षा परीक्षाओं की अनुमति दें। परीक्षणों को अलग-अलग सक्षम करें और श्रमिकों के लिए 6 अंकों का वैधानिक ड्रिल पास कोड उत्पन्न करें।",
     dgmsColModule: "मॉड्यूल / परीक्षा",
     dgmsColStatus: "डीजीएमएस निकासी स्थिति",
     dgmsColToggle: "परीक्षण अनुमति",
@@ -716,13 +716,13 @@ export const translations = {
     dgmsTestDisabledBadge: "डीजीएमएस विनिर्देश के तहत",
     enterDgmsCodeBtn: "डीजीएमएस कोड दर्ज कर प्रवेश करें",
     dgmsUnlockModalTitle: "डीजीएमएस वैधानिक परीक्षा प्रवेश",
-    dgmsUnlockModalDesc: "इस मॉड्यूल का परीक्षण खान सुरक्षा महानिदेशालय (DGMS) के ऑन-साइट प्राधिकरण के अधीन है। ड्रिल शुरू करने के लिए अपने निरीक्षक द्वारा दिया गया 4 या 6 अंकों का कोड दर्ज करें।",
-    dgmsCodeInputPlaceholder: "4 या 6 अंकों का कोड दर्ज करें (उदा. 849201)",
+    dgmsUnlockModalDesc: "इस मॉड्यूल का परीक्षण खान सुरक्षा महानिदेशालय (DGMS) के ऑन-साइट प्राधिकरण के अधीन है। ड्रिल शुरू करने के लिए अपने निरीक्षक द्वारा दिया गया 6 अंकों का कोड दर्ज करें।",
+    dgmsCodeInputPlaceholder: "6 अंकों का कोड दर्ज करें (उदा. 849201)",
     dgmsVerifyAndStartBtn: "सत्यापित करें एवं ड्रिल शुरू करें",
     dgmsVerifyingCode: "डीजीएमएस से सत्यापित हो रहा है...",
     dgmsCodeSuccess: "डीजीएमएस वैधानिक प्राधिकरण सत्यापित। सिमुलेटर शुरू हो रहा है...",
     dgmsCodeInvalid: "अमान्य कोड या परीक्षण वर्तमान में डीजीएमएस द्वारा अवरुद्ध है। कृपया निरीक्षक से संपर्क करें।",
-    dgmsCodeDigitsNotice: "4 या 6 अंकों का वैधानिक कोड आवश्यक",
+    dgmsCodeDigitsNotice: "6 अंकों का वैधानिक कोड आवश्यक",
     dgmsCopiedToClipboard: "कोड क्लिपबोर्ड पर कॉपी हो गया!",
     dgmsSessionAuthorizedBadge: "डीजीएमएस अधिकृत",
     
@@ -1258,7 +1258,7 @@ export const translations = {
 
     // DGMS Test Authorization & Access Codes
     dgmsAuthSectionTitle: "DGMS ᱵᱤᱰᱟᱹᱣ ᱪᱷᱟᱹᱲ ᱟᱨ ᱠᱳᱰ ᱪᱟᱪᱞᱟᱣ",
-    dgmsAuthSectionDesc: "ᱠᱟᱹᱢᱤ ᱴᱷᱟᱶ ᱨᱮ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱵᱤᱰᱟᱹᱣ ᱨᱮᱭᱟᱜ ᱪᱷᱟᱹᱲ ᱮᱢ ᱢᱮ᱾ ᱠᱟᱹᱢᱤᱭᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱔ ᱥᱮ ᱖ ᱮᱞ ᱨᱮᱱᱟᱜ ᱠᱳᱰ ᱛᱮᱭᱟᱨ ᱢᱮ᱾",
+    dgmsAuthSectionDesc: "ᱠᱟᱹᱢᱤ ᱴᱷᱟᱶ ᱨᱮ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱵᱤᱰᱟᱹᱣ ᱨᱮᱭᱟᱜ ᱪᱷᱟᱹᱲ ᱮᱢ ᱢᱮ᱾ ᱠᱟᱹᱢᱤᱭᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱖ ᱮᱞ ᱨᱮᱱᱟᱜ ᱠᱳᱰ ᱛᱮᱭᱟᱨ ᱢᱮ᱾",
     dgmsColModule: "ᱢᱚᱰᱩᱞ / ᱵᱤᱰᱟᱹᱣ",
     dgmsColStatus: "DGMS ᱪᱷᱟᱹᱲ ᱦᱟᱞᱚᱛ",
     dgmsColToggle: "ᱵᱤᱰᱟᱹᱣ ᱪᱷᱟᱹᱲ",
@@ -1273,13 +1273,13 @@ export const translations = {
     dgmsTestDisabledBadge: "DGMS ᱛᱮᱭᱟᱨ ᱨᱮ ᱢᱮᱱᱟᱜ-ᱟ",
     enterDgmsCodeBtn: "DGMS ᱠᱳᱰ ᱮᱢ ᱠᱟᱛᱮ ᱵᱚᱞᱚᱱ ᱢᱮ",
     dgmsUnlockModalTitle: "DGMS ᱵᱤᱰᱟᱹᱣ ᱪᱷᱟᱹᱲ",
-    dgmsUnlockModalDesc: "ᱱᱚᱶᱟ ᱰᱨᱤᱞ ᱮᱦᱚᱵ ᱞᱟᱹᱜᱤᱫ DGMS ᱚᱯᱷᱤᱥᱚᱨ ᱮᱢ ᱟᱠᱟᱫ ᱔ ᱥᱮ ᱖ ᱮᱞ ᱨᱮᱱᱟᱜ ᱠᱳᱰ ᱮᱢ ᱢᱮ᱾",
-    dgmsCodeInputPlaceholder: "᱔ ᱥᱮ ᱖ ᱮᱞ ᱠᱳᱰ ᱮᱢ ᱢᱮ (e.g. 849201)",
+    dgmsUnlockModalDesc: "ᱱᱚᱶᱟ ᱰᱨᱤᱞ ᱮᱦᱚᱵ ᱞᱟᱹᱜᱤᱫ DGMS ᱚᱯᱷᱤᱥᱚᱨ ᱮᱢ ᱟᱠᱟᱫ ᱖ ᱮᱞ ᱨᱮᱱᱟᱜ ᱠᱳᱰ ᱮᱢ ᱢᱮ᱾",
+    dgmsCodeInputPlaceholder: "᱖ ᱮᱞ ᱠᱳᱰ ᱮᱢ ᱢᱮ (e.g. 849201)",
     dgmsVerifyAndStartBtn: "ᱯᱩᱨᱟᱹᱣ ᱟᱨ ᱮᱦᱚᱵ ᱢᱮ",
     dgmsVerifyingCode: "DGMS ᱥᱟᱶ ᱧᱮᱞᱚᱜ ᱠᱟᱱᱟ...",
     dgmsCodeSuccess: "DGMS ᱪᱷᱟᱹᱲ ᱴᱷᱤᱠ ᱜᱮᱭᱟ᱾ ᱥᱤᱢᱩᱞᱮᱴᱚᱨ ᱮᱦᱚᱵᱚᱜ ᱠᱟᱱᱟ...",
     dgmsCodeInvalid: "ᱵᱟᱹᱲᱤᱡ ᱠᱳᱰ ᱥᱮ DGMS ᱱᱚᱶᱟ ᱵᱟᱭ ᱮᱦᱚᱵ ᱟᱠᱟᱫ-ᱟ᱾",
-    dgmsCodeDigitsNotice: "᱔ ᱥᱮ ᱖ ᱮᱞ ᱠᱳᱰ ᱞᱟᱹᱠᱛᱤ",
+    dgmsCodeDigitsNotice: "᱖ ᱮᱞ ᱠᱳᱰ ᱞᱟᱹᱠᱛᱤ",
     dgmsCopiedToClipboard: "ᱠᱳᱰ ᱠᱚᱯᱤ ᱮᱱᱟ!",
     dgmsSessionAuthorizedBadge: "DGMS ᱪᱷᱟᱹᱲ ᱧᱟᱢ ᱮᱱᱟ",
     

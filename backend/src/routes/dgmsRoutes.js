@@ -7,10 +7,7 @@ import { logAuditEvent, getClientIp, AuditEventType } from '../services/auditSer
 const router = express.Router();
 
 function generateNumericCode(length = 6) {
-  const len = Number(length) === 4 ? 4 : 6;
-  const min = Math.pow(10, len - 1);
-  const max = Math.pow(10, len) - 1;
-  return crypto.randomInt(min, max + 1).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 }
 
 const DEFAULT_CODES = {
@@ -161,19 +158,19 @@ router.post('/toggle-test', optionalAuthenticate, (req, res, next) => {
 
 /**
  * POST /api/dgms/generate-code
- * Generates a fresh 4 or 6-digit statutory access code for a module.
+ * Generates a fresh 6-digit statutory access code for a module.
  */
 router.post('/generate-code', optionalAuthenticate, (req, res, next) => {
   try {
-    const { moduleId, codeLength = 6 } = req.body;
+    const { moduleId } = req.body;
     if (!moduleId) {
       return res.status(400).json({ error: 'moduleId is required' });
     }
 
     ensureAuthorizationsSeeded();
 
-    const length = Number(codeLength) === 4 ? 4 : 6;
-    const newCode = generateNumericCode(length);
+    const length = 6;
+    const newCode = generateNumericCode(6);
     const inspectorId = req.user?.id || 'USR-DGMS-01';
     const inspectorName = req.user?.name || req.user?.fullName || 'Dr. A.K. Sengupta (Chief Inspector)';
 

@@ -173,8 +173,8 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     if (!dgmsCodeModalModule || !dgmsInputCode.trim()) return;
 
     const cleanedCode = dgmsInputCode.trim().replace(/[\s-]/g, '');
-    if (cleanedCode.length !== 4 && cleanedCode.length !== 6) {
-      setDgmsVerifyError(t.dgmsCodeDigitsNotice || 'Please enter a valid 4 or 6-digit statutory code');
+    if (cleanedCode.length !== 6) {
+      setDgmsVerifyError(t.dgmsCodeDigitsNotice || 'Please enter the 6-digit statutory code');
       return;
     }
 
@@ -875,7 +875,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
 
             {/* Description */}
             <p style={{ fontSize: '0.86rem', color: '#4A5568', lineHeight: '1.5', marginBottom: '1.5rem' }}>
-              {t.dgmsUnlockModalDesc || 'Testing for this module requires on-site authorization by the Directorate General of Mines Safety (DGMS). Enter the 4 or 6-digit statutory drill pass code provided by your inspecting DGMS Officer to begin.'}
+              {t.dgmsUnlockModalDesc || 'Testing for this module requires on-site authorization by the Directorate General of Mines Safety (DGMS). Enter the 6-digit statutory drill pass code provided by your inspecting DGMS Officer to begin.'}
             </p>
 
             {/* Error & Success Messages */}
@@ -919,12 +919,12 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
             <form onSubmit={handleVerifyDgmsCode}>
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '700', color: '#334155', marginBottom: '0.4rem' }}>
-                  {t.dgmsColAccessCode || 'Statutory Access Code'} (4 or 6 Digits)
+                  {t.dgmsColAccessCode || 'Statutory Access Code'} (6 Digits)
                 </label>
                 <input
                   type="text"
                   autoFocus
-                  maxLength={8}
+                  maxLength={6}
                   inputMode="numeric"
                   pattern="[0-9]*"
                   value={dgmsInputCode}
@@ -946,7 +946,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                   }}
                 />
                 <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '0.35rem', textAlign: 'center' }}>
-                  {t.dgmsCodeDigitsNotice || 'Requires 4 or 6-digit statutory code'}
+                  {t.dgmsCodeDigitsNotice || 'Requires 6-digit statutory code'}
                 </div>
               </div>
 

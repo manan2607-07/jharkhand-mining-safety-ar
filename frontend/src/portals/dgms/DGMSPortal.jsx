@@ -113,7 +113,6 @@ export default function DGMSPortal({ initialHash = '' }) {
     return DEFAULT_AUTHORIZATIONS;
   });
   const [authLoading, setAuthLoading] = useState(false);
-  const [codeLengths, setCodeLengths] = useState({});
   const [copiedModuleId, setCopiedModuleId] = useState(null);
   const [actionInProgress, setActionInProgress] = useState(null);
 
@@ -204,16 +203,14 @@ export default function DGMSPortal({ initialHash = '' }) {
     }
   };
 
-  const handleGenerateCode = async (moduleId, requestedLength) => {
-    const len = Number(requestedLength) === 4 ? 4 : 6;
-    const min = Math.pow(10, len - 1);
-    const max = Math.pow(10, len) - 1;
-    const optimisticCode = Math.floor(min + Math.random() * (max - min + 1)).toString();
+  const handleGenerateCode = async (moduleId) => {
+    const len = 6;
+    const optimisticCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Optimistic UI update immediately
     setTestAuthorizations(prev => {
       const updated = prev.map(item =>
-        item.module_id === moduleId ? { ...item, access_code: optimisticCode, code_length: len, updated_at: new Date().toISOString() } : item
+        item.module_id === moduleId ? { ...item, access_code: optimisticCode, code_length: 6, updated_at: new Date().toISOString() } : item
       );
       try {
         localStorage.setItem('jh_dgms_cached_authorizations', JSON.stringify(updated));
@@ -226,7 +223,7 @@ export default function DGMSPortal({ initialHash = '' }) {
       setActionInProgress(`code-${moduleId}`);
       const res = await apiFetch('/api/dgms/generate-code', {
         method: 'POST',
-        body: JSON.stringify({ moduleId, codeLength: len })
+        body: JSON.stringify({ moduleId })
       });
       if (res.ok) {
         const result = await res.json();
@@ -396,7 +393,7 @@ export default function DGMSPortal({ initialHash = '' }) {
               {t.dgmsAuthSectionTitle || 'DGMS Statutory Test Authorization & Access Code Control'}
             </h3>
             <p style={{ fontSize: '0.85rem', color: '#4A5568', marginTop: '0.35rem', maxWidth: '850px' }}>
-              {t.dgmsAuthSectionDesc || 'Authorize vocational safety examinations on-site. Enable tests individually and issue 4 or 6-digit statutory drill pass codes for frontline workers.'}
+              {t.dgmsAuthSectionDesc || 'Authorize vocational safety examinations on-site. Enable tests individually and issue 6-digit statutory drill pass codes for frontline workers.'}
             </p>
           </div>
 
@@ -488,7 +485,6 @@ export default function DGMSPortal({ initialHash = '' }) {
                 const isEnabled = auth.is_enabled === 1;
                 const isToggling = actionInProgress === `toggle-${auth.module_id}`;
                 const isGenerating = actionInProgress === `code-${auth.module_id}`;
-                const currentLen = codeLengths[auth.module_id] || auth.code_length || 6;
 
                 return (
                   <tr key={auth.module_id} style={{ background: isEnabled ? '#F8FCF9' : '#FFFFFF' }}>
@@ -615,68 +611,32 @@ export default function DGMSPortal({ initialHash = '' }) {
                       </div>
                     </td>
 
-                    {/* Code Controls (4 or 6 digit selector + Regenerate) */}
+                    {/* Code Controls (Generate New 6-Digit Code) */}
                     <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: '600' }}>Digits:</span>
-                          <div style={{ display: 'inline-flex', borderRadius: '4px', overflow: 'hidden', border: '1px solid #CBD5E1' }}>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setCodeLengths(prev => ({ ...prev, [auth.module_id]: 6 }));
-                                handleGenerateCode(auth.module_id, 6);
-                              }}
-                              style={{
-                                padding: '0.2rem 0.5rem',
-                                fontSize: '0.72rem',
-                                fontWeight: currentLen === 6 ? '800' : '500',
-                                background: currentLen === 6 ? '#0c4e7e' : '#FFFFFF',
-                                color: currentLen === 6 ? '#FFFFFF' : '#475569',
-                                border: 'none',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              6 Digits
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setCodeLengths(prev => ({ ...prev, [auth.module_id]: 4 }));
-                                handleGenerateCode(auth.module_id, 4);
-                              }}
-                              style={{
-                                padding: '0.2rem 0.5rem',
-                                fontSize: '0.72rem',
-                                fontWeight: currentLen === 4 ? '800' : '500',
-                                background: currentLen === 4 ? '#0c4e7e' : '#FFFFFF',
-                                color: currentLen === 4 ? '#FFFFFF' : '#475569',
-                                border: 'none',
-                                borderLeft: '1px solid #CBD5E1',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              4 Digits
-                            </button>
-                          </div>
-                        </div>
-
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                         <button
-                          onClick={() => handleGenerateCode(auth.module_id, currentLen)}
+                          onClick={() => handleGenerateCode(auth.module_id)}
                           disabled={isGenerating}
                           className="gov-btn-secondary"
                           style={{
-                            padding: '0.35rem 0.65rem',
-                            fontSize: '0.76rem',
+                            padding: '0.4rem 0.75rem',
+                            fontSize: '0.78rem',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '0.35rem',
-                            width: 'fit-content'
+                            width: 'fit-content',
+                            fontWeight: '600',
+                            borderColor: '#0c4e7e',
+                            color: '#0c4e7e',
+                            cursor: 'pointer'
                           }}
                         >
-                          <RefreshCw size={12} className={isGenerating ? 'animate-spin' : ''} />
+                          <RefreshCw size={13} className={isGenerating ? 'animate-spin' : ''} />
                           <span>{isGenerating ? 'Generating...' : (t.dgmsGenerateNewCode || 'Generate New Code')}</span>
                         </button>
+                        <div style={{ fontSize: '0.7rem', color: '#64748B' }}>
+                          Standard 6-Digit DGMS PIN
+                        </div>
                       </div>
                     </td>
 
