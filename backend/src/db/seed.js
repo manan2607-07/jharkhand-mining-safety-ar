@@ -13,6 +13,7 @@ export function seed() {
   // Clear existing records in proper dependency order
   db.exec(`
     DELETE FROM sync_audit_log;
+    DELETE FROM dgms_test_authorizations;
     DELETE FROM certificates;
     DELETE FROM training_sessions;
     DELETE FROM workers;
