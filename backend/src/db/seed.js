@@ -150,6 +150,24 @@ export function seed() {
     );
   }
 
+  console.log('🌱 Seeding DGMS Test Authorizations & Passcodes...');
+  const insertAuth = db.prepare(`
+    INSERT OR REPLACE INTO dgms_test_authorizations (id, module_id, access_code, code_length, is_enabled, authorized_by, authorized_by_name)
+    VALUES (?, ?, ?, ?, ?, 'USR-DGMS-01', 'Dr. A.K. Sengupta (Chief Inspector)')
+  `);
+
+  const defaultAuths = [
+    { id: 'AUTH-MOD-001', module_id: 'MOD-001', access_code: '184920', code_length: 6, is_enabled: 1 },
+    { id: 'AUTH-MOD-002', module_id: 'MOD-002', access_code: '294715', code_length: 6, is_enabled: 1 },
+    { id: 'AUTH-MOD-003', module_id: 'MOD-003', access_code: '849201', code_length: 6, is_enabled: 0 },
+    { id: 'AUTH-MOD-004', module_id: 'MOD-004', access_code: '632194', code_length: 6, is_enabled: 0 },
+    { id: 'AUTH-MOD-005', module_id: 'MOD-005', access_code: '518742', code_length: 6, is_enabled: 0 }
+  ];
+
+  for (const a of defaultAuths) {
+    insertAuth.run(a.id, a.module_id, a.access_code, a.code_length, a.is_enabled);
+  }
+
   console.log('🌱 Seeding Cohorts & Frontline Workers...');
   const insertCohort = db.prepare(`
     INSERT INTO cohorts (id, name, site_id, supervisor_id, start_date, target_completion_date, status)
