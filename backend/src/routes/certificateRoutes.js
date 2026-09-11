@@ -273,7 +273,7 @@ router.post('/issue', optionalAuthenticate, sensitiveOpLimiter, (req, res, next)
       expiryDate,
       hash,
       signature,
-      req.user.id || 'USR-OFFICER-01'
+      req.user?.id || 'USR-OFFICER-01'
     );
 
     res.status(201).json({
@@ -294,8 +294,8 @@ router.post('/issue', optionalAuthenticate, sensitiveOpLimiter, (req, res, next)
 
     logAuditEvent({
       type: AuditEventType.CERT_ISSUED,
-      actorId: req.user.id,
-      actorRole: req.user.role,
+      actorId: req.user?.id || worker.id,
+      actorRole: req.user?.role || 'WORKER',
       resource: `certificate:${certificateId}`,
       action: `Certificate issued for worker ${worker.worker_code} on module ${mod.id} (score: ${numericScore})`,
       result: 'SUCCESS',
