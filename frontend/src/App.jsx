@@ -182,9 +182,9 @@ function MainApp() {
           </>
         ) : showWorkerDashboard ? (
           <WorkerPortal
-            key={`worker-${lastSyncTimestamp}`}
-            onActivityOccurred={() => setLastSyncTimestamp(Date.now())}
             workerSection={workerSection}
+            setWorkerSection={setWorkerSection}
+            onActivityOccurred={() => setLastSyncTimestamp(Date.now())}
           />
         ) : (
           <div style={{ padding: '2rem', textAlign: 'center' }}>

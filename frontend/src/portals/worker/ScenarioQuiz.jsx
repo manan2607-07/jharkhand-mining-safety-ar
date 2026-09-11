@@ -278,9 +278,6 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
       const compositeScore = Math.round(quizPercentage * 0.7 + arAccuracy * 100 * 0.3);
 
       setQuizFinished(true);
-      if (compositeScore >= 75) {
-        onQuizPassed(compositeScore);
-      }
     }
   };
 
@@ -346,8 +343,29 @@ export default function ScenarioQuiz({ moduleId, arAccuracy = 0.9, onQuizPassed,
         </div>
 
         {passed ? (
-          <div className="gov-badge-green" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
-            {t.verifiedForIssuance}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
+            <div className="gov-badge-green" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+              {t.verifiedForIssuance || 'COMPLIANT WITH DGMS VOCATIONAL SAFETY BENCHMARK'}
+            </div>
+            <button
+              onClick={() => onQuizPassed(compositeScore)}
+              className="gov-btn-gold"
+              style={{
+                width: '100%',
+                padding: '0.85rem',
+                fontSize: '0.95rem',
+                fontWeight: '800',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                cursor: 'pointer',
+                marginTop: '0.5rem'
+              }}
+            >
+              <span>{t.proceedToCertificate || 'VIEW MY SAFETY CERTIFICATE'}</span>
+              <ArrowRight size={16} />
+            </button>
           </div>
         ) : (
           <button onClick={onRetake} className="gov-btn-primary" style={{ padding: '0.65rem 1.5rem' }}>
