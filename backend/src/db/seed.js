@@ -93,7 +93,7 @@ export function seed() {
       desc_hi: 'वायुमंडलीय मल्टी-गैस डिटेक्टर (मीथेन, CO, ऑक्सीजन कमी), अनिवार्य PPE पहनने का क्रम और 2-व्यक्ति बडी-सिस्टम संकेत।',
       desc_sat: 'ᱢᱤᱛᱷᱮᱱ ᱟᱨ ᱠᱟᱨᱵᱚᱱ ᱢᱚᱱᱳᱠᱥᱟᱭᱤᱰ ᱜᱮᱥ ᱯᱚᱨᱠᱷᱟᱣ, PPE ᱦᱚᱨᱚᱜ ᱞᱮᱠᱟᱱ ᱥᱟᱯᱟᱵ ᱟᱨ ᱵᱟᱨ ᱦᱚᱲᱟᱜ ᱵᱟᱰᱟᱭ ᱪᱤᱱᱦᱟᱹ᱾',
       category: 'HAZARD_PREVENTION',
-      pass_threshold: 80,
+      pass_threshold: 75,
       est_minutes: 15,
       is_mvp: 1,
       phase: 1
@@ -107,10 +107,10 @@ export function seed() {
       desc_hi: 'कन्वेयर बेल्ट और क्रशर के लिए लॉक-आउट/टैग-आउट (LOTO) प्रक्रियाएं और गार्ड-रेल सुरक्षा जांच।',
       desc_sat: 'ᱢᱮᱥᱤᱱ ᱵᱚᱸᱫᱽ ᱠᱟᱛᱮ ᱪᱟᱹᱵᱷᱤ ᱞᱟᱜᱟᱣ (LOTO) ᱟᱨ ᱵᱮᱞᱴ ᱥᱩᱨ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱥᱟᱺᱜᱤᱧ ᱫᱚᱦᱚ᱾',
       category: 'INDUSTRIAL_SAFETY',
-      pass_threshold: 75,
+      pass_threshold: 80,
       est_minutes: 10,
-      is_mvp: 0,
-      phase: 2
+      is_mvp: 1,
+      phase: 1
     },
     {
       id: 'MOD-004',
@@ -122,9 +122,9 @@ export function seed() {
       desc_sat: 'ᱦᱟᱭ-ᱵᱷᱚᱞᱴᱮᱡᱽ ᱵᱤᱡᱽᱞᱤ ᱟᱨ ᱠᱷᱟᱫᱟᱱ ᱵᱞᱟᱥᱴᱤᱝ ᱚᱠᱛᱚ ᱥᱟᱺᱜᱤᱧ ᱪᱟᱞᱟᱣ ᱥᱮᱪᱮᱫ᱾',
       category: 'SPECIALIZED_DRILL',
       pass_threshold: 85,
-      est_minutes: 15,
-      is_mvp: 0,
-      phase: 2
+      est_minutes: 14,
+      is_mvp: 1,
+      phase: 1
     },
     {
       id: 'MOD-005',
@@ -135,10 +135,10 @@ export function seed() {
       desc_hi: 'नए श्रमिकों के लिए एआर-गाइडेड पीपीई फिटिंग जांच (हेलमेट, बूट, मास्क) और प्रथम-दिवस अभिविन्यास।',
       desc_sat: 'ᱱᱟᱣᱟ ᱠᱟᱹᱢᱤᱭᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱦᱮᱞᱢᱮᱴ, ᱡᱩᱛᱟᱹ, ᱢᱟᱥᱠ ᱴᱷᱤᱠ ᱥᱟᱺᱦᱤᱡ ᱦᱚᱨᱚᱜ ᱟᱨ ᱠᱷᱟᱫᱟᱱ ᱵᱚᱞᱚᱱ ᱰᱟᱦᱟᱨ᱾',
       category: 'INDUCTION',
-      pass_threshold: 75,
+      pass_threshold: 90,
       est_minutes: 8,
-      is_mvp: 0,
-      phase: 2
+      is_mvp: 1,
+      phase: 1
     }
   ];
 

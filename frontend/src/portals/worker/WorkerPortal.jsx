@@ -3,8 +3,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { useOfflineSync } from '../../context/OfflineSyncContext';
 import { apiFetch } from '../../services/api';
-import FireModuleAR from './FireModuleAR';
-import GasModuleAR from './GasModuleAR';
+import SimulatorContainer from '../../simulator/ui/SimulatorContainer';
 import ScenarioQuiz from './ScenarioQuiz';
 import DigitalCertificate from './DigitalCertificate';
 import { 
@@ -80,8 +79,8 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
   const modules = [
     {
       id: 'MOD-001',
-      title: t.module1Title,
-      subtitle: t.module1Subtitle,
+      title: t.module1Title || 'Fire & Explosion Response',
+      subtitle: t.module1Subtitle || 'Exit identification, extinguisher PASS technique, and evacuation drill.',
       icon: Flame,
       color: '#0c4e7e',
       isMvp: true,
@@ -91,8 +90,8 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     },
     {
       id: 'MOD-002',
-      title: t.module2Title,
-      subtitle: t.module2Subtitle,
+      title: t.module2Title || 'Gas Leak & Confined Space Protocol',
+      subtitle: t.module2Subtitle || 'Methane (CH4), Carbon Monoxide (CO), PPE donning, and buddy signaling.',
       icon: AlertOctagon,
       color: '#B8860B',
       isMvp: true,
@@ -102,34 +101,34 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     },
     {
       id: 'MOD-003',
-      title: t.module3Title,
-      subtitle: t.module3Subtitle,
+      title: t.module3Title || 'Machinery & Moving-Part Safety',
+      subtitle: t.module3Subtitle || 'Conveyor belt lock-out/tag-out (LOTO), roller pinch points, and emergency pull cords.',
       icon: Cog,
-      color: '#4B5563',
-      isMvp: false,
-      phase: 2,
+      color: '#0c4e7e',
+      isMvp: true,
+      phase: 1,
       duration: `10 ${t.minutesUnit || 'mins'}`,
       threshold: '80%'
     },
     {
       id: 'MOD-004',
-      title: t.module4Title,
-      subtitle: t.module4Subtitle,
+      title: t.module4Title || 'Electrical & Blasting Clearance',
+      subtitle: t.module4Subtitle || 'Flameproof enclosure inspection, explosive magazine handling, and shot-firing cordon.',
       icon: Zap,
-      color: '#4B5563',
-      isMvp: false,
-      phase: 2,
+      color: '#0c4e7e',
+      isMvp: true,
+      phase: 1,
       duration: `14 ${t.minutesUnit || 'mins'}`,
       threshold: '85%'
     },
     {
       id: 'MOD-005',
-      title: t.module5Title,
-      subtitle: t.module5Subtitle,
+      title: t.module5Title || 'PPE Compliance & Induction',
+      subtitle: t.module5Subtitle || 'Mandatory DGMS 11-point gear protocol, cap lamp inspection, and dust respirator fitting.',
       icon: HardHat,
-      color: '#4B5563',
-      isMvp: false,
-      phase: 2,
+      color: '#0c4e7e',
+      isMvp: true,
+      phase: 1,
       duration: `8 ${t.minutesUnit || 'mins'}`,
       threshold: '90%'
     }
@@ -139,6 +138,31 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     setSelectedModule(mod);
     speak(language === 'sat' ? "ᱥᱮᱪᱮᱫ ᱮᱦᱚᱵᱚᱜ ᱠᱟᱱᱟ᱾ ᱠᱮᱢᱮᱨᱟ ᱥᱟᱢᱟᱝ ᱨᱮ ᱫᱚᱦᱚᱭ ᱢᱮ᱾" : "सुरक्षा सिमुलेशन प्रारंभ हो रहा है। कैमरा स्क्रीन पर ध्यान दें।");
     setActiveView('SIMULATION');
+  };
+
+  const handleSimulatorComplete = ({ results, certificate, isOffline }) => {
+    if (certificate) {
+      const fullCert = {
+        ...certificate,
+        moduleTitle: selectedModule?.title || 'Safety Certification',
+        workerCode: currentUser.workerCode,
+        workerName: currentUser.name
+      };
+      setIssuedCertificate(fullCert);
+      setWorkerCerts((prev) => [fullCert, ...prev]);
+      setActiveView('CERTIFICATE');
+
+      // Real-time broadcast for admin portal synchronization
+      try {
+        window.dispatchEvent(new CustomEvent('jh-safety-drill-completed', { detail: fullCert }));
+        localStorage.setItem('jh_last_activity_ts', Date.now().toString());
+        if (onActivityOccurred) onActivityOccurred(fullCert);
+      } catch (e) {
+        console.warn('Cross-portal event dispatch notice:', e);
+      }
+    } else {
+      setActiveView('CATALOG');
+    }
   };
 
   const handleARComplete = (results) => {
@@ -236,17 +260,11 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
     <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '1.5rem 1rem' }}>
       {/* Simulation View */}
       {activeView === 'SIMULATION' && (
-        selectedModule.id === 'MOD-001' ? (
-          <FireModuleAR
-            onComplete={handleARComplete}
-            onCancel={() => setActiveView('CATALOG')}
-          />
-        ) : (
-          <GasModuleAR
-            onComplete={handleARComplete}
-            onCancel={() => setActiveView('CATALOG')}
-          />
-        )
+        <SimulatorContainer
+          moduleId={selectedModule?.id || 'MOD-005'}
+          onComplete={handleSimulatorComplete}
+          onCancel={() => setActiveView('CATALOG')}
+        />
       )}
 
       {/* Quiz Assessment View */}
