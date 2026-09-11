@@ -104,9 +104,9 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       title: t.module3Title || 'Machinery & Moving-Part Safety',
       subtitle: t.module3Subtitle || 'Conveyor belt lock-out/tag-out (LOTO), roller pinch points, and emergency pull cords.',
       icon: Cog,
-      color: '#0c4e7e',
-      isMvp: true,
-      phase: 1,
+      color: '#4B5563',
+      isMvp: false,
+      phase: 2,
       duration: `10 ${t.minutesUnit || 'mins'}`,
       threshold: '80%'
     },
@@ -115,9 +115,9 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       title: t.module4Title || 'Electrical & Blasting Clearance',
       subtitle: t.module4Subtitle || 'Flameproof enclosure inspection, explosive magazine handling, and shot-firing cordon.',
       icon: Zap,
-      color: '#0c4e7e',
-      isMvp: true,
-      phase: 1,
+      color: '#4B5563',
+      isMvp: false,
+      phase: 2,
       duration: `14 ${t.minutesUnit || 'mins'}`,
       threshold: '85%'
     },
@@ -126,9 +126,9 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
       title: t.module5Title || 'PPE Compliance & Induction',
       subtitle: t.module5Subtitle || 'Mandatory DGMS 11-point gear protocol, cap lamp inspection, and dust respirator fitting.',
       icon: HardHat,
-      color: '#0c4e7e',
-      isMvp: true,
-      phase: 1,
+      color: '#4B5563',
+      isMvp: false,
+      phase: 2,
       duration: `8 ${t.minutesUnit || 'mins'}`,
       threshold: '90%'
     }
@@ -519,7 +519,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                           </span>
                         )}
                         <span className={mod.isMvp ? 'gov-badge-amber' : 'gov-badge-grey'}>
-                          {mod.isMvp ? t.statutoryDrillBadge : t.phase2Badge}
+                          {mod.isMvp ? t.statutoryDrillBadge : (t.underDgmsSpec || 'Under DGMS Specification')}
                         </span>
                       </div>
                     </div>
@@ -568,7 +568,7 @@ export default function WorkerPortal({ onActivityOccurred, workerSection = 'modu
                         className="gov-btn-secondary"
                         style={{ width: '100%', padding: '0.65rem', opacity: 0.6, cursor: 'not-allowed' }}
                       >
-                        {t.underDgmsSpec}
+                        {t.underDgmsSpec || 'Under DGMS Specification'}
                       </button>
                     )}
                   </div>

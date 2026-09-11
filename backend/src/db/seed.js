@@ -109,8 +109,8 @@ export function seed() {
       category: 'INDUSTRIAL_SAFETY',
       pass_threshold: 80,
       est_minutes: 10,
-      is_mvp: 1,
-      phase: 1
+      is_mvp: 0,
+      phase: 2
     },
     {
       id: 'MOD-004',
@@ -123,8 +123,8 @@ export function seed() {
       category: 'SPECIALIZED_DRILL',
       pass_threshold: 85,
       est_minutes: 14,
-      is_mvp: 1,
-      phase: 1
+      is_mvp: 0,
+      phase: 2
     },
     {
       id: 'MOD-005',
@@ -137,8 +137,8 @@ export function seed() {
       category: 'INDUCTION',
       pass_threshold: 90,
       est_minutes: 8,
-      is_mvp: 1,
-      phase: 1
+      is_mvp: 0,
+      phase: 2
     }
   ];
 
